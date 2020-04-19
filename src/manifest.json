@@ -1,0 +1,10 @@
+{
+  "manifest_version": 2,
+  "name": "Shane Lee's New Tab",
+  "description": "Shane Lee's New Tab",
+  "permissions": ["storage"],
+  "version": "0.0.1",
+  "chrome_url_overrides" : {
+    "newtab": "template/index.html"
+  }
+}
