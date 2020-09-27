@@ -4,11 +4,14 @@ html {
 
 /* 
  * Grey = #2C2C2C
+ * Dark Grey = #272725
  * Mustard Yellow = #e7b91b
+ * Font colours 
+ * Orangy Grey = #8d8271
 */
 
 body {
-  background-color: #e7b91b;
+  background-color: #272725;
 }
 
 .main {
@@ -20,7 +23,7 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 { 
-	color: #111; 
+	color: #8d8271; 
 	font-family: 'Helvetica Neue', sans-serif; 
 	font-weight: bold; 
 	letter-spacing: -1px; 
