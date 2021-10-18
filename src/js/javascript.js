@@ -1,5 +1,12 @@
 loadJSon()
 
+document.addEventListener('keydown', (event) => {
+  if (event.key === '~') {
+    document.getElementById('main').style.display = 'none'
+  }
+})
+
+
 function loadJSon() {
 	const request = new XMLHttpRequest()
 	const requestURL = '../data/quotes.json'
