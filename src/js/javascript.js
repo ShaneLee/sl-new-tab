@@ -21,7 +21,7 @@ function loadJSon() {
 }
 
 function getQuote(jsonObj) {
-  const randomQuote = pickRandom(jsonObj.quotes) 
+  const randomQuote = pickRandom(jsonObj) 
   printQuote(randomQuote.author, randomQuote.quote)
 }
 
