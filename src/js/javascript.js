@@ -41,4 +41,5 @@ function deathCountdown() {
 	document.getElementById('deathCountdown').innerHTML =
 		'You have '.toUpperCase() + days + ' days remaining.'.toUpperCase()
 	document.getElementById('title').innerHTML = days + ' Days Left'
+  document.title = days
 }
