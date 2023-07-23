@@ -2,8 +2,8 @@
 <html>
   <head>
     <title id="title">New Tab</title>
-    <script type="text/javascript" src="../js/moment-with-locales.min.js" charset="UTF-8">></script>
-    <script type="text/javascript" src="../js/moment.min.js" charset="UTF-8">></script>
+    <script type="text/javascript" src="../js/moment-with-locales.min.js" charset="UTF-8"></script>
+    <script type="text/javascript" src="../js/moment.min.js" charset="UTF-8"></script>
     <script src="../js/javascript.js" charset="UTF-8"></script>
     <script src="../js/jquery-3.5.0.min.js" charset="utf-8"></script>
     <link rel="stylesheet" type="text/css" href="../css/style.css">
@@ -15,6 +15,18 @@
       <h6 id="author" class"author"></h6>
 
       <h5 id="deathCountdown"></h5> 
+
+      <h2>TODOS</h2>
+      
+      <form id="todo-form" class="todo-form">
+        <input name="todo" id="todo-input" placeholder="Create todo"/>
+        <input name="category" id="category-input" value="main" style="display:none;"/>
+        <input type="submit" hidden />
+      </form>
+
+      <ul id="todos" class="todos">
+
+      </ul>
     </div>
   </body>
 </html>

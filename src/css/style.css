@@ -12,6 +12,9 @@ html {
 
 body {
   background-color: #272725;
+	color: #8d8271; 
+	font-family: 'Helvetica Neue', sans-serif; 
+	font-weight: bold; 
 }
 
 .main {
@@ -24,8 +27,6 @@ body {
 
 h1, h2, h3, h4, h5, h6 { 
 	color: #8d8271; 
-	font-family: 'Helvetica Neue', sans-serif; 
-	font-weight: bold; 
 	letter-spacing: -1px; 
 	line-height: 1; 
 	text-align: center;
@@ -43,4 +44,28 @@ h5 {
 h6 {
   font-size: 2em;
   font-weight: lighter;
+}
+
+ul {
+  list-style: none;
+}
+
+.todos {
+  text-align: left;
+  font-size: 2.5em;
+}
+
+.todo-form input {
+  height: 50px;
+  width: 93%;
+  background: none;
+  font-size: 2.5em;
+	color: #8d8271; 
+	font-family: 'Helvetica Neue', sans-serif; 
+	font-weight: bold; 
+  border: none;
+}
+
+.todo-item:hover {
+  text-decoration: underline;
 }

@@ -3,7 +3,10 @@
   "name": "Shane Lee's New Tab",
   "description": "Shane Lee's New Tab",
   "permissions": ["storage"],
-  "version": "0.1.0",
+  "version": "1.0.0",
+  "host_permissions": [
+    "https://localhost:8080/*"
+  ],
   "chrome_url_overrides" : {
     "newtab": "template/index.html"
   }
