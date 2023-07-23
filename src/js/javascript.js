@@ -61,41 +61,44 @@ function todoForm() {
             'Content-Type': 'application/json'
           },
           body: formData
-      }).finally(() => {
-        reloadTodos()
+      })
+      .then(response => response?.json())
+      .then(val => {
+        if (!!val) {
+          const list = document.getElementById('todos');        
+          addTodo(list, val)
+        }
       });
   });
 }
 
 
-function reloadTodos() {
-  // TODO make this better
-  location.reload();
-}
-
 function todos() {
   fetch(todosEndpoint, {method: 'GET'})
   .then(response => response.json())
   .then(todos => {
-      const uL = document.getElementById('todos');        
-      todos?.forEach(todo => {
-        const xhr = new XMLHttpRequest();
-        xhr.open('PATCH', completeEndpoint, false);
-        xhr.setRequestHeader('Content-Type', 'application/json')
-
-        const listItem = document.createElement('li');  
-        listItem.className = 'todo-item';
-        listItem.innerHTML = todo.todo;
-        listItem.id = todo.id
-        listItem.addEventListener('click', () => {
-          xhr.send(JSON.stringify(todo))
-          listItem.style = 'display: none;'
-          return false
-        });
-        uL.appendChild(listItem);
-      })
+      const list = document.getElementById('todos');        
+      todos?.forEach(todo => addTodo(list, todo))
   });
 }
+
+function addTodo(uL, todo) {
+  const xhr = new XMLHttpRequest();
+  xhr.open('PATCH', completeEndpoint, false);
+  xhr.setRequestHeader('Content-Type', 'application/json')
+
+  const listItem = document.createElement('li');  
+  listItem.className = 'todo-item';
+  listItem.innerHTML = todo.todo;
+  listItem.id = todo.id
+  listItem.addEventListener('click', () => {
+    xhr.send(JSON.stringify(todo))
+    listItem.style = 'display: none;'
+    return false
+  });
+  uL.appendChild(listItem);
+}
+
 
 window.onload = function() {
   loadJSon()
