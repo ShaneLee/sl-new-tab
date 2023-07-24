@@ -55,7 +55,28 @@ ul {
   font-size: 2.5em;
 }
 
+.categories {
+  height: 50px;
+  width: 40%;
+  background: none;
+	color: #8d8271; 
+	font-family: 'Helvetica Neue', sans-serif; 
+	font-weight: bold; 
+  border: none;
+}
+
 .todo-form input {
+  height: 50px;
+  width: 93%;
+  background: none;
+  font-size: 2.5em;
+	color: #8d8271; 
+	font-family: 'Helvetica Neue', sans-serif; 
+	font-weight: bold; 
+  border: none;
+}
+
+.todo-form input:focus {
   height: 50px;
   width: 93%;
   background: none;
@@ -68,4 +89,18 @@ ul {
 
 .todo-item:hover {
   text-decoration: underline;
+}
+
+.float-parent-element { 
+    width: 80%; 
+} 
+.float-child-element { 
+    float: left; 
+    width: 50%; 
+} 
+.left { 
+    margin-left: 50%; 
+} 
+.right { 
+    margin-left: 50%; 
 }

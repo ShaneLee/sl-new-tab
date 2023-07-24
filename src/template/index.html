@@ -16,11 +16,22 @@
 
       <h5 id="deathCountdown"></h5> 
 
-      <h2>TODOS</h2>
+      <div class="float-parent-element">
+        <div class="float-child-element">
+          <div class="right">
+            <h2>TODOS</h2>
+          </div>
+        </div>
+        <div class="float-child-element">
+          <div class="left">
+            <select name="category" id="category-input" class="categories" value="main" style="display:none;">
+            </select>
+          </div>
+        </div>
+      </div>
       
       <form id="todo-form" class="todo-form">
         <input name="todo" id="todo-input" placeholder="Create todo"/>
-        <input name="category" id="category-input" value="main" style="display:none;"/>
         <input type="submit" hidden />
       </form>
 

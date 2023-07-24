@@ -44,22 +44,70 @@ function deathCountdown() {
 
 const todosEndpoint = 'http://localhost:8080/todos'
 const completeEndpoint = 'http://localhost:8080/todos/complete'
+const categoriesEndpoint = 'http://localhost:8080/todos/categories'
+const tempUserId = 'bd11dcc2-77f6-430f-8e87-5839d31ab0e3'
+
+const headers = {
+  'Content-Type': 'application/json',
+  'tempUserId': tempUserId
+}
+
+function playAudio() {
+    new Audio('../sounds/great-success.ogg').play();
+}
 
 
+function refreshTodos() {
+  const list = document.getElementById('todos');        
+  [... list.children].forEach(val => list.removeChild(val))
+  todos()
+}
+
+function categories() {
+  const categories = document.getElementById('category-input');
+  categories.onchange = refreshTodos
+  fetch(categoriesEndpoint, {
+      method: 'GET',
+      headers: headers
+      })
+  .then(response => response?.json())
+  .then(val => {
+    const all = document.createElement('option');  
+    all.className = 'categories-item';
+    all.innerHTML = 'all'
+    categories.appendChild(all)
+    if (!!val) {
+      val.forEach(category => {
+        const item = document.createElement('option');  
+        item.className = 'categories-item';
+        item.value = category
+        item.innerHTML = category
+
+        categories.style = null
+        categories.appendChild(item)
+      })
+    }
+    else {
+      categories.style = 'display:none;'
+    }
+
+    return ''
+  })
+  .finally(() => todos());
+}
 
 function todoForm() {
+  const todoElement = document.getElementById('todo-input');
   const form = document.getElementById('todo-form');
   form.addEventListener('submit', function(event){
       event.preventDefault();
     
-      const todo = document.getElementById('todo-input').value;
+      const todo = todoElement.value
       const category = document.getElementById('category-input').value;
-      const formData = JSON.stringify({ 'todo': todo, 'category': category })
+      const formData = JSON.stringify({ 'todo': todo, 'category': category === 'all' ? null : category })
       fetch(todosEndpoint, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
+          headers: headers,
           body: formData
       })
       .then(response => response?.json())
@@ -68,13 +116,21 @@ function todoForm() {
           const list = document.getElementById('todos');        
           addTodo(list, val)
         }
-      });
+        return ''
+      })
+      .then(_ => todoElement.value = null)
   });
 }
 
 
 function todos() {
-  fetch(todosEndpoint, {method: 'GET'})
+  const category = document.getElementById('category-input').value;
+
+  const endpoint = !!category && category !== 'all' ? `${todosEndpoint}?category=${category}` : todosEndpoint
+  fetch(endpoint, {
+    method: 'GET', 
+    headers: headers
+  })
   .then(response => response.json())
   .then(todos => {
       const list = document.getElementById('todos');        
@@ -86,6 +142,7 @@ function addTodo(uL, todo) {
   const xhr = new XMLHttpRequest();
   xhr.open('PATCH', completeEndpoint, false);
   xhr.setRequestHeader('Content-Type', 'application/json')
+  xhr.setRequestHeader('tempUserId', tempUserId)
 
   const listItem = document.createElement('li');  
   listItem.className = 'todo-item';
@@ -94,6 +151,7 @@ function addTodo(uL, todo) {
   listItem.addEventListener('click', () => {
     xhr.send(JSON.stringify(todo))
     listItem.style = 'display: none;'
+    playAudio()
     return false
   });
   uL.appendChild(listItem);
@@ -102,6 +160,6 @@ function addTodo(uL, todo) {
 
 window.onload = function() {
   loadJSon()
-  todos()
+  categories()
   todoForm()
 }
