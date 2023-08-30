@@ -1,4 +1,5 @@
 host='localhost'
+quotesEnabled=false
 
 document.addEventListener('keydown', (event) => {
   if (event.key === '~') {
@@ -171,7 +172,9 @@ function addTodo(uL, todo) {
 
 
 window.onload = function() {
-  loadJSon()
+  if (quotesEnabled) {
+    loadJSon()
+  }
   categories()
   todoForm()
 }

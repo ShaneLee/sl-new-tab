@@ -52,12 +52,19 @@ ul {
 
 .todos {
   text-align: left;
-  font-size: 2.5em;
+  font-size: 1.5em;
+  margin: 0;
+  padding: 0;
+}
+
+.todos li {
+  padding: 10px 0px;
+  border-bottom: 1px solid #868680;
+  overflow-wrap: break-word;
 }
 
 .categories {
   height: 50px;
-  width: 40%;
   background: none;
 	color: #8d8271; 
 	font-family: 'Helvetica Neue', sans-serif; 
@@ -65,11 +72,17 @@ ul {
   border: none;
 }
 
+.todo-container {
+  width: 93%;
+  text-align: left;
+
+}
+
 .todo-form input {
   height: 50px;
-  width: 93%;
+  width: 100%;
   background: none;
-  font-size: 2.5em;
+  font-size: 1.5em;
 	color: #8d8271; 
 	font-family: 'Helvetica Neue', sans-serif; 
 	font-weight: bold; 
@@ -78,9 +91,8 @@ ul {
 
 .todo-form input:focus {
   height: 50px;
-  width: 93%;
   background: none;
-  font-size: 2.5em;
+  font-size: 1.5em;
 	color: #8d8271; 
 	font-family: 'Helvetica Neue', sans-serif; 
 	font-weight: bold; 
@@ -91,16 +103,12 @@ ul {
   text-decoration: underline;
 }
 
-.float-parent-element { 
-    width: 80%; 
+.todos-header-container { 
+    display: flex;
+    justify-content: space-between;
 } 
-.float-child-element { 
-    float: left; 
-    width: 50%; 
-} 
+
 .left { 
-    margin-left: 50%; 
 } 
 .right { 
-    margin-left: 50%; 
 }
