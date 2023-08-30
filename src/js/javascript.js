@@ -1,3 +1,5 @@
+host='localhost'
+
 document.addEventListener('keydown', (event) => {
   if (event.key === '~') {
     document.getElementById('main').style.display = 'none'
@@ -42,14 +44,24 @@ function deathCountdown() {
   document.title = days
 }
 
-const todosEndpoint = 'http://localhost:8080/todos'
-const completeEndpoint = 'http://localhost:8080/todos/complete'
-const categoriesEndpoint = 'http://localhost:8080/todos/categories'
+const todosEndpoint = `http://${host}:8080/todos`
+const completeEndpoint = `http://${host}:8080/todos/complete`
+const categoriesEndpoint = `http://${host}:8080/todos/categories`
 const tempUserId = 'bd11dcc2-77f6-430f-8e87-5839d31ab0e3'
 
 const headers = {
   'Content-Type': 'application/json',
   'tempUserId': tempUserId
+}
+
+function currentWeekNumber() {
+  const currentDate = new Date();
+  const startDate = new Date(currentDate.getFullYear(), 0, 1);
+  const  days = Math.floor((currentDate - startDate) / (24 * 60 * 60 * 1000));
+
+  const weekNumber = Math.ceil(days / 7);
+
+  return weekNumber
 }
 
 function playAudio() {
