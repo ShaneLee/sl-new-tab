@@ -1,14 +1,22 @@
 host='http://localhost:8080'
 quotesEnabled=false
 
+const CATEGORIES_SET = new Set();
+const LAST = new Array();
+
 document.addEventListener('keydown', (event) => {
   if (event.key === '~') {
     document.getElementById('main').style.display = 'none'
   }
+
+  // undo
+  if ((event.ctrlKey || event.metaKey) && event.key === 'z') {
+      const last = LAST.pop()
+      if (!!last) {
+        uncomplete(last)
+      }
+  }
 })
-
-const CATEGORIES_SET = new Set();
-
 
 function loadJSon() {
 	const request = new XMLHttpRequest()
@@ -49,12 +57,29 @@ function deathCountdown() {
 
 const todosEndpoint = `${host}/todos`
 const completeEndpoint = `${host}/todos/complete`
+const uncompleteEndpoint = `${host}/todos/uncomplete`
 const categoriesEndpoint = `${host}/todos/categories`
 const tempUserId = 'bd11dcc2-77f6-430f-8e87-5839d31ab0e3'
 
 const headers = {
   'Content-Type': 'application/json',
   'tempUserId': tempUserId
+}
+
+function uncomplete(todo) {
+  fetch(uncompleteEndpoint, {
+      method: 'PATCH',
+      headers: headers,
+      body: JSON.stringify(todo)
+  }).then(_ => refreshTodos())
+}
+
+function complete(todo) {
+  fetch(completeEndpoint, {
+      method: 'PATCH',
+      headers: headers,
+      body: JSON.stringify(todo)
+  }).then(_ => refreshTodos())
 }
 
 function currentWeekNumber() {
@@ -178,6 +203,7 @@ function addTodo(uL, todo) {
   listItem.innerHTML = todo.todo;
   listItem.id = todo.id
   listItem.addEventListener('click', () => {
+    LAST.push(todo)
     xhr.send(JSON.stringify(todo))
     listItem.style = 'display: none;'
     playAudio()
