@@ -1,4 +1,4 @@
-host='localhost'
+host='http://localhost:8080'
 quotesEnabled=false
 
 document.addEventListener('keydown', (event) => {
@@ -6,6 +6,8 @@ document.addEventListener('keydown', (event) => {
     document.getElementById('main').style.display = 'none'
   }
 })
+
+const CATEGORIES_SET = new Set();
 
 
 function loadJSon() {
@@ -45,9 +47,9 @@ function deathCountdown() {
   document.title = days
 }
 
-const todosEndpoint = `http://${host}:8080/todos`
-const completeEndpoint = `http://${host}:8080/todos/complete`
-const categoriesEndpoint = `http://${host}:8080/todos/categories`
+const todosEndpoint = `${host}/todos`
+const completeEndpoint = `${host}/todos/complete`
+const categoriesEndpoint = `${host}/todos/categories`
 const tempUserId = 'bd11dcc2-77f6-430f-8e87-5839d31ab0e3'
 
 const headers = {
@@ -91,6 +93,7 @@ function categories() {
     categories.appendChild(all)
     if (!!val) {
       val.forEach(category => {
+        CATEGORIES_SET.add(category)
         const item = document.createElement('option');  
         item.className = 'categories-item';
         item.value = category
@@ -115,8 +118,21 @@ function todoForm() {
   form.addEventListener('submit', function(event){
       event.preventDefault();
     
-      const todo = todoElement.value
-      const category = document.getElementById('category-input').value;
+      let todo = todoElement.value
+      let category = document.getElementById('category-input').value;
+      if (todo.startsWith('@')) {
+        const split = todo.split('@')
+        category = split[1]
+        todo = split[2]
+        if (!CATEGORIES_SET.has(category)) {
+          fetch(categoriesEndpoint, {
+              method: 'POST',
+              headers: headers,
+              body: JSON.stringify({ 'category': category })
+          })
+        }
+      }
+
       const formData = JSON.stringify({ 'todo': todo, 'category': category === 'all' ? null : category })
       fetch(todosEndpoint, {
           method: 'POST',
