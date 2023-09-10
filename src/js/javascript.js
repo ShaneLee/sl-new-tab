@@ -27,7 +27,6 @@ function loadJSon() {
 	request.onload = () => {
 		const quotes = request.response
 		getQuote(quotes)
-		deathCountdown()
 	}
 }
 
@@ -218,5 +217,6 @@ window.onload = function() {
     loadJSon()
   }
   categories()
+  deathCountdown()
   todoForm()
 }
