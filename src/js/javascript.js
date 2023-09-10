@@ -45,13 +45,14 @@ function printQuote(quoteAuthor, quote) {
 }
 
 function deathCountdown() {
-	const deathDate = moment('2075-03-28')
-	const today = moment()
-	const days = deathDate.diff(today, 'days').toLocaleString('en')
-	document.getElementById('deathCountdown').innerHTML =
-		'You have '.toUpperCase() + days + ' days remaining.'.toUpperCase()
-	document.getElementById('title').innerHTML = days + ' Days Left'
+  const deathDate = moment('2075-03-28')
+  const today = moment()
+  const days = deathDate.diff(today, 'days').toLocaleString('en')
+  document.getElementById('deathCountdown').innerHTML =
+  'You have '.toUpperCase() + days + ' days remaining.'.toUpperCase()
+  document.getElementById('title').innerHTML = days + ' Days Left'
   document.title = days
+  return Math.abs(today.diff(moment('1994-03-28'), 'weeks'))
 }
 
 const todosEndpoint = `${host}/todos`
@@ -211,12 +212,43 @@ function addTodo(uL, todo) {
   uL.appendChild(listItem);
 }
 
+function createGrid(width, height, numToColor) {
+  const gridContainer = document.getElementById("grid-container");
+
+  for (let row = 0; row < height; row++) {
+    for (let col = 0; col < width; col++) {
+      const square = document.createElement("div");
+      square.classList.add("square");
+
+      if (numToColor > 0) {
+        square.style.backgroundColor = "#8d8271";
+        numToColor--;
+      }
+
+      gridContainer.appendChild(square);
+    }
+  }
+}
+
+
+
 
 window.onload = function() {
   if (quotesEnabled) {
     loadJSon()
   }
   categories()
-  deathCountdown()
+  const weeksUsed = deathCountdown()
+  let clicked = false
+  document.getElementById('deathCountdown').addEventListener('click', () => {
+    if (!clicked) {
+      createGrid(52, 81, weeksUsed);
+      document.getElementById("grid-container").style = 'display: grid';
+      clicked = true
+    } else {
+      // This is noddy
+      document.getElementById("grid-container").style = 'display: none';
+    }
+  });
   todoForm()
 }

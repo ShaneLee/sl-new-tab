@@ -112,3 +112,20 @@ ul {
 } 
 .right { 
 }
+
+
+.grid {
+  width: 262px;
+  margin: 0 auto;
+	display: none;
+	grid-template-columns: repeat(52, 5px);
+	grid-template-rows: repeat(81, 5px);
+	gap: 2px;
+}
+
+.square {
+	width: 5px;
+	height: 5px;
+	background-color: #ccc;
+}
+
