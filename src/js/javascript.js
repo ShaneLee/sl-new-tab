@@ -1,5 +1,7 @@
 host='http://localhost:8080'
 quotesEnabled=false
+// Should we default to all todos or the current week number
+defaultToAll=false
 
 const CATEGORIES_SET = new Set();
 const LAST = new Array();
@@ -112,21 +114,32 @@ function categories() {
       })
   .then(response => response?.json())
   .then(val => {
+    const defaultCategory = document.createElement('option');  
     const all = document.createElement('option');  
+    defaultCategory.className = 'categories-item';
     all.className = 'categories-item';
-    all.innerHTML = 'all'
-    categories.appendChild(all)
+      all.innerHTML = 'all'
+    const week = `Week ${currentWeekNumber()}`
+    if (defaultToAll) {
+      categories.appendChild(all)
+    }
+    else {
+      defaultCategory.innerHTML = `Week ${currentWeekNumber()}`
+      categories.appendChild(defaultCategory)
+      categories.appendChild(all)
+    }
     if (!!val) {
-      val.forEach(category => {
-        CATEGORIES_SET.add(category)
-        const item = document.createElement('option');  
-        item.className = 'categories-item';
-        item.value = category
-        item.innerHTML = category
+      val.filter(category => category !== week)
+        .forEach(category => {
+          CATEGORIES_SET.add(category)
+          const item = document.createElement('option');  
+          item.className = 'categories-item';
+          item.value = category
+          item.innerHTML = category
 
-        categories.style = null
-        categories.appendChild(item)
-      })
+          categories.style = null
+          categories.appendChild(item)
+        })
     }
     else {
       categories.style = 'display:none;'
