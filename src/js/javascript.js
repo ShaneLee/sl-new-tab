@@ -1,10 +1,14 @@
 host='http://localhost:8080'
 quotesEnabled=false
+timerEnabled=true
 // Should we default to all todos or the current week number
 defaultToAll=false
 
 const CATEGORIES_SET = new Set();
 const LAST = new Array();
+
+let runningTask;
+let timerInterval;
 
 document.addEventListener('keydown', (event) => {
   if (event.key === '~') {
@@ -46,6 +50,111 @@ function printQuote(quoteAuthor, quote) {
   document.getElementById('author').innerHTML = quoteAuthor
 }
 
+
+/***************************************************
+ *
+ * TIMER
+ *
+ ***************************************************/
+
+function getRunningTask() {
+  fetch(runningTaskEndpoint, {
+      method: 'GET',
+      headers: headers
+      })
+  .then(response => response?.json())
+  .then(val => { runningTask = val; return val })
+  .then(updateTask)
+}
+
+function updateTaskButton(isPlaying) {
+  const button = document.getElementById("task-button");
+  const icon = document.getElementById("task-button-icon");
+
+  if (isPlaying) {
+      button.classList.add("play");
+      icon.innerHTML = "&#9632;"; // Stop icon (square)
+  }
+
+  button.addEventListener("click", function() {
+  if (button.classList.contains("play")) {
+      button.classList.remove("play");
+      button.classList.add("stop");
+      icon.classList.remove("playing");
+      icon.innerHTML = "&#9632;"; // Stop icon (square)
+      //playTask()
+  } else if (button.classList.contains("stop")) {
+    button.classList.remove("stop");
+    icon.classList.add("playing");
+    button.classList.add("play");
+    icon.innerHTML = "&#9654;"; // Play icon (right-pointing triangle)
+    stopTask(runningTask)
+  }
+  });
+
+}
+
+function stopTask(task) {
+  if (!!task) {
+    fetch(stopTaskEndpoint, {
+        method: 'PATCH',
+        headers: headers,
+        body: JSON.stringify(task)
+    })
+    clearInterval(timerInterval)
+  }
+}
+
+function startNewTask(task) {
+  fetch(timeTrackingEndpoint, {
+      method: 'POST',
+      headers: headers,
+      body: JSON.stringify(task)
+  })
+  .then(response => response?.json())
+  .then(val => { runningTask = val })
+}
+
+function updateTask(task) {
+  updateTaskName(task.action)
+  startTimerFromInstant(task.startTime)
+  updateTaskButton(true)
+}
+
+function updateTaskName(name) {
+  const element = document.getElementById("task-name");
+  element.textContent = name;
+}
+
+function updateTimer(hours, minutes, seconds) {
+  const hoursElement = document.getElementById("hours");
+  const minutesElement = document.getElementById("minutes");
+  const secondsElement = document.getElementById("seconds");
+
+  hoursElement.textContent = hours.toString().padStart(2, "0");
+  minutesElement.textContent = minutes.toString().padStart(2, "0");
+  secondsElement.textContent = seconds.toString().padStart(2, "0");
+}
+
+function startTimerFromInstant(instant) {
+  const startTime = new Date(instant);
+
+  timerInterval = setInterval(function () {
+    const currentTime = new Date();
+    const timeDifference = currentTime - startTime;
+
+    const hours = Math.floor((timeDifference / (1000 * 60 * 60)) % 24);
+    const minutes = Math.floor((timeDifference / (1000 * 60)) % 60);
+    const seconds = Math.floor((timeDifference / 1000) % 60);
+
+    updateTimer(hours, minutes, seconds);
+  }, 1000);
+}
+
+/******************END TIMER ************************/
+
+
+
 function deathCountdown() {
   const deathDate = moment('2075-03-28')
   const today = moment()
@@ -62,6 +171,10 @@ const completeEndpoint = `${host}/todos/complete`
 const uncompleteEndpoint = `${host}/todos/uncomplete`
 const categoriesEndpoint = `${host}/todos/categories`
 const tempUserId = 'bd11dcc2-77f6-430f-8e87-5839d31ab0e3'
+
+const runningTaskEndpoint = `${host}/tracking/running`
+const timeTrackingEndpoint = `${host}/tracking`
+const stopTaskEndpoint = `${host}/tracking/stop`
 
 const headers = {
   'Content-Type': 'application/json',
@@ -249,6 +362,15 @@ function createGrid(width, height, numToColor) {
 window.onload = function() {
   if (quotesEnabled) {
     loadJSon()
+  }
+  if (timerEnabled) {
+    const task = {
+      "action": "Cleopatra",
+      "category": "research",
+      "project": "the-great-lives"
+    }
+    startNewTask(task)
+    getRunningTask()
   }
   categories()
   const weeksUsed = deathCountdown()
