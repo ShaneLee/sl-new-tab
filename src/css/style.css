@@ -152,7 +152,7 @@ ul {
   line-height: 22px;
 }
 
-.icon.playing {
+.icon.stopped {
   line-height: 29px;
   font-size: 1.0em;
   margin-left: 2px;
@@ -171,6 +171,26 @@ ul {
 #timer-values {
   display: inline-block;
   margin-left: 10px;
+}
+
+.task-form input {
+  height: 50px;
+  background: none;
+  font-size: 1.5em;
+	color: #8d8271; 
+	font-family: 'Helvetica Neue', sans-serif; 
+	font-weight: bold; 
+  border: none;
+}
+
+.task-form input:focus {
+  height: 50px;
+  background: none;
+  font-size: 1.5em;
+	color: #8d8271; 
+	font-family: 'Helvetica Neue', sans-serif; 
+	font-weight: bold; 
+  border: none;
 }
 
 /* End Timer ----------------------- */

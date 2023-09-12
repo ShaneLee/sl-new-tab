@@ -62,9 +62,39 @@ function getRunningTask() {
       method: 'GET',
       headers: headers
       })
-  .then(response => response?.json())
-  .then(val => { runningTask = val; return val })
-  .then(updateTask)
+  .then(response => response.status === 200 ? response?.json() : null)
+  .then(val => {
+    if (!!val) {
+      runningTask = val;
+      updateTask(val)
+    }
+    else {
+      updateTaskButton(false)
+    }
+  });
+}
+
+const stopButton = {
+  iconFn: ic => {
+    ic.classList.remove("stopped")
+    ic.innerHTML = "&#9632;"; // Stop icon (square)"
+  },
+  btFn: button => {
+      button.classList.add("stop");
+      button.classList.remove("play");
+  }
+  
+}
+
+const playButton = {
+  iconFn: ic => {
+    ic.classList.add("stopped")
+    ic.innerHTML = "&#9654;"; // Play icon (right-pointing triangle)
+  },
+  btFn: button => {
+      button.classList.add("play");
+      button.classList.remove("stop");
+  }
 }
 
 function updateTaskButton(isPlaying) {
@@ -72,26 +102,29 @@ function updateTaskButton(isPlaying) {
   const icon = document.getElementById("task-button-icon");
 
   if (isPlaying) {
-      button.classList.add("play");
-      icon.innerHTML = "&#9632;"; // Stop icon (square)
+    stopButton.iconFn(icon)
+    stopButton.btFn(button)
+  }
+  else {
+    playButton.iconFn(icon)
+    playButton.btFn(button)
   }
 
   button.addEventListener("click", function() {
   if (button.classList.contains("play")) {
-      button.classList.remove("play");
-      button.classList.add("stop");
-      icon.classList.remove("playing");
-      icon.innerHTML = "&#9632;"; // Stop icon (square)
-      //playTask()
+    stopButton.iconFn(icon)
+    stopButton.btFn(button)
+    playTask()
   } else if (button.classList.contains("stop")) {
-    button.classList.remove("stop");
-    icon.classList.add("playing");
-    button.classList.add("play");
-    icon.innerHTML = "&#9654;"; // Play icon (right-pointing triangle)
+    playButton.iconFn(icon)
+    playButton.btFn(button)
     stopTask(runningTask)
   }
   });
+}
 
+function playTask() {
+  submitTaskForm()
 }
 
 function stopTask(task) {
@@ -101,8 +134,11 @@ function stopTask(task) {
         headers: headers,
         body: JSON.stringify(task)
     })
-    clearInterval(timerInterval)
   }
+  clearInterval(timerInterval)
+  updateTimer(0, 0, 0)
+  showTaskInput()
+  clearTask()
 }
 
 function startNewTask(task) {
@@ -111,12 +147,44 @@ function startNewTask(task) {
       headers: headers,
       body: JSON.stringify(task)
   })
+  .then(response => response?.status === 201 ? response : null)
   .then(response => response?.json())
-  .then(val => { runningTask = val })
+  .then(val => {
+    if (!!val) {
+      runningTask = val
+      updateTask(val)
+    }
+  })
+}
+
+function clearTask() {
+  document.getElementById('task-name').innerHTML = ''
+}
+
+function showTaskInput() {
+  const taskInput = document.getElementById('task-input')
+  const projectInput = document.getElementById('project-input')
+  const categoryInput = document.getElementById('task-category-input')
+  taskInput.style = 'display:""'
+  projectInput.style = 'display:""'
+  categoryInput.style = 'display:""'
+}
+
+function hideTaskInput() {
+  const taskInput = document.getElementById('task-input')
+  const projectInput = document.getElementById('project-input')
+  const categoryInput = document.getElementById('task-category-input')
+  taskInput.value = '';
+  taskInput.style = 'display:none'
+  projectInput.value = '';
+  projectInput.style = 'display:none'
+  categoryInput.value = '';
+  categoryInput.style = 'display:none'
 }
 
 function updateTask(task) {
   updateTaskName(task.action)
+  hideTaskInput()
   startTimerFromInstant(task.startTime)
   updateTaskButton(true)
 }
@@ -131,9 +199,9 @@ function updateTimer(hours, minutes, seconds) {
   const minutesElement = document.getElementById("minutes");
   const secondsElement = document.getElementById("seconds");
 
-  hoursElement.textContent = hours.toString().padStart(2, "0");
-  minutesElement.textContent = minutes.toString().padStart(2, "0");
-  secondsElement.textContent = seconds.toString().padStart(2, "0");
+  hoursElement.textContent = typeof hours === 'number' ? hours.toString().padStart(2, "0") : "00";
+  minutesElement.textContent = typeof minutes === 'number' ? minutes.toString().padStart(2, "0") : "00";
+  secondsElement.textContent = typeof seconds === 'number' ? seconds.toString().padStart(2, "0") : "00";
 }
 
 function startTimerFromInstant(instant) {
@@ -150,6 +218,24 @@ function startTimerFromInstant(instant) {
     updateTimer(hours, minutes, seconds);
   }, 1000);
 }
+
+function submitTaskForm() {
+  const taskElement = document.getElementById('task-input');
+  const task = taskElement.value
+  if (!task) { return; }
+  const projectElement = document.getElementById('project-input');
+  const categoryElement = document.getElementById('task-category-input');
+  const project = projectElement.value;
+  const category = categoryElement.value;
+
+  const formData = {
+    'action': task,
+    'category': category,
+    'project': project
+  }
+  startNewTask(formData)
+}
+
 
 /******************END TIMER ************************/
 
@@ -364,12 +450,7 @@ window.onload = function() {
     loadJSon()
   }
   if (timerEnabled) {
-    const task = {
-      "action": "Cleopatra",
-      "category": "research",
-      "project": "the-great-lives"
-    }
-    startNewTask(task)
+    updateTaskButton(false)
     getRunningTask()
   }
   categories()
