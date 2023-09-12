@@ -443,6 +443,11 @@ function createGrid(width, height, numToColor) {
 }
 
 
+function updateTimeTrackingSummaryLink() {
+  const link = document.getElementById('time-tracking-summary-link');
+  link.href = `chrome-extension://${chrome.runtime.id}/template/time-tracking-summary.html`
+  link.innerHTML = `Time tracking summary`
+}
 
 
 window.onload = function() {
@@ -452,6 +457,7 @@ window.onload = function() {
   if (timerEnabled) {
     updateTaskButton(false)
     getRunningTask()
+    updateTimeTrackingSummaryLink()
   }
   categories()
   const weeksUsed = deathCountdown()

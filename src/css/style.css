@@ -17,6 +17,15 @@ body {
 	font-weight: bold; 
 }
 
+a { 
+	color: #8d8271; 
+  text-decoration: none;
+}
+
+a:hover { 
+  text-decoration: underline;
+}
+
 .main {
   overflow: hidden;
   margin-left: 25%;
@@ -130,6 +139,18 @@ ul {
 }
 
 /* Timer ---------------------------- */
+
+.tracking-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 10px;
+}
+
+#time-tracking-summary-link {
+  align-self: flex-start;
+}
+
 #task-button {
   margin-left: 10px;
   width: 20px;

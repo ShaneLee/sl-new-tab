@@ -9,25 +9,28 @@
     <link rel="stylesheet" type="text/css" href="../css/style.css">
   </head>
   <body>
-    <div id="timer" class="timer-container">
-      <span id="timer-text" class="timer-text">
-        <span>
-          <form id="task-form" class="task-form">
-              <input name="task" id="task-input" placeholder="Track task"/>
-              <input name="category" id="task-category-input" placeholder="Category"/>
-              <input name="project" id="project-input" placeholder="Project"/>
-            </span>
-          </form>
-        </span>
+    <div class="tracking-container">
+      <div id="timer" class="timer-container">
+        <span id="timer-text" class="timer-text">
+          <span>
+            <form id="task-form" class="task-form">
+                <input name="task" id="task-input" placeholder="Track task"/>
+                <input name="category" id="task-category-input" placeholder="Category"/>
+                <input name="project" id="project-input" placeholder="Project"/>
+              </span>
+            </form>
+          </span>
 
-        <span id="task-name"></span>
-        <span id="timer-values">
-          <span id="hours">00</span>:<span id="minutes">00</span>:<span id="seconds">00</span>
+          <span id="task-name"></span>
+          <span id="timer-values">
+            <span id="hours">00</span>:<span id="minutes">00</span>:<span id="seconds">00</span>
+          </span>
         </span>
-      </span>
-      <button id="task-button" class="play">
-        <div id="task-button-icon" class="icon stopped">■</div>
-      </button>
+        <button id="task-button" class="play">
+          <div id="task-button-icon" class="icon stopped">■</div>
+        </button>
+      </div>
+      <a id="time-tracking-summary-link"></a>
     </div>
     <div class="main" id="main">
 
