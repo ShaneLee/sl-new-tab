@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title id="title">Manual Time Tracking</title>
+    <script src="../js/manual-time-tracking.js" charset="UTF-8"></script>
+    <script src="../js/jquery-3.5.0.min.js" charset="utf-8"></script>
+    <link rel="stylesheet" type="text/css" href="../css/style.css">
+  </head>
+  <body>
+    <div class="tracking-container">
+      <div id="timer" class="timer-container">
+        <span id="timer-text" class="timer-text">
+          <span>
+            <form id="manual-tracking-form" class="task-form">
+                <input name="task" id="manual-task-input" placeholder="Track task"/>
+                <input name="category" id="manual-task-category-input" placeholder="Category"/>
+                <input name="project" id="manual-project-input" placeholder="Project"/>
+                <input name="time" id="manual-time-input" placeholder="Time HH:MM:SS"/>
+                <input type="submit" hidden />
+              </span>
+            </form>
+          </span>
+      </div>
+    </div>
+  </body>
+</html>
