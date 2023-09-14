@@ -36,21 +36,20 @@ function populateSummaryTable(timeTrackingSummary) {
     let html = '';
 
     for (const [projectName, projectSummary] of Object.entries(timeTrackingSummary.projectSummaryByProject)) {
-            const projectFormattedTime = secondsToHHMMSS(projectSummary.totalSecondsTracked)
-            html += `<tr><td>${projectName}</td><td></td><td></td><td>${projectFormattedTime}</td></tr>`;
+        html += `<tr><td><strong>${projectName}</strong></td><td></td><td>${secondsToHHMMSS(projectSummary.totalSecondsTracked)}</td></tr>`;
+        html += `<tr><td><em>Category</em></td><td><em>Task</em></td><td></td></tr>`;
 
-            projectSummary.categories.forEach(category => {
-                const categoryformattedTime = secondsToHHMMSS(category.totalSecondsTracked)
-                html += `<tr><td></td><td>${category.categoryName}</td><td></td><td>${categoryformattedTime}</td></tr>`;
-                
-                category.tasks.forEach(task => {
-                    const formattedTime = secondsToHHMMSS(task.totalSecondsTracked)
-                    html += `<tr><td></td><td></td><td>${task.task}</td><td>${formattedTime}</td></tr>`;
-                });
+        projectSummary.categories.forEach(category => {
+            html += `<tr><td>${category.categoryName}</td><td></td><td>${secondsToHHMMSS(category.totalSecondsTracked)}</td></tr>`;
+            
+            category.tasks.forEach(task => {
+                html += `<tr><td></td><td>${task.task}</td><td>${secondsToHHMMSS(task.totalSecondsTracked)}</td></tr>`;
             });
-        }
+        });
+    }
 
-        tableBody.innerHTML = html;
+  tableBody.innerHTML = html; 
+
 
 }
 
