@@ -31,26 +31,27 @@ function secondsToHHMMSS(seconds) {
         }
     
 
-function populateSummaryTable(summaryData) {
+function populateSummaryTable(timeTrackingSummary) {
     const tableBody = document.getElementById("summaryTableBody");
+    let html = '';
 
-    for (const project in summaryData.projectSummaryByProject) {
-        const projectSummary = summaryData.projectSummaryByProject[project];
+    for (const [projectName, projectSummary] of Object.entries(timeTrackingSummary.projectSummaryByProject)) {
+            const projectFormattedTime = secondsToHHMMSS(projectSummary.totalSecondsTracked)
+            html += `<tr><td>${projectName}</td><td></td><td></td><td>${projectFormattedTime}</td></tr>`;
 
-        for (const category in projectSummary.secondsTrackedByCategory) {
-            const totalSeconds = projectSummary.secondsTrackedByCategory[category];
-            const formattedTime = secondsToHHMMSS(totalSeconds);
-
-            const row = document.createElement("tr");
-            row.innerHTML = `
-                <td>${project}</td>
-                <td>${category}</td>
-                <td>${formattedTime}</td>
-            `;
-
-            tableBody.appendChild(row);
+            projectSummary.categories.forEach(category => {
+                const categoryformattedTime = secondsToHHMMSS(category.totalSecondsTracked)
+                html += `<tr><td></td><td>${category.categoryName}</td><td></td><td>${categoryformattedTime}</td></tr>`;
+                
+                category.tasks.forEach(task => {
+                    const formattedTime = secondsToHHMMSS(task.totalSecondsTracked)
+                    html += `<tr><td></td><td></td><td>${task.task}</td><td>${formattedTime}</td></tr>`;
+                });
+            });
         }
-    }
+
+        tableBody.innerHTML = html;
+
 }
 
 // Call the function to populate the table when the page loads

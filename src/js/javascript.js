@@ -183,7 +183,7 @@ function hideTaskInput() {
 }
 
 function updateTask(task) {
-  updateTaskName(task.action)
+  updateTaskName(task.task)
   hideTaskInput()
   startTimerFromInstant(task.startTime)
   updateTaskButton(true)
@@ -229,7 +229,7 @@ function submitTaskForm() {
   const category = categoryElement.value;
 
   const formData = {
-    'action': task,
+    'task': task,
     'category': category,
     'project': project
   }
