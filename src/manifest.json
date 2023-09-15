@@ -5,8 +5,17 @@
   "permissions": ["storage"],
   "version": "1.0.0",
   "host_permissions": [
-    "https://localhost:8080/*"
+    "https://localhost:8080/*",
+    "<all_urls>"
   ],
+  "permissions": [
+    "scripting",
+    "tabs",
+    "activeTab"
+  ],
+  "background": {
+    "service_worker": "js/background.js"
+  },
   "chrome_url_overrides" : {
     "newtab": "template/index.html"
   }
