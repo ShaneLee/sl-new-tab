@@ -357,8 +357,10 @@ function todoForm() {
     
       let todo = todoElement.value
       let category = document.getElementById('category-input').value;
+      let categoryChanged = false
       if (todo.startsWith('@')) {
         const split = todo.split('@')
+        categoryChanged = split[1] !== category
         category = split[1]
         todo = split[2]
         if (!CATEGORIES_SET.has(category)) {
@@ -380,7 +382,11 @@ function todoForm() {
       .then(val => {
         if (!!val) {
           const list = document.getElementById('todos');        
-          addTodo(list, val)
+          if (!categoryChanged) {
+            // If this is in a different category to the currently 
+            // shown one, don't bother adding it to the list
+            addTodo(list, val)
+          }
         }
         return ''
       })
