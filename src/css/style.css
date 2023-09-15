@@ -124,7 +124,7 @@ ul {
 
 
 .grid {
-  width: 262px;
+  width: 362px;
   margin: 0 auto;
 	display: none;
 	grid-template-columns: repeat(52, 5px);
