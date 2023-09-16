@@ -1,7 +1,7 @@
 const host = 'http://localhost:8080'
 const webTrackerEndpoint = `${host}/tracking/web`
 const stopEndpoint = `${host}/tracking/web/stop`
-const webTrackingEnabled = true
+const webTrackingEnabled = false
 const tempUserId = 'bd11dcc2-77f6-430f-8e87-5839d31ab0e3'
 
 const headers = {
