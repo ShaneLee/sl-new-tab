@@ -14,7 +14,7 @@ let previousTab = null;
 if (webTrackingEnabled) {
 	chrome.tabs.onActivated.addListener(activeInfo => {
     chrome.tabs.get(activeInfo.tabId, (tab) => {
-      if (tab.url.startsWith("chrome://") || tab.incognito) {
+      if (tab.url.startsWith("chrome://") || isShoppingForGiftsForWife(tab)) {
         if (previousTab) {
           endTracking(previousTab);
         }
@@ -42,6 +42,10 @@ if (webTrackingEnabled) {
       });
     })
   });
+}
+
+function isShoppingForGiftsForWife(tab) {
+  return tab.incognito;
 }
 
 function getLocation(href) {
