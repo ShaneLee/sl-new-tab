@@ -71,7 +71,7 @@ function getRunningTask() {
     else {
       updateTaskButton(false)
     }
-  });
+  }).catch(err => {});
 }
 
 const stopButton = {
@@ -346,6 +346,7 @@ function categories() {
 
     return ''
   })
+  .catch(err => {})
   .finally(() => todos());
 }
 
@@ -407,7 +408,8 @@ function todos() {
   .then(todos => {
       const list = document.getElementById('todos');        
       todos?.forEach(todo => addTodo(list, todo))
-  });
+  })
+  .catch(err => {});
 }
 
 function addTodo(uL, todo) {
