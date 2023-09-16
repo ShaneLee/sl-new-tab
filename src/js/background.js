@@ -83,10 +83,5 @@ function endTracking(previous) {
     method: 'PATCH',
     headers: headers,
     body: JSON.stringify(previous),
-  })
-  .then(response => response.json())
-  .then(data => { })
-  .catch((error) => {
-    console.error('Error:', error);
   });
 }
