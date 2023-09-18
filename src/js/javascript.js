@@ -472,6 +472,7 @@ window.onload = function() {
     updateTaskButton(false)
     getRunningTask()
     updateTimeTrackingSummaryLink()
+    updateRatingsLink()
   }
   categories()
   const weeksUsed = deathCountdown()
