@@ -215,3 +215,91 @@ ul {
 }
 
 /* End Timer ----------------------- */
+
+/* Ratings and reviews ------------------ */
+
+#ratingForm {
+    background-color: #2C2C2C;  /* Grey */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    margin: 40px auto;
+}
+
+#ratingForm textarea {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    background-color: #272725;  /* Dark Grey */
+    color: #8d8271;  /* Orangy Grey */
+    font-family: 'Helvetica Neue', sans-serif;
+    font-weight: bold;
+    border-radius: 8px;
+    margin-top: 20px;
+    resize: vertical;
+    box-sizing: border-box;  /* Ensures padding is included in width */
+}
+
+#ratingForm button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: #e7b91b;  /* Mustard Yellow */
+    border: none;
+    color: #272725;  /* Dark Grey */
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: background-color 0.2s;
+}
+
+#ratingForm button:hover {
+    background-color: #d1a116;  /* A darker shade of Mustard Yellow */
+}
+
+.chart-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.rating-group {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.rating-group input[type="radio"] {
+    display: none;
+}
+
+.rating-group label {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    background-color: #272725;  /* Dark Grey */
+    color: #8d8271;  /* Orangy Grey */
+    border: 2px solid #8d8271;  /* Orangy Grey */
+    border-radius: 50%;  /* Makes it circular */
+    text-align: center;
+    line-height: 30px;  /* Vertically center the text */
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.rating-group label:hover {
+    background-color: #8d8271;  /* Orangy Grey */
+    color: #272725;  /* Dark Grey */
+}
+
+.rating-group input[type="radio"]:checked + label {
+    background-color: #e7b91b;  /* Mustard Yellow */
+    color: #272725;  /* Dark Grey */
+    border: 2px solid #e7b91b;  /* Mustard Yellow */
+}
+
+
+
+
+/* End Ratings and reviews ------------------ */
