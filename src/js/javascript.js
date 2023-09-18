@@ -457,6 +457,12 @@ function updateTimeTrackingSummaryLink() {
   link.innerHTML = `Time tracking summary`
 }
 
+function updateRatingsLink() {
+  const link = document.getElementById('ratings-link');
+  link.href = `chrome-extension://${chrome.runtime.id}/template/ratings.html`
+  link.innerHTML = `Mood Ratings`
+}
+
 
 window.onload = function() {
   if (quotesEnabled) {
