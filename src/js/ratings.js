@@ -51,7 +51,8 @@ function populateRatings(data) {
           aspectRatio: 2,
           scales: {
               y: {
-                  beginAtZero: true,
+                  beginAtZero: false,
+                  min: 1,
                   max: 5,
                   ticks: {
                     stepSize: 1,
