@@ -89,3 +89,15 @@ function endTracking(previous) {
     body: JSON.stringify(previous),
   });
 }
+
+chrome.commands.onCommand.addListener((command) => {
+    if (command === "ideaBucketPopup") {
+        chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+            let activeTab = tabs[0];
+            chrome.scripting.executeScript({
+                target: {tabId: activeTab.id},
+                files: ["js/show-popup.js"]
+            });
+        });
+    }
+});

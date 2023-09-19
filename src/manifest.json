@@ -11,12 +11,25 @@
   "permissions": [
     "scripting",
     "tabs",
-    "activeTab"
+    "activeTab",
+    "commands"
   ],
   "background": {
     "service_worker": "js/background.js"
   },
   "chrome_url_overrides" : {
     "newtab": "template/index.html"
+  },
+  "action": {
+
+  },
+  "commands": {
+      "ideaBucketPopup": {
+        "suggested_key": {
+          "default": "Ctrl+Shift+Y"
+        },
+        "description": "Open Extension Popup"
+      }
   }
+
 }
