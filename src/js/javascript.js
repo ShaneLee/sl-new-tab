@@ -3,6 +3,7 @@ quotesEnabled=false
 timerEnabled=true
 // Should we default to all todos or the current week number
 defaultToAll=false
+const withEmojis=true
 
 const CATEGORIES_SET = new Set();
 const LAST = new Array();
@@ -450,17 +451,37 @@ function createGrid(width, height, numToColor) {
   }
 }
 
+function addLinks() {
+  updateTimeTrackingSummaryLink() 
+  updateRatingsLink()
+  updateIdeaBucketLink()
+}
 
 function updateTimeTrackingSummaryLink() {
   const link = document.getElementById('time-tracking-summary-link');
   link.href = `chrome-extension://${chrome.runtime.id}/template/time-tracking-summary.html`
   link.innerHTML = `Time tracking summary`
+  if (withEmojis) {
+    link.innerHTML = `🕰️ Time tracking summary`
+  }
 }
 
 function updateRatingsLink() {
   const link = document.getElementById('ratings-link');
   link.href = `chrome-extension://${chrome.runtime.id}/template/ratings.html`
   link.innerHTML = `Mood Ratings`
+  if (withEmojis) {
+    link.innerHTML = `🌺 Mood Ratings`
+  }
+}
+
+function updateIdeaBucketLink() {
+  const link = document.getElementById('idea-bucket-link');
+  link.href = `chrome-extension://${chrome.runtime.id}/template/idea-bucket.html`
+    link.innerHTML = `Idea Bucket`
+  if (withEmojis) {
+    link.innerHTML = `💡 Idea Bucket`
+  }
 }
 
 
@@ -471,8 +492,7 @@ window.onload = function() {
   if (timerEnabled) {
     updateTaskButton(false)
     getRunningTask()
-    updateTimeTrackingSummaryLink()
-    updateRatingsLink()
+    addLinks()
   }
   categories()
   const weeksUsed = deathCountdown()
