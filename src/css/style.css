@@ -108,6 +108,37 @@ ul {
   border: none;
 }
 
+div.todo-input {
+  height: 50px;
+  width: 100%;
+  background: none;
+  font-size: 1.5em;
+  color: #8d8271;
+  font-family: 'Helvetica Neue', sans-serif;
+  font-weight: bold;
+  border: none;
+  outline: none;
+  padding: 0;
+  line-height: 50px;  // This helps vertically align the text
+}
+
+div.todo-input:empty:before {
+  content: attr(data-placeholder);
+  color: #757575;
+}
+
+div.todo-input:focus {
+  height: 50px;
+  background: none;
+  font-size: 1.5em;
+  color: #8d8271;
+  font-family: 'Helvetica Neue', sans-serif;
+  font-weight: bold;
+  border: none;
+  outline: none;  // Removes the default browser focus outline
+}
+
+
 .todo-item:hover {
   text-decoration: underline;
 }

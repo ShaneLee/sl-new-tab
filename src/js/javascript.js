@@ -351,49 +351,66 @@ function categories() {
   .finally(() => todos());
 }
 
+function stripSpanTags(str) {
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = str;
+    return tempDiv.textContent || tempDiv.innerText || "";
+}
+
+function todoFormSubmitEvent(event) {
+  const todoElement = document.getElementById('todo-input');
+  const form = document.getElementById('todo-form');
+  event.preventDefault();
+
+  let todo = stripSpanTags(todoElement.innerHTML)
+  let category = document.getElementById('category-input').value;
+  let categoryChanged = false
+  if (todo.startsWith('@')) {
+    const split = todo.split('@')
+    categoryChanged = split[1] !== category
+    category = split[1]
+    todo = split[2]
+    if (!CATEGORIES_SET.has(category)) {
+      fetch(categoriesEndpoint, {
+          method: 'POST',
+          headers: headers,
+          body: JSON.stringify({ 'category': category })
+      })
+    }
+  }
+
+  const formData = JSON.stringify({ 'todo': todo, 'category': category === 'all' ? null : category })
+  fetch(todosEndpoint, {
+      method: 'POST',
+      headers: headers,
+      body: formData
+  })
+  .then(response => response?.json())
+  .then(val => {
+    if (!!val) {
+      const list = document.getElementById('todos');        
+      if (!categoryChanged) {
+        // If this is in a different category to the currently 
+        // shown one, don't bother adding it to the list
+        addTodo(list, val)
+        todoElement.innerHTML = ''
+      }
+    }
+    return ''
+  })
+  .then(_ => todoElement.value = null)
+}
+
 function todoForm() {
   const todoElement = document.getElementById('todo-input');
   const form = document.getElementById('todo-form');
-  form.addEventListener('submit', function(event){
+  todoElement.addEventListener('keypress', function(event) {
+    if (event.key === 'Enter') {
       event.preventDefault();
-    
-      let todo = todoElement.value
-      let category = document.getElementById('category-input').value;
-      let categoryChanged = false
-      if (todo.startsWith('@')) {
-        const split = todo.split('@')
-        categoryChanged = split[1] !== category
-        category = split[1]
-        todo = split[2]
-        if (!CATEGORIES_SET.has(category)) {
-          fetch(categoriesEndpoint, {
-              method: 'POST',
-              headers: headers,
-              body: JSON.stringify({ 'category': category })
-          })
-        }
-      }
-
-      const formData = JSON.stringify({ 'todo': todo, 'category': category === 'all' ? null : category })
-      fetch(todosEndpoint, {
-          method: 'POST',
-          headers: headers,
-          body: formData
-      })
-      .then(response => response?.json())
-      .then(val => {
-        if (!!val) {
-          const list = document.getElementById('todos');        
-          if (!categoryChanged) {
-            // If this is in a different category to the currently 
-            // shown one, don't bother adding it to the list
-            addTodo(list, val)
-          }
-        }
-        return ''
-      })
-      .then(_ => todoElement.value = null)
+      todoFormSubmitEvent(event)
+    }
   });
+  form.addEventListener('submit', todoFormSubmitEvent);
 }
 
 
@@ -484,8 +501,84 @@ function updateIdeaBucketLink() {
   }
 }
 
+function parseFrequencyString(val) {
+    // Check for patterns like "every 2 weeks"
+    const everyPattern = /every (\d+) (days?|weeks?|months?|quarters?|years?)/i;
+
+    // Check for patterns like "Monday @2pm" or "Monday at 2pm"
+    const dayTimePattern = /(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)?\s*(@|at)\s*(\d{1,2}[ap]m)/i;
+
+    const everyMatch = val.match(everyPattern);
+    const dayTimeMatch = val.match(dayTimePattern);
+
+    const matches = [];
+
+    if (everyMatch) {
+        const number = parseInt(everyMatch[1], 10);
+        const unit = everyMatch[2].toLowerCase();
+
+        // For this JavaScript version, we're only appending the matched strings to the array
+        matches.push(`${number} ${unit}`);
+    }
+
+    if (dayTimeMatch) {
+        // Only add DayOfWeek if it's present in the matched pattern
+        if (dayTimeMatch[1]) {
+            matches.push(dayTimeMatch[1]);
+        }
+
+        // Add LocalTime
+        matches.push(dayTimeMatch[3]);
+    }
+
+    // Additional validations can be added if needed, similar to the Java code. 
+    // These would throw errors if conditions are not met.
+
+    return matches;
+}
+
+
+function parseFrequencyString(val) {
+    const everyPattern = /every (\d+) (days?|weeks?|months?|quarters?|years?)/ig;
+    const dayTimePattern = /(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)?\s*(@|at)\s*(\d{1,2}[ap]m)/ig;
+
+    // Replaces matched patterns with highlighted version
+    val = val.replace(everyPattern, '<span style="background-color: yellow;">$&</span>');
+    val = val.replace(dayTimePattern, '<span style="background-color: yellow;">$&</span>');
+    
+    return val;
+}
+
+function highlightMatches() {
+    const div = document.getElementById('todo-input');
+    const content = div.innerHTML;
+    div.innerHTML = parseFrequencyString(content);
+}
+
+function addTodoListener() {
+  document.getElementById('todo-input').addEventListener('input', function() {
+      if (this.innerHTML === '<br>') {
+        this.innerHTML = '';  // Ensure the div is truly empty
+      }
+      // To avoid cursor jumping, we'll only replace content if it has changed
+      const newContent = parseFrequencyString(this.innerText);
+      if (newContent !== this.innerHTML) {
+          this.innerHTML = newContent;
+
+          // Set cursor to the end after change
+          const range = document.createRange();
+          const sel = window.getSelection();
+          range.setStart(this, this.childNodes.length);
+          range.collapse(true);
+          sel.removeAllRanges();
+          sel.addRange(range);
+      }
+  });
+}
+
 
 window.onload = function() {
+  addTodoListener()
   if (quotesEnabled) {
     loadJSon()
   }
