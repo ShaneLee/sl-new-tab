@@ -6,6 +6,7 @@ html {
  * Grey = #2C2C2C
  * Dark Grey = #272725
  * Mustard Yellow = #e7b91b
+ * Highlighted Todo not Due #f0f0f0
  * Font colours 
  * Orangy Grey = #8d8271
 */
@@ -141,6 +142,25 @@ div.todo-input:focus {
 
 .todo-item:hover {
   text-decoration: underline;
+}
+
+.todo-item {
+  position: relative;  /* Setting position relative so that the absolute positioned child (dueDateElement) is relative to this item */
+}
+
+.due-date-box {
+  position: absolute; 
+  top: 50%;           
+  transform: translateY(-50%);
+  right: 10px;        
+  background-color: #f0f0f0;
+  padding: 5px;      
+  border-radius: 3px;
+}
+
+.highlighted-due {
+  color: #272725;
+  background-color: #e7b91b;
 }
 
 .todos-header-container { 

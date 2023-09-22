@@ -440,6 +440,44 @@ function addTodo(uL, todo) {
   listItem.className = 'todo-item';
   listItem.innerHTML = todo.todo;
   listItem.id = todo.id
+
+  if (todo.dueDate) {
+      const dueDateElement = document.createElement('span');
+      const currentDate = new Date();
+      const date = new Date(todo.dueDate);
+
+      // Set both dates to midnight for a day-to-day comparison
+      currentDate.setHours(0, 0, 0, 0);
+      const midnightDueDate = new Date(todo.dueDate);
+      midnightDueDate.setHours(0, 0, 0, 0);
+
+      // Formatting the time portion
+      const timeString = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+      // Checking if the date is today, tomorrow, another day in the current week, or more than a week away
+      const daysDifference = (midnightDueDate - currentDate) / (1000 * 60 * 60 * 24); // Difference in days
+      let dateString;
+
+      if (daysDifference === 0) {
+          dateString = timeString; // e.g., "6:00pm"
+      } else if (daysDifference === 1) {
+          dateString = `Tomorrow ${timeString}`; // e.g., "Tomorrow 6:00pm"
+      } else if (daysDifference > 1 && daysDifference < 7) {
+          dateString = `${date.toLocaleDateString('en-US', { weekday: 'short' })} ${timeString}`; // e.g., "Mon 6:00pm"
+      } else {
+          dateString = date.toISOString().split('T')[0]; // e.g., "2023-09-29"
+      }
+
+      dueDateElement.innerHTML = dateString;
+
+      dueDateElement.className = 'due-date-box';
+      if (todo.due) {
+          dueDateElement.classList.add('highlighted-due');
+      }
+
+      listItem.appendChild(dueDateElement);
+  }
+
   listItem.addEventListener('click', () => {
     LAST.push(todo)
     xhr.send(JSON.stringify(todo))
