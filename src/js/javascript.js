@@ -502,45 +502,9 @@ function updateIdeaBucketLink() {
 }
 
 function parseFrequencyString(val) {
-    // Check for patterns like "every 2 weeks"
-    const everyPattern = /every (\d+) (days?|weeks?|months?|quarters?|years?)/i;
+    const everyPattern = /(every)(?: (\d+))? (days?|weeks?|months?|quarters?|years?)/ig;
+    const dayTimePattern = /(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)\s*(@|at)\s*(\d{1,2}[ap]m)/ig;
 
-    // Check for patterns like "Monday @2pm" or "Monday at 2pm"
-    const dayTimePattern = /(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)?\s*(@|at)\s*(\d{1,2}[ap]m)/i;
-
-    const everyMatch = val.match(everyPattern);
-    const dayTimeMatch = val.match(dayTimePattern);
-
-    const matches = [];
-
-    if (everyMatch) {
-        const number = parseInt(everyMatch[1], 10);
-        const unit = everyMatch[2].toLowerCase();
-
-        // For this JavaScript version, we're only appending the matched strings to the array
-        matches.push(`${number} ${unit}`);
-    }
-
-    if (dayTimeMatch) {
-        // Only add DayOfWeek if it's present in the matched pattern
-        if (dayTimeMatch[1]) {
-            matches.push(dayTimeMatch[1]);
-        }
-
-        // Add LocalTime
-        matches.push(dayTimeMatch[3]);
-    }
-
-    // Additional validations can be added if needed, similar to the Java code. 
-    // These would throw errors if conditions are not met.
-
-    return matches;
-}
-
-
-function parseFrequencyString(val) {
-    const everyPattern = /every (\d+) (days?|weeks?|months?|quarters?|years?)/ig;
-    const dayTimePattern = /(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)?\s*(@|at)\s*(\d{1,2}[ap]m)/ig;
 
     // Replaces matched patterns with highlighted version
     val = val.replace(everyPattern, '<span style="background-color: yellow;">$&</span>');
