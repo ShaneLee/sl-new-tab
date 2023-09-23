@@ -398,7 +398,7 @@ function todoFormSubmitEvent(event) {
     }
     return ''
   })
-  .then(_ => todoElement.value = null)
+  .then(_ => todoElement.innerHTML = '')
 }
 
 function todoForm() {
