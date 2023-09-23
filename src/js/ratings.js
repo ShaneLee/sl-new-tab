@@ -1,79 +1,18 @@
 host='http://localhost:8080'
 
 const tempUserId = 'bd11dcc2-77f6-430f-8e87-5839d31ab0e3'
-
-const moodEndpoint = `${host}/mood?rangeType=WEEK`
+const moodEndpoint = `${host}/mood?rangeType=`
 
 const headers = {
   'Content-Type': 'application/json',
   'tempUserId': tempUserId
 }
 
-let chart; 
-
 function loadPage() {
-  getRatings()
+  getRatings('WEEK')
     .then(createForm);
 }
 
-function getRatings() {
-  return fetch(moodEndpoint, {
-      method: 'GET',
-      headers: headers
-      })
-  .then(response => response.status === 200 ? response?.json() : null)
-  .then(val => {
-    if (!!val) {
-      populateRatings(val)
-    }
-  })
-}
-
-
-function populateRatings(data) {
-  const ratings = data.map(d => d.rating);
-  const timestamps = data.map(d => new Date(d.createdAt).toLocaleDateString());
-  const dataset = {
-      label: 'Mood',
-      borderColor: '#e7b91b',
-      data: ratings,
-      fill: true,
-      tension: 0.3
-  }
-
-  const ctx = document.getElementById('ratingsChart').getContext('2d');
-  if (chart) {
-    chart.data.labels = timestamps
-    chart.data.datasets[0] = dataset
-    chart.update()
-  }
-  else {
-    chart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: timestamps,
-            datasets: [dataset]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: true,
-            aspectRatio: 2,
-            scales: {
-                y: {
-                    beginAtZero: false,
-                    min: 1,
-                    max: 5,
-                    ticks: {
-                      stepSize: 1,
-                      precision: 0
-                    }
-                }
-            }
-        }
-    });
-  }
-
-}
 
 function createForm() {
   document.getElementById('ratingForm').addEventListener('submit', function(e) {

@@ -4,36 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="../css/style.css">
+    <script src="../js/time-tracking-summary.js" charset="UTF-8"></script>
     <script src="../js/summary.js" charset="UTF-8"></script>
     <title>Time Tracking Summary</title>
-    <style>
-        table {
-            border-collapse: collapse;
-            width: 80%;
-            margin: 20px auto;
-        }
-        th, td {
-            border: 1px solid #dddddd;
-            text-align: left;
-            padding: 8px;
-        }
-        th {
-        }
-    </style>
 </head>
 <body>
     <h1>Time Tracking Summary</h1>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Project</th>
-                <th></th>
-                <th>Total Time Tracked</th>
-            </tr>
-        </thead>
-        <tbody id="summaryTableBody">
-        </tbody>
-    </table>
+    <div id="summaryContainerDiv"></div>
 </body>
 </html>

@@ -571,6 +571,7 @@ function addLinks() {
   updateTimeTrackingSummaryLink() 
   updateRatingsLink()
   updateIdeaBucketLink()
+  updateReviewLink()
 }
 
 function updateTimeTrackingSummaryLink() {
@@ -597,6 +598,15 @@ function updateIdeaBucketLink() {
     link.innerHTML = `Idea Bucket`
   if (withEmojis) {
     link.innerHTML = `💡 Idea Bucket`
+  }
+}
+
+function updateReviewLink() {
+  const link = document.getElementById('review-link');
+  link.href = `chrome-extension://${chrome.runtime.id}/template/review.html`
+    link.innerHTML = `Review`
+  if (withEmojis) {
+    link.innerHTML = `🌱 Review`
   }
 }
 
