@@ -145,7 +145,27 @@ div.todo-input:focus {
 }
 
 .todo-item {
+  display: flex;
   position: relative;  /* Setting position relative so that the absolute positioned child (dueDateElement) is relative to this item */
+  overflow: hidden;
+}
+
+.content {
+  transition: transform 0.3s;
+  background-color: #272725;  /* This ensures that .content is solid and covers the .delete div */
+  flex-grow: 1; 
+  z-index: 2;  /* Ensures that the content div is above the delete div */
+}
+
+.delete {
+  padding: 10px;
+  width: 100px;
+  text-align: center;
+  position: absolute;  /* Absolutely position the delete div */
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 1;  /* Lower z-index than the content div */
 }
 
 .due-date-box {

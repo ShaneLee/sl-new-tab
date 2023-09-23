@@ -284,6 +284,14 @@ function complete(todo) {
   }).then(_ => refreshTodos())
 }
 
+function deleteTodo(todo) {
+  fetch(todosEndpoint, {
+      method: 'DELETE',
+      headers: headers,
+      body: JSON.stringify(todo)
+  }).then(_ => refreshTodos())
+}
+
 function currentWeekNumber() {
   const currentDate = new Date();
   const startDate = new Date(currentDate.getFullYear(), 0, 1);
@@ -438,8 +446,21 @@ function addTodo(uL, todo) {
 
   const listItem = document.createElement('li');  
   listItem.className = 'todo-item';
-  listItem.innerHTML = todo.todo;
+  // listItem.innerHTML = todo.todo;
   listItem.id = todo.id
+
+  // Create a container for the todo content and delete section
+  const contentDiv = document.createElement('div');
+  contentDiv.className = 'content';
+  contentDiv.innerHTML = todo.todo;
+
+  const deleteDiv = document.createElement('div');
+  deleteDiv.className = 'delete';
+  deleteDiv.innerHTML = 'Delete';
+
+  // Append the content and delete divs to the listItem
+  listItem.appendChild(contentDiv);
+  listItem.appendChild(deleteDiv);
 
   if (todo.dueDate) {
       const dueDateElement = document.createElement('span');
@@ -475,8 +496,48 @@ function addTodo(uL, todo) {
           dueDateElement.classList.add('highlighted-due');
       }
 
-      listItem.appendChild(dueDateElement);
+      contentDiv.appendChild(dueDateElement);  
   }
+
+
+  let startX, currentTranslate = 0, isDragging = false;
+  listItem.addEventListener('mousedown', (event) => {
+    startX = event.clientX;
+    isDragging = false;
+
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+  });
+
+  function onMouseMove(event) {
+      // Calculate how far the mouse has been moved
+      const distanceMoved = event.clientX - startX;
+
+      if (distanceMoved < 0) { // Only slide to left
+          currentTranslate = Math.max(-100, distanceMoved);  // Cap the maximum slide to -100px (width of delete div)
+          contentDiv.style.transform = `translateX(${currentTranslate}px)`;
+      }
+
+      isDragging = true;
+  }
+
+  function onMouseUp() {
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+
+      // If the user has dragged more than half the width of the delete div, complete the slide
+      if (currentTranslate <= -50) {
+          contentDiv.style.transform = `translateX(-100px)`;
+          deleteTodo(todo)
+      } else {
+          contentDiv.style.transform = `translateX(0)`;
+      }
+
+      if (!isDragging) {
+          // TODO: Handle the scenario where the user just clicked without dragging
+      }
+  }
+
 
   listItem.addEventListener('click', () => {
     LAST.push(todo)
