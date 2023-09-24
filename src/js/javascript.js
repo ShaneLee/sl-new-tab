@@ -276,6 +276,14 @@ function uncomplete(todo) {
   }).then(_ => refreshTodos())
 }
 
+function update(todo) {
+  fetch(todosEndpoint, {
+      method: 'PUT',
+      headers: headers,
+      body: JSON.stringify(todo)
+  }).then(_ => refreshTodos())
+}
+
 function complete(todo) {
   fetch(completeEndpoint, {
       method: 'PATCH',
@@ -517,6 +525,10 @@ function addTodo(uL, todo) {
           currentTranslate = Math.max(-100, distanceMoved);  // Cap the maximum slide to -100px (width of delete div)
           contentDiv.style.transform = `translateX(${currentTranslate}px)`;
       }
+      else if (distanceMoved > 0) { // Only slide to right
+          currentTranslate = Math.min(100, distanceMoved);
+          contentDiv.style.transform = `translateX(${currentTranslate}px)`;
+      }
 
       isDragging = true;
   }
@@ -526,9 +538,16 @@ function addTodo(uL, todo) {
       document.removeEventListener('mouseup', onMouseUp);
 
       // If the user has dragged more than half the width of the delete div, complete the slide
-      if (currentTranslate <= -50) {
+      if (currentTranslate <= -50) { // slide to the left
           contentDiv.style.transform = `translateX(-100px)`;
           deleteTodo(todo)
+      }
+      else if (currentTranslate >= 50) { // slide to the right
+        const category = todo?.category.replace(/\d+/, (match) => parseInt(match, 10) + 1);
+        if (!!category) {
+          todo.category = category
+          update(todo)
+        }
       } else {
           contentDiv.style.transform = `translateX(0)`;
       }
