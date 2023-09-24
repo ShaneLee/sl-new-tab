@@ -216,7 +216,7 @@ function renderTodoLists(section, todos, todoListsElement) {
 
         // Create and append category element
         const categorySpan = document.createElement('span');
-        categorySpan.className = "category";
+        categorySpan.className = "review-category";
         categorySpan.setAttribute('data-category', item.category);
         categorySpan.textContent = item.category;
         li.appendChild(categorySpan);

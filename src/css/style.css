@@ -481,6 +481,20 @@ div.todo-input:focus {
     border: 2px solid #e7b91b; /* Mustard Yellow */
 }
 
+.review-category {
+    display: inline-block;
+    padding: 2px 8px;
+    margin-left: 10px;
+    border-radius: 5px;
+    background-color: #e0e0e0; /* Default color */
+}
+
+.review-category[data-category="Week 38"] {
+    background-color: #3498db; /* Blue for Week 38 */
+    color: white;
+}
+
+
 
 /* End Ratings and reviews ------------------ */
 
