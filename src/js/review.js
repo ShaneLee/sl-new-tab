@@ -125,6 +125,7 @@ function renderTodoSummary(todos, todoListsElement) {
   const totalCompleted = todos.completed.length;
   const totalUncompleted = todos.uncomplete.length;
   let percentageCompleteOfPlanned = 0;
+  let percentageComplete = Math.round((totalCompleted  / totalTodos) * 100);
 
   if (todos.createdBeforePeriodStart.length > 0) {
     const completedBeforePeriodStart = todos.createdBeforePeriodStart.filter(todo => todo.complete).length;
@@ -143,6 +144,7 @@ function renderTodoSummary(todos, todoListsElement) {
     <strong>Total Todos:</strong> ${totalTodos} <br>
     <strong>Completed Todos:</strong> ${totalCompleted} <br>
     <strong>Uncompleted Todos:</strong> ${totalUncompleted} <br>
+    <strong>Percentage Complete:</strong> ${percentageComplete}% <br>
     <strong>Planned Complete / Uncomplete:</strong> ${percentageCompleteOfPlanned}%
   `;
 
