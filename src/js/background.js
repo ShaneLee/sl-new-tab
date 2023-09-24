@@ -101,3 +101,10 @@ chrome.commands.onCommand.addListener((command) => {
         });
     }
 });
+
+chrome.runtime.onInstalled.addListener((details) => {
+    if(details.reason === 'install') {
+      // OAuth2 goes here at some point
+      chrome.tabs.create({url: 'settings.html'});
+    }
+});

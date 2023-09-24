@@ -12,7 +12,9 @@
     "scripting",
     "tabs",
     "activeTab",
-    "commands"
+    "commands",
+    "storage",
+    "identity"
   ],
   "background": {
     "service_worker": "js/background.js"
@@ -23,6 +25,7 @@
   "action": {
 
   },
+  "options_page": "template/settings.html",
   "commands": {
       "ideaBucketPopup": {
         "suggested_key": {
