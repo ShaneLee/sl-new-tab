@@ -8,8 +8,10 @@ const headers = {
   'tempUserId': tempUserId
 }
 
+const defaultType = 'WEEK'
+
 function loadPage() {
-  getRatings('WEEK')
+  getRatings(defaultType)
     .then(createForm);
 }
 
@@ -36,7 +38,7 @@ function createForm() {
   .then(response => response?.json())
   .then(val => {
     if (!!val) {
-      getRatings()
+      getRatings(defaultType)
     }
   })
   }
