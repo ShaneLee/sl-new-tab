@@ -1,5 +1,6 @@
 const host = 'http://localhost:8080'
 const webTrackerEndpoint = `${host}/tracking/web`
+const readingListEndpoint = `${host}/reading-list`
 const stopEndpoint = `${host}/tracking/web/stop`
 const webTrackingEnabled = false
 const tempUserId = 'bd11dcc2-77f6-430f-8e87-5839d31ab0e3'
@@ -10,6 +11,15 @@ const headers = {
 }
 
 let previousTab = null;
+
+function addToReadingList(payload) {
+  fetch(readingListEndpoint, {
+    method: 'POST',
+    headers: headers,
+    body: JSON.stringify(payload),
+  })
+
+}
 
 if (webTrackingEnabled) {
 	chrome.tabs.onActivated.addListener(activeInfo => {
@@ -90,6 +100,16 @@ function endTracking(previous) {
   });
 }
 
+chrome.contextMenus.onClicked.addListener((info, tab) => {
+  if (info.menuItemId === "saveToReadingList") {
+    addToReadingList({
+      'url': info.pageUrl,
+      'title': info.title || tab.title,
+      'text': info.selectionText
+    })
+  }
+});
+
 chrome.commands.onCommand.addListener((command) => {
     if (command === "ideaBucketPopup") {
         chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
@@ -100,6 +120,14 @@ chrome.commands.onCommand.addListener((command) => {
             });
         });
     }
+});
+
+chrome.runtime.onInstalled.addListener(() => {
+  chrome.contextMenus.create({
+    id: "saveToReadingList",
+    title: "Save to Reading List",
+    contexts: ["page", "selection"]
+  });
 });
 
 chrome.runtime.onInstalled.addListener((details) => {
