@@ -632,11 +632,13 @@ function updateReviewLink() {
 function parseFrequencyString(val) {
     const everyPattern = /(every)(?: (\d+))? (days?|weeks?|months?|quarters?|years?)/ig;
     const dayTimePattern = /(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)\s*(@|at)\s*(\d{1,2}[ap]m)/ig;
+    const categoryPattern = /@([^@]+)@/g;
 
 
     // Replaces matched patterns with highlighted version
     val = val.replace(everyPattern, '<span style="background-color: yellow;">$&</span>');
     val = val.replace(dayTimePattern, '<span style="background-color: yellow;">$&</span>');
+    val = val.replace(categoryPattern, '<span style="background-color: yellow;">$&</span>');
     
     return val;
 }
