@@ -631,7 +631,7 @@ function updateReviewLink() {
 
 function parseFrequencyString(val) {
     const everyPattern = /(every)(?: (\d+))? (days?|weeks?|months?|quarters?|years?)/ig;
-    const dayTimePattern = /(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)\s*(@|at)\s*(\d{1,2}[ap]m)/ig;
+    const dayTimePattern = /(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|Today|Tomorrow)\s*(@|at)\s*(\d{1,2}[ap]m)/ig;
     const categoryPattern = /@([^@]+)@/g;
 
 
