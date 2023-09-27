@@ -457,16 +457,22 @@ function addTodo(uL, todo) {
   // listItem.innerHTML = todo.todo;
   listItem.id = todo.id
 
+  const categoryDiv = document.createElement('div');
+  categoryDiv.className = 'slide-category';
+  categoryDiv.innerHTML = 'Category';
+
   // Create a container for the todo content and delete section
   const contentDiv = document.createElement('div');
   contentDiv.className = 'content';
   contentDiv.innerHTML = todo.todo;
 
   const deleteDiv = document.createElement('div');
-  deleteDiv.className = 'delete';
+  deleteDiv.className = 'slide-delete';
   deleteDiv.innerHTML = 'Delete';
 
   // Append the content and delete divs to the listItem
+  // Category has to go first
+  listItem.appendChild(categoryDiv);
   listItem.appendChild(contentDiv);
   listItem.appendChild(deleteDiv);
 
