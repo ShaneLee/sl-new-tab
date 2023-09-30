@@ -1,5 +1,3 @@
-const taskSummaryEndpoint = type => `${host}/tracking/summary?type=${type}`
-
 function getSummary(type, containerElement) {
   return fetch(taskSummaryEndpoint(type), {
       method: 'GET',

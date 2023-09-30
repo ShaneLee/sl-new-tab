@@ -1,13 +1,3 @@
-const host='http://localhost:8080'
-const tempUserId = 'bd11dcc2-77f6-430f-8e87-5839d31ab0e3'
-
-const userPreferences = `${host}/preferences`
-
-const headers = {
-  'Content-Type': 'application/json',
-  'tempUserId': tempUserId
-}
-
 window.onload = function() {
   document.getElementById('settingsForm').addEventListener('submit', function(e) {
       e.preventDefault();

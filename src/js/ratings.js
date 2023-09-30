@@ -1,13 +1,3 @@
-host='http://localhost:8080'
-
-const tempUserId = 'bd11dcc2-77f6-430f-8e87-5839d31ab0e3'
-const moodEndpoint = `${host}/mood?rangeType=`
-
-const headers = {
-  'Content-Type': 'application/json',
-  'tempUserId': tempUserId
-}
-
 const defaultType = 'WEEK'
 
 function loadPage() {

@@ -1,4 +1,3 @@
-host='http://localhost:8080'
 quotesEnabled=false
 timerEnabled=true
 // Should we default to all todos or the current week number
@@ -251,21 +250,6 @@ function deathCountdown() {
   document.getElementById('title').innerHTML = days + ' Days Left'
   document.title = days
   return Math.abs(today.diff(moment('1994-03-28'), 'weeks'))
-}
-
-const todosEndpoint = `${host}/todos`
-const completeEndpoint = `${host}/todos/complete`
-const uncompleteEndpoint = `${host}/todos/uncomplete`
-const categoriesEndpoint = `${host}/todos/categories`
-const tempUserId = 'bd11dcc2-77f6-430f-8e87-5839d31ab0e3'
-
-const runningTaskEndpoint = `${host}/tracking/running`
-const timeTrackingEndpoint = `${host}/tracking`
-const stopTaskEndpoint = `${host}/tracking/stop`
-
-const headers = {
-  'Content-Type': 'application/json',
-  'tempUserId': tempUserId
 }
 
 function uncomplete(todo) {

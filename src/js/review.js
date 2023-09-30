@@ -1,20 +1,4 @@
-host='http://localhost:8080'
-
-const tempUserId = 'bd11dcc2-77f6-430f-8e87-5839d31ab0e3'
-
-const moodEndpoint = `${host}/mood?rangeType=`
-const reviewEndpoint = `${host}/review`
-const reviewEndpointFn = date => `${host}/review?reviewDate=${date}`
-const tempFormId = '91f2994f-2446-459c-806d-f99387fd2f1c'
-const formEndpoint = `${host}/review/form?formId=${tempFormId}`
-const todoReviewEndpoint = (type, category) => `${host}/todos/review?type=${type}${category && `&category=${category}`}`
-
 const reviewLink = date => `chrome-extension://gplimlhmjfiokbijcgiokhjofgdhlplj/template/review.html?date=${date}`
-
-const headers = {
-  'Content-Type': 'application/json',
-  'tempUserId': tempUserId
-}
 
 let weekNumber
 let formReviewId = getFormId();
@@ -27,8 +11,6 @@ function getQueryParam(paramName) {
     const params = new URLSearchParams(window.location.search);
     return params.get(paramName);
 }
-
-
 
 function loadPage() {
   const dateParam = getQueryParam("date");

@@ -1,14 +1,3 @@
-host='http://localhost:8080'
-
-const tempUserId = 'bd11dcc2-77f6-430f-8e87-5839d31ab0e3'
-
-const bucketEndpoint = `${host}/bucket`
-
-const headers = {
-  'Content-Type': 'application/json',
-  'tempUserId': tempUserId
-}
-
 function getIdeas() {
   fetch(bucketEndpoint, {
       method: 'GET',
