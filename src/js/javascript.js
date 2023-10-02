@@ -581,6 +581,7 @@ function addLinks() {
   updateRatingsLink()
   updateIdeaBucketLink()
   updateReviewLink()
+  updateReadingListLink()
 }
 
 function updateTimeTrackingSummaryLink() {
@@ -589,6 +590,15 @@ function updateTimeTrackingSummaryLink() {
   link.innerHTML = `Time tracking summary`
   if (withEmojis) {
     link.innerHTML = `🕰️ Time tracking summary`
+  }
+}
+
+function updateReadingListLink() {
+  const link = document.getElementById('reading-list-link');
+  link.href = `chrome-extension://${chrome.runtime.id}/template/reading-list.html`
+  link.innerHTML = `Reading List`
+  if (withEmojis) {
+    link.innerHTML = `📚 Reading List`
   }
 }
 
