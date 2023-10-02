@@ -1,4 +1,5 @@
-const host = 'http://localhost:8080'
+host = 'http://localhost:8080'
+host='http://192.168.0.46:8080'
 const webTrackerEndpoint = `${host}/tracking/web`
 const readingListEndpoint = `${host}/reading-list`
 const stopEndpoint = `${host}/tracking/web/stop`
