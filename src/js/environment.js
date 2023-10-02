@@ -17,6 +17,7 @@ const runningTaskEndpoint = `${host}/tracking/running`
 const timeTrackingEndpoint = `${host}/tracking`
 const stopTaskEndpoint = `${host}/tracking/stop`
 const taskSummaryEndpoint = type => `${host}/tracking/summary?type=${type}`
+const readingListEndpoint = `${host}/reading-list`
 
 const bucketEndpoint = `${host}/bucket`
 
