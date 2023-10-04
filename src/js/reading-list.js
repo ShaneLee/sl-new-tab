@@ -11,11 +11,17 @@ function getReadingList() {
   });
 }
 
+function updateReadStatus(val, read) {
+  fetch(readingListEndpointReadFn(val.id, read), {
+      method: 'PATCH',
+      headers: headers
+      })
+}
+
 
 function populateTable(vals) {
   const tbody = document.getElementById('reading-list-table');
 
-  // Clear the current content of the tbody
   tbody.innerHTML = '';
 
   vals.forEach(val => {
@@ -32,7 +38,11 @@ function populateTable(vals) {
       const notesCell = document.createElement('td');
       const checked = document.createElement('input');
       checked.type = 'checkbox'
-      checked.value = val.read;
+      checked.checked = val.read;
+
+      checked.addEventListener('change', function() {
+          updateReadStatus(val, this.checked);
+      });
       notesCell.appendChild(checked)
       row.appendChild(notesCell);
 

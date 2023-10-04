@@ -1,5 +1,5 @@
 host='http://localhost:8080'
-host='http://192.168.0.46:8080'
+// host='http://192.168.0.46:8080'
 const tempUserId = 'bd11dcc2-77f6-430f-8e87-5839d31ab0e3'
 
 const headers = {
@@ -18,6 +18,7 @@ const timeTrackingEndpoint = `${host}/tracking`
 const stopTaskEndpoint = `${host}/tracking/stop`
 const taskSummaryEndpoint = type => `${host}/tracking/summary?type=${type}`
 const readingListEndpoint = `${host}/reading-list`
+const readingListEndpointReadFn = (id, read) => `${host}/reading-list?id=${id}&isRead=${read}`
 
 const bucketEndpoint = `${host}/bucket`
 
