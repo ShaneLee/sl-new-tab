@@ -82,6 +82,48 @@ function getReviewForm(typeParam) {
 
 function renderMoodForType(type) {
    getMoodRatingsForType(type)
+    .then(renderMoodTable)
+}
+
+function renderMoodTable(ratings) {
+	const table = document.createElement('table');
+	table.className = 'time-tracking-summary'
+
+  const headerRow = table.insertRow(0);
+
+  const headers = ['Created At', 'Rating', 'Notes'];
+
+  // Add headers to the header row
+  headers.forEach((headerText, index) => {
+    const th = document.createElement('th');
+    th.textContent = headerText;
+    headerRow.appendChild(th);
+  });
+
+  // Iterate through the ratings data and create table rows
+  ratings.forEach((ratingData, index) => {
+    const row = table.insertRow(index + 1); // +1 to skip the header row
+
+    // Format the createdAt date as YYYY-MM-DD
+    const createdAtDate = new Date(ratingData.createdAt);
+    const createdAtText = `${createdAtDate.getFullYear()}-${(createdAtDate.getMonth() + 1)
+      .toString()
+      .padStart(2, '0')}-${createdAtDate.getDate().toString().padStart(2, '0')}`;
+
+    // Populate table cells with data
+    const createdAtCell = row.insertCell(0);
+    createdAtCell.textContent = createdAtText;
+
+    const ratingCell = row.insertCell(1);
+    ratingCell.textContent = ratingData.rating;
+
+    const notesCell = row.insertCell(2);
+    notesCell.textContent = ratingData.notes;
+		notesCell.style.width = '50%'
+  });
+
+  const container = document.getElementById('ratings-table-container'); 
+  container.appendChild(table);
 }
 
 function renderTodosForType(type) {
