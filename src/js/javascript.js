@@ -389,7 +389,7 @@ function todoFormSubmitEvent(event) {
   .then(val => {
     if (!!val) {
       const list = document.getElementById('todos');        
-      if (!categoryChanged) {
+      if (!categoryChanged && category === val.category) {
         // If this is in a different category to the currently 
         // shown one, don't bother adding it to the list
         addTodo(list, val)
