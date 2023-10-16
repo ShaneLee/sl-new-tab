@@ -1,5 +1,6 @@
 quotesEnabled=false
 timerEnabled=true
+slideEnabled=false
 // Should we default to all todos or the current week number
 defaultToAll=false
 const withEmojis=true
@@ -9,6 +10,7 @@ const LAST = new Array();
 
 let runningTask;
 let timerInterval;
+let contextMenu;
 
 document.addEventListener('keydown', (event) => {
   if (event.key === '~') {
@@ -430,6 +432,7 @@ function todos() {
   .catch(err => {});
 }
 
+let selectedTodo = null;
 function addTodo(uL, todo) {
   const xhr = new XMLHttpRequest();
   xhr.open('PATCH', completeEndpoint, false);
@@ -459,6 +462,9 @@ function addTodo(uL, todo) {
   listItem.appendChild(categoryDiv);
   listItem.appendChild(contentDiv);
   listItem.appendChild(deleteDiv);
+  listItem.addEventListener('contextmenu', function(event) {
+    showContextMenu(event, todo);
+  });
 
   if (todo.dueDate) {
       const dueDateElement = document.createElement('span');
@@ -498,53 +504,55 @@ function addTodo(uL, todo) {
   }
 
 
-  let startX, currentTranslate = 0, isDragging = false;
-  listItem.addEventListener('mousedown', (event) => {
-    startX = event.clientX;
-    isDragging = false;
+  if (slideEnabled) {
+    let startX, currentTranslate = 0, isDragging = false;
+    listItem.addEventListener('mousedown', (event) => {
+      startX = event.clientX;
+      isDragging = false;
 
-    document.addEventListener('mousemove', onMouseMove);
-    document.addEventListener('mouseup', onMouseUp);
-  });
+      document.addEventListener('mousemove', onMouseMove);
+      document.addEventListener('mouseup', onMouseUp);
+    });
 
-  function onMouseMove(event) {
-      // Calculate how far the mouse has been moved
-      const distanceMoved = event.clientX - startX;
+    function onMouseMove(event) {
+        // Calculate how far the mouse has been moved
+        const distanceMoved = event.clientX - startX;
 
-      if (distanceMoved < 0) { // Only slide to left
-          currentTranslate = Math.max(-100, distanceMoved);  // Cap the maximum slide to -100px (width of delete div)
-          contentDiv.style.transform = `translateX(${currentTranslate}px)`;
-      }
-      else if (distanceMoved > 0) { // Only slide to right
-          currentTranslate = Math.min(100, distanceMoved);
-          contentDiv.style.transform = `translateX(${currentTranslate}px)`;
-      }
-
-      isDragging = true;
-  }
-
-  function onMouseUp() {
-      document.removeEventListener('mousemove', onMouseMove);
-      document.removeEventListener('mouseup', onMouseUp);
-
-      // If the user has dragged more than half the width of the delete div, complete the slide
-      if (currentTranslate <= -50) { // slide to the left
-          contentDiv.style.transform = `translateX(-100px)`;
-          deleteTodo(todo)
-      }
-      else if (currentTranslate >= 50) { // slide to the right
-        const category = todo?.category.replace(/\d+/, (match) => parseInt(match, 10) + 1);
-        if (!!category) {
-          todo.category = category
-          update(todo)
+        if (distanceMoved < 0) { // Only slide to left
+            currentTranslate = Math.max(-100, distanceMoved);  // Cap the maximum slide to -100px (width of delete div)
+            contentDiv.style.transform = `translateX(${currentTranslate}px)`;
         }
-      } else {
-          contentDiv.style.transform = `translateX(0)`;
-      }
+        else if (distanceMoved > 0) { // Only slide to right
+            currentTranslate = Math.min(100, distanceMoved);
+            contentDiv.style.transform = `translateX(${currentTranslate}px)`;
+        }
 
-      if (!isDragging) {
-          // TODO: Handle the scenario where the user just clicked without dragging
-      }
+        isDragging = true;
+    }
+
+    function onMouseUp() {
+        document.removeEventListener('mousemove', onMouseMove);
+        document.removeEventListener('mouseup', onMouseUp);
+
+        // If the user has dragged more than half the width of the delete div, complete the slide
+        if (currentTranslate <= -50) { // slide to the left
+            contentDiv.style.transform = `translateX(-100px)`;
+            deleteTodo(todo)
+        }
+        else if (currentTranslate >= 50) { // slide to the right
+          const category = todo?.category.replace(/\d+/, (match) => parseInt(match, 10) + 1);
+          if (!!category) {
+            todo.category = category
+            update(todo)
+          }
+        } else {
+            contentDiv.style.transform = `translateX(0)`;
+        }
+
+        if (!isDragging) {
+            // TODO: Handle the scenario where the user just clicked without dragging
+        }
+    }
   }
 
 
@@ -649,6 +657,21 @@ function highlightMatches() {
     div.innerHTML = parseFrequencyString(content);
 }
 
+function showContextMenu(event, todo) {
+  event.preventDefault();
+  selectedTodo = todo
+
+  contextMenu.style.left = `${event.pageX}px`;
+  contextMenu.style.top = `${event.pageY}px`;
+  contextMenu.style.display = 'block';
+}
+
+function hideContextMenu() {
+    if (!!contextMenu) {
+      contextMenu.style.display = 'none';
+    }
+}
+
 function addTodoListener() {
   document.getElementById('todo-input').addEventListener('input', function() {
       if (this.innerHTML === '<br>') {
@@ -667,6 +690,45 @@ function addTodoListener() {
           sel.removeAllRanges();
           sel.addRange(range);
       }
+  });
+
+  contextMenu = document.getElementById('contextMenu');
+  const deleteAction = document.getElementById('deleteAction');
+  const moveNextAction = document.getElementById('moveNextAction');
+  const changeCategoryAction = document.getElementById('changeCategoryAction');
+
+
+  deleteAction.addEventListener('click', function() {
+    deleteTodo(selectedTodo)
+    selectedTodo = null
+    hideContextMenu();
+  });
+
+  moveNextAction.addEventListener('click', function() {
+    const todo = selectedTodo
+    const category = todo?.category.replace(/\d+/, (match) => parseInt(match, 10) + 1);
+    if (!!category) {
+      todo.category = category
+      update(todo)
+    }
+    selectedTodo = null
+    hideContextMenu();
+  });
+
+  changeCategoryAction.addEventListener('click', function() {
+    const todo = selectedTodo
+    const category = prompt('Enter the new category:');
+    if (!!category) {
+      todo.category = category
+      update(todo)
+    }
+    selectedTodo = null
+    hideContextMenu();
+  });
+
+  // Event listener to hide context menu on window click
+  window.addEventListener('click', function() {
+    hideContextMenu();
   });
 }
 

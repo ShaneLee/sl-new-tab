@@ -577,3 +577,23 @@ div.todo-input:focus {
 .default-form button:hover {
     background-color: #d1a116;  /* A darker shade of Mustard Yellow */
 }
+
+/* TODOs */
+.context-menu {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  width: 150px;
+  background: #2c2c2c;
+  border: 1px solid #868680;
+}
+
+.context-menu-item {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.context-menu-item:hover {
+  background: #272725;
+}
+
