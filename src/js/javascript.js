@@ -60,7 +60,7 @@ function printQuote(quoteAuthor, quote) {
  ***************************************************/
 
 function getRunningTask() {
-  fetch(runningTaskEndpoint, {
+  api(runningTaskEndpoint, {
       method: 'GET',
       headers: headers
       })
@@ -131,7 +131,7 @@ function playTask() {
 
 function stopTask(task) {
   if (!!task) {
-    fetch(stopTaskEndpoint, {
+   api(stopTaskEndpoint, {
         method: 'PATCH',
         headers: headers,
         body: JSON.stringify(task)
@@ -144,7 +144,7 @@ function stopTask(task) {
 }
 
 function startNewTask(task) {
-  fetch(timeTrackingEndpoint, {
+  api(timeTrackingEndpoint, {
       method: 'POST',
       headers: headers,
       body: JSON.stringify(task)
@@ -255,7 +255,7 @@ function deathCountdown() {
 }
 
 function uncomplete(todo) {
-  fetch(uncompleteEndpoint, {
+  api(uncompleteEndpoint, {
       method: 'PATCH',
       headers: headers,
       body: JSON.stringify(todo)
@@ -263,7 +263,7 @@ function uncomplete(todo) {
 }
 
 function update(todo) {
-  fetch(todosEndpoint, {
+  api(todosEndpoint, {
       method: 'PUT',
       headers: headers,
       body: JSON.stringify(todo)
@@ -271,7 +271,7 @@ function update(todo) {
 }
 
 function complete(todo) {
-  fetch(completeEndpoint, {
+  api(completeEndpoint, {
       method: 'PATCH',
       headers: headers,
       body: JSON.stringify(todo)
@@ -279,7 +279,7 @@ function complete(todo) {
 }
 
 function deleteTodo(todo) {
-  fetch(todosEndpoint, {
+  api(todosEndpoint, {
       method: 'DELETE',
       headers: headers,
       body: JSON.stringify(todo)
@@ -310,7 +310,7 @@ function refreshTodos() {
 function categories() {
   const categories = document.getElementById('category-input');
   categories.onchange = refreshTodos
-  fetch(categoriesEndpoint, {
+  api(categoriesEndpoint, {
       method: 'GET',
       headers: headers
       })
@@ -373,7 +373,7 @@ function todoFormSubmitEvent(event) {
     category = split[1]
     todo = split[2]
     if (!CATEGORIES_SET.has(category)) {
-      fetch(categoriesEndpoint, {
+      api(categoriesEndpoint, {
           method: 'POST',
           headers: headers,
           body: JSON.stringify({ 'category': category })
@@ -382,7 +382,7 @@ function todoFormSubmitEvent(event) {
   }
 
   const formData = JSON.stringify({ 'todo': todo, 'category': category === 'all' ? null : category })
-  fetch(todosEndpoint, {
+  api(todosEndpoint, {
       method: 'POST',
       headers: headers,
       body: formData
@@ -422,7 +422,7 @@ function todos() {
   today.setHours(0, 0, 0, 0);
 
   const endpoint = !!category && category !== 'all' ? `${todosEndpoint}?category=${category}` : todosEndpoint
-  fetch(endpoint, {
+  api(endpoint, {
     method: 'GET', 
     headers: headers
   })

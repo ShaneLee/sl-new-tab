@@ -33,3 +33,10 @@ const todoReviewEndpoint = (type, category) => `${host}/todos/review?type=${type
 const userPreferences = `${host}/preferences`
 
 
+function api(endpoint, obj, rethrow) {
+  if (rethrow) {
+    return fetch(endpoint, obj)
+  }
+  return fetch(endpoint, obj)
+    .catch(err => null)
+}
