@@ -418,6 +418,8 @@ function todoForm() {
 
 function todos() {
   const category = document.getElementById('category-input').value;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
   const endpoint = !!category && category !== 'all' ? `${todosEndpoint}?category=${category}` : todosEndpoint
   fetch(endpoint, {
@@ -427,7 +429,11 @@ function todos() {
   .then(response => response.json())
   .then(todos => {
       const list = document.getElementById('todos');        
-      todos?.forEach(todo => addTodo(list, todo))
+      if (!!todos) {
+        todos
+          .filter(todo => !(todo.recurring && !todo.due))
+          .forEach(todo => addTodo(list, todo))
+      }
   })
   .catch(err => {});
 }
