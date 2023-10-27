@@ -1,6 +1,7 @@
 quotesEnabled=false
 timerEnabled=true
 slideEnabled=false
+spendTrackingEnabled=true
 // Should we default to all todos or the current week number
 defaultToAll=false
 const withEmojis=true
@@ -50,6 +51,46 @@ function pickRandom(quotes) {
 function printQuote(quoteAuthor, quote) {
   document.getElementById('quote').innerHTML = quote
   document.getElementById('author').innerHTML = quoteAuthor
+}
+
+function startOfMonthCurrentDatePair() {
+  const currentDate = new Date();
+  const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+  const formattedStartOfMonth = `${startOfMonth.getFullYear()}-${(startOfMonth.getMonth() + 1).toString().padStart(2, '0')}-01`;
+  const formattedCurrentDate = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1).toString().padStart(2, '0')}-${currentDate.getDate().toString().padStart(2, '0')}`;
+
+  return { 'start': formattedStartOfMonth, 'end': formattedCurrentDate }
+}
+
+// TODO call
+function getTotalMonthSpend() {
+  const datePair = startOfMonthCurrentDatePair() 
+
+  api(transactionsEndpointFn(datePair.start, datePair.end), {
+      method: 'GET',
+      headers: headers
+      })
+  .then(response => response.status === 200 ? response?.json() : null)
+  .then(val => {
+    if (!!val) {
+      updateMonthSpend(val)
+    }
+  }).catch(err => {});
+}
+
+function updateMonthSpend(transactions) {
+  // TODO maybe I should have an endpoint to get the month spend
+  const monthSpend = transactions
+    .map(val => val.amount)
+    .reduce((a, b) => a + b);
+  document.getElementById('totalMonthSpend').innerHTML = `Total Month Spend £${formatNumberToTwoDecimalPlaces(monthSpend)}`
+}
+
+function formatNumberToTwoDecimalPlaces(number) {
+    if (typeof number !== 'number') {
+        throw new Error('Input must be a number');
+    }
+    return number.toFixed(2);
 }
 
 
@@ -738,9 +779,39 @@ function addTodoListener() {
   });
 }
 
+function getDaysUntilTargetDate(targetDate) {
+    const currentDate = new Date();
+    const daysUntil = Math.floor((targetDate - currentDate) / (1000 * 60 * 60 * 24));
+    const day = targetDate.getDate();
+    const monthNames = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ];
+    const monthName = monthNames[targetDate.getMonth()];
+    const formattedDate = `${day} ${monthName}`;
+
+    return `${daysUntil} day${daysUntil !== 1 ? 's' : ''} until ${formattedDate}`;
+}
+
+function targetNote() {
+  const note = document.getElementById('note')
+
+  const targets = [
+    { "name": "Leonardo da Vinci", "target": new Date('November 3, 2023') },
+    { "name": "Charles Darwin", "target": new Date('November 17, 2023') }
+  ]
+
+  const internal = targets.map(val => `${val.name} ${getDaysUntilTargetDate(val.target)}</br>`).join('');
+  note.innerHTML = internal
+}
+
 
 window.onload = function() {
   addTodoListener()
+  targetNote()
+  if (spendTrackingEnabled) {
+    getTotalMonthSpend()
+  }
   if (quotesEnabled) {
     loadJSon()
   }

@@ -12,6 +12,8 @@ const todosEndpoint = `${host}/todos`
 const completeEndpoint = `${host}/todos/complete`
 const uncompleteEndpoint = `${host}/todos/uncomplete`
 const categoriesEndpoint = `${host}/todos/categories`
+const transactionsEndpointFn = (start, end) => `${host}/transaction?start=${start}&endInclusive=${end}`
+const transactionEndpoint = `${host}/transaction`
 
 const runningTaskEndpoint = `${host}/tracking/running`
 const timeTrackingEndpoint = `${host}/tracking`

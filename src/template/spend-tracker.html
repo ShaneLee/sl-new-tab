@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="../css/style.css">
+    <script src="../js/environment.js" charset="UTF-8"></script>
+    <script src="../js/spend-tracker.js" charset="UTF-8"></script>
+    <title>Spend Tracker</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 80%;
+            margin: 20px auto;
+        }
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+        th {
+        }
+    </style>
+</head>
+<body>
+    <h1>Spend Tracker 💰</h1>
+
+		<h1>Create Transaction</h1>
+    <form id="transactionForm" class="default-form">
+      <input type="text" id="account" name="account" placeholder="Account" required><br>
+      <input type="text" id="amount" name="amount" placeholder="Amount" pattern="\d+(\.\d{2})?" required><br>
+      <input type="text" id="description" name="description" placeholder="Description" required><br>
+      <input type="date" id="date" name="date" placeholder="Date" required><br>
+      <textarea id="notes" name="notes" placeholder="Notes"></textarea><br>
+      <input type="text" id="category" name="category" placeholder="Category" required><br>
+      <button type="submit">Submit</button>
+    </form>
+</body>
+</html>
