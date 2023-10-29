@@ -472,11 +472,21 @@ function todos() {
       const list = document.getElementById('todos');        
       if (!!todos) {
         todos
-          .filter(todo => !(todo.recurring && !todo.due))
+          .filter(todo => !(todo.recurring && !isTodoDueToday(todo)))
           .forEach(todo => addTodo(list, todo))
       }
   })
   .catch(err => {});
+}
+
+function isTodoDueToday(todo) {
+  const dueDate = new Date(todo.dueDate);
+  // Get the current date
+  const currentDate = new Date();
+  // Compare year, month, and day parts of the due date with the current date
+  return dueDate.getFullYear() === currentDate.getFullYear() &&
+         dueDate.getMonth() === currentDate.getMonth() &&
+         dueDate.getDate() === currentDate.getDate() || todo.due;
 }
 
 let selectedTodo = null;
