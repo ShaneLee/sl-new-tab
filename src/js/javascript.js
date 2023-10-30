@@ -751,6 +751,7 @@ function addTodoListener() {
 
   contextMenu = document.getElementById('contextMenu');
   const deleteAction = document.getElementById('deleteAction');
+  const editAction = document.getElementById('editAction');
   const moveNextAction = document.getElementById('moveNextAction');
   const changeCategoryAction = document.getElementById('changeCategoryAction');
 
@@ -777,6 +778,17 @@ function addTodoListener() {
     const category = prompt('Enter the new category:');
     if (!!category) {
       todo.category = category
+      update(todo)
+    }
+    selectedTodo = null
+    hideContextMenu();
+  });
+
+  editAction.addEventListener('click', function() {
+    const todo = selectedTodo
+    const task = prompt('Edit todo:', todo.todo);
+    if (!!task && todo.todo !== task) {
+      todo.todo = task
       update(todo)
     }
     selectedTodo = null
