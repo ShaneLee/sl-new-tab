@@ -718,8 +718,25 @@ function showContextMenu(event, todo) {
   event.preventDefault();
   selectedTodo = todo
 
-  contextMenu.style.left = `${event.pageX}px`;
-  contextMenu.style.top = `${event.pageY}px`;
+  const contextMenuWidth = contextMenu.offsetWidth;
+  const contextMenuHeight = contextMenu.offsetHeight;
+  const viewportHeight = window.innerHeight;
+
+  let left = event.pageX;
+  let top = event.pageY;
+
+  // Check if the context menu is going off the right edge of the viewport
+  if (left + contextMenuWidth > window.innerWidth) {
+    left = window.innerWidth - contextMenuWidth;
+  }
+
+  // Check if the context menu is going off the bottom edge of the viewport
+  if (top + contextMenuHeight > viewportHeight) {
+    top = viewportHeight - contextMenuHeight;
+  }
+
+  contextMenu.style.left = `${left}px`;
+  contextMenu.style.top = `${top}px`;
   contextMenu.style.display = 'block';
 }
 
