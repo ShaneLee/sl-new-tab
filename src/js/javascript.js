@@ -820,7 +820,7 @@ function addTodoListener() {
 
 function getDaysUntilTargetDate(targetDate) {
     const currentDate = new Date();
-    const daysUntil = Math.floor((targetDate - currentDate) / (1000 * 60 * 60 * 24));
+    const daysUntil = Math.ceil((targetDate - currentDate) / (1000 * 60 * 60 * 24));
     const day = targetDate.getDate();
     const monthNames = [
         "January", "February", "March", "April", "May", "June",
