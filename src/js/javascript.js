@@ -836,9 +836,10 @@ function targetNote() {
   const note = document.getElementById('note')
 
   const targets = [
-    { "name": "Promo", "target": new Date('November 17, 2023') },
     { "name": "Leonardo da Vinci", "target": new Date('November 24, 2023') },
-    { "name": "Cleopatra", "target": new Date('December 8, 2023') }
+    { "name": "Cleopatra", "target": new Date('December 8, 2023') },
+    { "name": "Charles Darwin", "target": new Date('December 22, 2023') },
+    { "name": "Florence Nightingale", "target": new Date('January 5, 2024') },
   ]
 
   const internal = targets.map(val => `${val.name} ${getDaysUntilTargetDate(val.target)}</br>`).join('');
