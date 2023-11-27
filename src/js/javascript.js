@@ -319,8 +319,8 @@ function complete(todo) {
   }).then(_ => refreshTodos())
 }
 
-function deleteTodo(todo) {
-  api(todosEndpoint, {
+function deleteTodo(todo, thisInstance) {
+  api(deleteTodosEndpointFn(thisInstance), {
       method: 'DELETE',
       headers: headers,
       body: JSON.stringify(todo)
@@ -594,7 +594,7 @@ function addTodo(uL, todo) {
         // If the user has dragged more than half the width of the delete div, complete the slide
         if (currentTranslate <= -50) { // slide to the left
             contentDiv.style.transform = `translateX(-100px)`;
-            deleteTodo(todo)
+            deleteTodo(todo, true)
         }
         else if (currentTranslate >= 50) { // slide to the right
           const category = todo?.category.replace(/\d+/, (match) => parseInt(match, 10) + 1);
@@ -767,14 +767,21 @@ function addTodoListener() {
   });
 
   contextMenu = document.getElementById('contextMenu');
-  const deleteAction = document.getElementById('deleteAction');
+  const deleteThisInstanceAction = document.getElementById('deleteThisInstanceAction');
+  const deleteAllInstancesAction = document.getElementById('deleteAllInstancesAction');
   const editAction = document.getElementById('editAction');
   const moveNextAction = document.getElementById('moveNextAction');
   const changeCategoryAction = document.getElementById('changeCategoryAction');
 
 
-  deleteAction.addEventListener('click', function() {
-    deleteTodo(selectedTodo)
+  deleteThisInstanceAction.addEventListener('click', function() {
+    deleteTodo(selectedTodo, true)
+    selectedTodo = null
+    hideContextMenu();
+  });
+
+  deleteAllInstancesAction.addEventListener('click', function() {
+    deleteTodo(selectedTodo, false)
     selectedTodo = null
     hideContextMenu();
   });
