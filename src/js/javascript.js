@@ -12,6 +12,7 @@ const LAST = new Array();
 let runningTask;
 let timerInterval;
 let contextMenu;
+let TODOS_SET = new Set()
 
 document.addEventListener('keydown', (event) => {
   if (event.key === '~') {
@@ -343,6 +344,7 @@ function playAudio() {
 
 
 function refreshTodos() {
+  TODOS_SET = new Set()
   const list = document.getElementById('todos');        
   [... list.children].forEach(val => list.removeChild(val))
   todos()
@@ -491,6 +493,7 @@ function isTodoDueToday(todo) {
 
 let selectedTodo = null;
 function addTodo(uL, todo) {
+  TODOS_SET.add(todo)
   const xhr = new XMLHttpRequest();
   xhr.open('PATCH', completeEndpoint, false);
   xhr.setRequestHeader('Content-Type', 'application/json')
@@ -716,34 +719,62 @@ function highlightMatches() {
 
 function showContextMenu(event, todo) {
   event.preventDefault();
-  selectedTodo = todo
 
-  const contextMenuWidth = contextMenu.offsetWidth;
-  const contextMenuHeight = contextMenu.offsetHeight;
-  const viewportHeight = window.innerHeight;
+  if (!!todo) {
+      selectedTodo = todo
+      // Show the todo-specific context menu
+      contextMenu = document.getElementById('todoContextMenu');
+      const contextMenuWidth = contextMenu.offsetWidth;
+      const contextMenuHeight = contextMenu.offsetHeight;
+      const viewportHeight = window.innerHeight;
 
-  let left = event.pageX;
-  let top = event.pageY;
+      let left = event.pageX;
+      let top = event.pageY;
 
-  // Check if the context menu is going off the right edge of the viewport
-  if (left + contextMenuWidth > window.innerWidth) {
-    left = window.innerWidth - contextMenuWidth;
+      // Check if the context menu is going off the right edge of the viewport
+      if (left + contextMenuWidth > window.innerWidth) {
+          left = window.innerWidth - contextMenuWidth;
+      }
+
+      // Check if the context menu is going off the bottom edge of the viewport
+      if (top + contextMenuHeight > viewportHeight) {
+          top = viewportHeight - contextMenuHeight;
+      }
+
+      contextMenu.style.left = `${left}px`;
+      contextMenu.style.top = `${top}px`;
+      contextMenu.style.display = 'block';
+  } else {
+      // Show the general context menu
+      contextMenu = document.getElementById('contextMenu');
+      const contextMenuWidth = contextMenu.offsetWidth;
+      const contextMenuHeight = contextMenu.offsetHeight;
+      const viewportHeight = window.innerHeight;
+
+      let left = event.pageX;
+      let top = event.pageY;
+
+      // Check if the context menu is going off the right edge of the viewport
+      if (left + contextMenuWidth > window.innerWidth) {
+          left = window.innerWidth - contextMenuWidth;
+      }
+
+      // Check if the context menu is going off the bottom edge of the viewport
+      if (top + contextMenuHeight > viewportHeight) {
+          top = viewportHeight - contextMenuHeight;
+      }
+
+      contextMenu.style.left = `${left}px`;
+      contextMenu.style.top = `${top}px`;
+      contextMenu.style.display = 'block';
   }
-
-  // Check if the context menu is going off the bottom edge of the viewport
-  if (top + contextMenuHeight > viewportHeight) {
-    top = viewportHeight - contextMenuHeight;
-  }
-
-  contextMenu.style.left = `${left}px`;
-  contextMenu.style.top = `${top}px`;
-  contextMenu.style.display = 'block';
 }
 
 function hideContextMenu() {
     if (!!contextMenu) {
       contextMenu.style.display = 'none';
     }
+    contextMenu = null
 }
 
 function addTodoListener() {
@@ -772,6 +803,12 @@ function addTodoListener() {
   const editAction = document.getElementById('editAction');
   const moveNextAction = document.getElementById('moveNextAction');
   const changeCategoryAction = document.getElementById('changeCategoryAction');
+  const changeAllCategoryAction = document.getElementById('changeAllCategoryAction');
+  const moveAllNextAction = document.getElementById('moveAllNextAction');
+
+  document.addEventListener('contextmenu', function(event) {
+    showContextMenu(event)
+  });
 
 
   deleteThisInstanceAction.addEventListener('click', function() {
@@ -805,6 +842,32 @@ function addTodoListener() {
       update(todo)
     }
     selectedTodo = null
+    hideContextMenu();
+  });
+
+  moveAllNextAction.addEventListener('click', function() {
+    // TODO update the backend to have a list edit endpoint
+    // will need to validate that all are for the same user
+    TODOS_SET.forEach(todo => {
+      const category = todo?.category.replace(/\d+/, (match) => parseInt(match, 10) + 1);
+      if (!!category) {
+        todo.category = category
+        update(todo)
+      }
+    })
+    hideContextMenu();
+  });
+
+  changeAllCategoryAction.addEventListener('click', function() {
+    // TODO update the backend to have a list edit endpoint
+    // will need to validate that all are for the same user
+    const category = prompt('Enter the new category:');
+    TODOS_SET.forEach(todo => {
+      if (!!category) {
+        todo.category = category
+        update(todo)
+      }
+    })
     hideContextMenu();
   });
 
