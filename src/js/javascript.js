@@ -780,8 +780,8 @@ function showContextMenu(event, todo) {
       const contextMenuHeight = contextMenu.offsetHeight;
       const viewportHeight = window.innerHeight;
 
-      let left = event.pageX;
-      let top = event.pageY;
+      let left = event.clientX;
+      let top = event.clientY;
 
       // Check if the context menu is going off the right edge of the viewport
       if (left + contextMenuWidth > window.innerWidth) {
@@ -803,8 +803,8 @@ function showContextMenu(event, todo) {
       const contextMenuHeight = contextMenu.offsetHeight;
       const viewportHeight = window.innerHeight;
 
-      let left = event.pageX;
-      let top = event.pageY;
+      let left = event.clientX;
+      let top = event.clientY;
 
       // Check if the context menu is going off the right edge of the viewport
       if (left + contextMenuWidth > window.innerWidth) {
