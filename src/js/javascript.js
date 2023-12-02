@@ -523,6 +523,9 @@ function addTodo(uL, todo) {
   listItem.appendChild(contentDiv);
   listItem.appendChild(deleteDiv);
   listItem.addEventListener('contextmenu', function(event) {
+    if (!!contextMenu) {
+      hideContextMenu()
+    }
     showContextMenu(event, todo);
   });
 
@@ -768,13 +771,15 @@ function showContextMenu(event, todo) {
       contextMenu.style.top = `${top}px`;
       contextMenu.style.display = 'block';
   }
+
+  event.stopPropagation()
 }
 
 function hideContextMenu() {
     if (!!contextMenu) {
       contextMenu.style.display = 'none';
+      contextMenu = null
     }
-    contextMenu = null
 }
 
 function addTodoListener() {
@@ -807,6 +812,7 @@ function addTodoListener() {
   const moveAllNextAction = document.getElementById('moveAllNextAction');
 
   document.addEventListener('contextmenu', function(event) {
+    hideContextMenu()
     showContextMenu(event)
   });
 
