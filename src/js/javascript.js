@@ -529,6 +529,14 @@ function addTodo(uL, todo) {
     showContextMenu(event, todo);
   });
 
+  if (todo.targetCount != null) {
+      const countElement = document.createElement('span');
+      countElement.innerHTML = `${todo.count}/${todo.targetCount}`;
+      // TODO different class?
+      countElement.className = 'due-date-box';
+      contentDiv.appendChild(countElement);
+  }
+
   if (todo.dueDate) {
       const dueDateElement = document.createElement('span');
       const currentDate = new Date();
@@ -620,6 +628,47 @@ function addTodo(uL, todo) {
 
 
   listItem.addEventListener('click', () => {
+    if (todo.targetCount != null) {
+      const existingCountInput = document.getElementById('countInput');
+        if (existingCountInput) {
+            // If an input already exists, focus on it and return
+            existingCountInput.focus();
+            return;
+        }
+      const countInput = document.createElement('input');
+      countInput.type = 'number';
+      // Make this not unique for todos, 
+      // this means that we can't have two of this open at once, which is a simple
+      // way to prevent the nonsense that would occur if I allowed that
+      countInput.id = 'countInput'
+      countInput.value = todo.count;  // Prepopulate with the current count
+      countInput.addEventListener('keypress', (event) => {
+          if (event.key === 'Enter') {
+              const newCount = parseInt(countInput.value, 10);
+              if (newCount >= todo.targetCount) {
+                  // Continue with the normal click function
+                  LAST.push(todo);
+                  xhr.send(JSON.stringify(todo));
+                  listItem.style = 'display: none;';
+                  playAudio();
+              } else {
+                  todo.count = newCount
+                  update(todo)
+              }
+              contentDiv.removeChild(countInput);
+          }
+      });
+
+      contentDiv.appendChild(countInput);
+
+      countInput.focus();
+
+      // Return to prevent further execution of the click event
+      return;
+
+
+    }
+
     LAST.push(todo)
     xhr.send(JSON.stringify(todo))
     listItem.style = 'display: none;'
