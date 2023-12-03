@@ -770,6 +770,10 @@ function highlightMatches() {
 }
 
 function showContextMenu(event, todo) {
+  // Check if the right-click occurred outside of an 'a' tag
+  if (event.target.tagName.toLowerCase() === 'a') {
+    return;
+  }
   event.preventDefault();
 
   if (!!todo) {
