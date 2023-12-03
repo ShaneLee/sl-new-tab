@@ -304,12 +304,16 @@ function uncomplete(todo) {
   }).then(_ => refreshTodos())
 }
 
-function update(todo) {
-  api(todosEndpoint, {
+function update(todo, dontRefresh) {
+  return api(todosEndpoint, {
       method: 'PUT',
       headers: headers,
       body: JSON.stringify(todo)
-  }).then(_ => refreshTodos())
+  }).then(_ => {
+    if (!dontRefresh) {
+      refreshTodos()
+    }
+  })
 }
 
 function complete(todo) {
@@ -531,7 +535,7 @@ function addTodo(uL, todo) {
 
   if (todo.targetCount != null) {
       const countElement = document.createElement('span');
-      countElement.innerHTML = `${todo.count}/${todo.targetCount}`;
+      countElement.innerHTML = `${todo.count}/${!!todo.incrementTarget ? todo.incrementTarget : todo.targetCount}`;
       // TODO different class?
       countElement.className = 'due-date-box';
       contentDiv.appendChild(countElement);
@@ -645,16 +649,18 @@ function addTodo(uL, todo) {
       countInput.addEventListener('keypress', (event) => {
           if (event.key === 'Enter') {
               const newCount = parseInt(countInput.value, 10);
-              if (newCount >= todo.targetCount) {
-                  // Continue with the normal click function
-                  LAST.push(todo);
-                  xhr.send(JSON.stringify(todo));
-                  listItem.style = 'display: none;';
-                  playAudio();
-              } else {
-                  todo.count = newCount
-                  update(todo)
-              }
+              todo.count = newCount
+              // TODO make the backend handle updating this particular case
+              update(todo, true)
+                .then(val => {
+                  if (newCount >= todo.targetCount || newCount >= todo.incrementTarget) {
+                      // Continue with the normal click function
+                      LAST.push(todo);
+                      xhr.send(JSON.stringify(todo));
+                      listItem.style = 'display: none;';
+                      playAudio();
+                }
+              })
               contentDiv.removeChild(countInput);
           }
       });
