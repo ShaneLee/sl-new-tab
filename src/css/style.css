@@ -68,6 +68,25 @@ ul {
   padding: 0;
 }
 
+.countInput {
+  background: none;
+	color: #8d8271; 
+  font-size: 1.2em;
+  font-weight: bold;
+  border: none;
+  margin: 0 0px 0px 10px;
+	font-family: 'Helvetica Neue', sans-serif; 
+  -moz-appearance: textfield;
+
+}
+
+.countInput
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+    margin: 0;
+}
+
 .todos li {
   padding: 10px 0px;
   border-bottom: 1px solid #868680;
