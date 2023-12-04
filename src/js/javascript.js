@@ -9,6 +9,8 @@ const withEmojis=true
 const CATEGORIES_SET = new Set();
 const LAST = new Array();
 
+const DEFAULT_RANK = 1000
+
 let runningTask;
 let timerInterval;
 let contextMenu;
@@ -316,6 +318,14 @@ function update(todo, dontRefresh) {
   })
 }
 
+function updateRanks(todos) {
+  return api(rankEndpoint, {
+      method: 'PUT',
+      headers: headers,
+      body: JSON.stringify(todos)
+  })
+}
+
 function complete(todo) {
   api(completeEndpoint, {
       method: 'PATCH',
@@ -504,9 +514,18 @@ function addTodo(uL, todo) {
   xhr.setRequestHeader('tempUserId', tempUserId)
 
   const listItem = document.createElement('li');  
+
   listItem.className = 'todo-item';
   // listItem.innerHTML = todo.todo;
   listItem.id = todo.id
+  listItem.draggable = true;
+
+  listItem.addEventListener('dragstart', (event) => {
+    event.dataTransfer.setData('text/plain', event.target.id);
+  });
+
+  listItem.addEventListener('dragover', handleDragOver);
+  listItem.addEventListener('drop', handleDrop);
 
   const categoryDiv = document.createElement('div');
   categoryDiv.className = 'slide-category';
@@ -645,6 +664,7 @@ function addTodo(uL, todo) {
       // this means that we can't have two of this open at once, which is a simple
       // way to prevent the nonsense that would occur if I allowed that
       countInput.id = 'countInput'
+      countInput.className = 'countInput'
       countInput.value = todo.count;  // Prepopulate with the current count
       countInput.addEventListener('keypress', (event) => {
           if (event.key === 'Enter') {
@@ -683,6 +703,127 @@ function addTodo(uL, todo) {
   });
   uL.appendChild(listItem);
 }
+
+function handleDragOver(event) {
+  event.preventDefault();
+}
+
+function handleDrop(event) {
+  event.preventDefault();
+
+  // Get the dragged data (e.g., todo ID)
+  const draggedItemId = event.dataTransfer.getData('text/plain');
+
+  // Get the drop target (the new position for the todo)
+  const dropTarget = event.target.closest('li');
+
+  // Reorder the todos based on the drop position
+  reorderTodos(draggedItemId, dropTarget);
+}
+
+function reorderTodos(draggedItemId, dropTarget) {
+  // Get the parent list (ul)
+  const todosList = dropTarget.parentElement;
+
+  // Get all todo items in the list
+  const todoItems = Array.from(todosList.children);
+
+  // Find the index of the dragged item
+  const draggedIndex = todoItems.findIndex(item => item.id === draggedItemId);
+
+  // Find the index of the drop target
+  const dropIndex = todoItems.findIndex(item => item === dropTarget);
+
+  // Remove the dragged item from the list
+  const [draggedItem] = todoItems.splice(draggedIndex, 1);
+
+  // Insert the dragged item at the new position
+  todoItems.splice(dropIndex, 0, draggedItem);
+
+  // Update the DOM with the new order
+  todosList.innerHTML = '';
+  todoItems.forEach(item => todosList.appendChild(item));
+
+  const adjacentItems = getAdjacentItems(todoItems, draggedItem)
+  setRankOrderBetween(adjacentItems, draggedItem, todoItems)
+}
+
+function getAdjacentItems(array, element) {
+  const index = array.indexOf(element);
+
+  if (index === -1) {
+    // Element not found in the array
+    return null;
+  }
+
+  const previousIndex = index - 1;
+  const nextIndex = index + 1;
+
+  const previousListItem = previousIndex >= 0 ? array[previousIndex] : null;
+  const nextListItem = nextIndex < array.length ? array[nextIndex] : null;
+
+  return { previousListItem, nextListItem };
+}
+
+function setRankOrderBetween(adjacentItems, todoObject, todos) {
+  const todosMap = Array.from(TODOS_SET).reduce((map, item) => {
+    map.set(item.id, item);
+    return map;
+  }, new Map())
+  const { previousListItem, nextListItem } = adjacentItems;
+  const previousItem = todosMap.get(previousListItem?.id)
+  const nextItem = todosMap.get(nextListItem?.id)
+
+  if (previousItem === null && nextItem === null) {
+    // Handle the case when both adjacent items are null
+    return updateIndividualTodoRank(todoObject, todosMap, DEFAULT_RANK);
+  }
+
+  const previousRank = previousItem ? previousItem.rankOrder : 0;
+  const nextRank = nextItem ? nextItem.rankOrder : 30000000;
+
+  // Calculate a rank order value between the two items
+  const newRankOrder = Math.floor((previousRank + nextRank) / 2);
+
+  // Check if there are no integers between the two items
+  // If this happens, the simplest thing to do is completely 
+  // rerank the whole list based on the current order
+  if (newRankOrder === previousRank || newRankOrder === nextRank) {
+    rerank(todos, todosMap);
+    return
+  }
+
+  return updateIndividualTodoRank(todoObject, todosMap, newRankOrder);
+}
+
+function updateIndividualTodoRank(todoObject, todosMap, rankOrder) {
+  const todo = todosMap.get(todoObject.id)
+  todo.rankOrder = rankOrder
+  // Call the backend to persist the new order
+  update(todo, true)
+}
+
+/** 
+ * We need to come up with a new rank for each of these elements
+ * then call the backend up update the ranks
+ *
+ * The ranks have an arbitary gap between the ranks that prevents the 
+ * need to rerank all the items every single time we reorder the elements. 
+ * In most cases, it will be update a single item's rank in the bank end
+ */ 
+function rerank(todoElements, todosMaps) {
+
+  const updated = todoElements.map((element, index) => {
+    const todo = todosMap.get(element.id)
+    return {
+      ...todo,
+      rankOrder: (index + 1) * DEFAULT_RANK, // default rank is the arbitary gap
+    };
+  })
+
+	updateRanks(updated)
+}
+
 
 function createGrid(width, height, numToColor) {
   const gridContainer = document.getElementById("grid-container");
