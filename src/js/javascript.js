@@ -922,57 +922,38 @@ function showContextMenu(event, todo) {
     return;
   }
   event.preventDefault();
-
-  if (!!todo) {
-      selectedTodo = todo
-      // Show the todo-specific context menu
-      contextMenu = document.getElementById('todoContextMenu');
-      const contextMenuWidth = contextMenu.offsetWidth;
-      const contextMenuHeight = contextMenu.offsetHeight;
-      const viewportHeight = window.innerHeight;
-
-      let left = event.clientX;
-      let top = event.clientY;
-
-      // Check if the context menu is going off the right edge of the viewport
-      if (left + contextMenuWidth > window.innerWidth) {
-          left = window.innerWidth - contextMenuWidth;
-      }
-
-      // Check if the context menu is going off the bottom edge of the viewport
-      if (top + contextMenuHeight > viewportHeight) {
-          top = viewportHeight - contextMenuHeight;
-      }
-
-      contextMenu.style.left = `${left}px`;
-      contextMenu.style.top = `${top}px`;
-      contextMenu.style.display = 'block';
-  } else {
-      // Show the general context menu
-      contextMenu = document.getElementById('contextMenu');
-      const contextMenuWidth = contextMenu.offsetWidth;
-      const contextMenuHeight = contextMenu.offsetHeight;
-      const viewportHeight = window.innerHeight;
-
-      let left = event.clientX;
-      let top = event.clientY;
-
-      // Check if the context menu is going off the right edge of the viewport
-      if (left + contextMenuWidth > window.innerWidth) {
-          left = window.innerWidth - contextMenuWidth;
-      }
-
-      // Check if the context menu is going off the bottom edge of the viewport
-      if (top + contextMenuHeight > viewportHeight) {
-          top = viewportHeight - contextMenuHeight;
-      }
-
-      contextMenu.style.left = `${left}px`;
-      contextMenu.style.top = `${top}px`;
-      contextMenu.style.display = 'block';
+  const isTodoContextMenu = !!todo;
+  const contextMenuId = isTodoContextMenu ? 'todoContextMenu' : 'contextMenu';
+  contextMenu = document.getElementById(contextMenuId);
+  
+  // Ensure the context menu is visible before retrieving dimensions
+  contextMenu.style.display = 'block';
+  
+  const contextMenuWidth = contextMenu.offsetWidth;
+  const contextMenuHeight = contextMenu.offsetHeight;
+  const viewportWidth = window.innerWidth;
+  const viewportHeight = window.innerHeight;
+  
+  let left = event.clientX;
+  let top = event.clientY;
+  
+  // Adjust left position if the context menu goes off the right edge
+  if (left + contextMenuWidth > viewportWidth) {
+    left = viewportWidth - contextMenuWidth;
   }
-
-  event.stopPropagation()
+  
+  // Adjust top position if the context menu goes off the bottom edge
+  if (top + contextMenuHeight > viewportHeight) {
+    top = viewportHeight - contextMenuHeight;
+  }
+  
+  // Ensure the top position is never negative
+  top = Math.max(top, 0);
+  
+  contextMenu.style.left = `${left}px`;
+  contextMenu.style.top = `${top}px`;
+  
+  event.stopPropagation();
 }
 
 function hideContextMenu() {
