@@ -1,7 +1,3 @@
-html {
-  height: 100%;
-}
-
 /* 
  * Grey = #2C2C2C
  * Dark Grey = #272725
@@ -11,16 +7,35 @@ html {
  * Orangy Grey = #8d8271
 */
 
+/* background-color: #131313; */
+
+:root {
+  --background-color: #272725;
+  --text-color: #8d8271;
+  --link-color: #8d8271;
+  --link-hover-color: #f0f0f0;
+  --highlighted-todo-color: #f0f0f0;
+  --font-family: 'Helvetica Neue', sans-serif;
+  --main-color: #e7b91b;
+  --darker-main-color: #d1a116;
+  --dark-grey: #2c2c2c;
+  --light-grey: #868680;
+}
+
+html {
+  height: 100%;
+}
+
+
 body {
-  background-color: #272725;
-  /* background-color: #131313; */
-	color: #8d8271; 
-	font-family: 'Helvetica Neue', sans-serif; 
+  background-color: var(--background-color);
+	color: var(--text-color); 
+	font-family: var(--font-family); 
 	font-weight: bold; 
 }
 
 a { 
-	color: #8d8271; 
+	color: var(--link-color); 
   text-decoration: none;
 }
 
@@ -37,7 +52,7 @@ a:hover {
 }
 
 h1, h2, h3, h4, h5, h6 { 
-	color: #8d8271; 
+	color: var(--text-color); 
 	letter-spacing: -1px; 
 	line-height: 1; 
 	text-align: center;
@@ -70,12 +85,12 @@ ul {
 
 .countInput {
   background: none;
-	color: #8d8271; 
+	color: var(--text-color); 
   font-size: 1.2em;
   font-weight: bold;
   border: none;
   margin: 0 0px 0px 10px;
-	font-family: 'Helvetica Neue', sans-serif; 
+	font-family: var(--font-family); 
   -moz-appearance: textfield;
 
 }
@@ -89,15 +104,15 @@ ul {
 
 .todos li {
   padding: 10px 0px;
-  border-bottom: 1px solid #868680;
+  border-bottom: 1px solid var(--light-grey);
   overflow-wrap: break-word;
 }
 
 .categories {
   height: 50px;
   background: none;
-	color: #8d8271; 
-	font-family: 'Helvetica Neue', sans-serif; 
+	color: var(--text-color); 
+	font-family: var(--font-family); 
 	font-weight: bold; 
   border: none;
 }
@@ -113,8 +128,8 @@ ul {
   width: 100%;
   background: none;
   font-size: 1.5em;
-	color: #8d8271; 
-	font-family: 'Helvetica Neue', sans-serif; 
+	color: var(--text-color); 
+	font-family: var(--font-family); 
 	font-weight: bold; 
   border: none;
 }
@@ -123,8 +138,8 @@ ul {
   height: 50px;
   background: none;
   font-size: 1.5em;
-	color: #8d8271; 
-	font-family: 'Helvetica Neue', sans-serif; 
+	color: var(--text-color); 
+	font-family: var(--font-family); 
 	font-weight: bold; 
   border: none;
 }
@@ -136,8 +151,8 @@ div.todo-input {
   width: 100%;
   background: none;
   font-size: 1.5em;
-  color: #8d8271;
-  font-family: 'Helvetica Neue', sans-serif;
+  color: var(--text-color);
+  font-family: var(--font-family);
   font-weight: bold;
   border: none;
   outline: none;
@@ -155,8 +170,8 @@ div.todo-input:focus {
   height: 50px;
   background: none;
   font-size: 1.5em;
-  color: #8d8271;
-  font-family: 'Helvetica Neue', sans-serif;
+  color: var(--text-color);
+  font-family: var(--font-family);
   font-weight: bold;
   border: none;
   outline: none;  // Removes the default browser focus outline
@@ -175,7 +190,7 @@ div.todo-input:focus {
 
 .content {
   transition: transform 0.3s;
-  background-color: #272725;  /* This ensures that .content is solid and covers the .delete div */
+  background-color: var(--background-color);  /* This ensures that .content is solid and covers the .delete div */
   flex-grow: 1; 
   z-index: 2;  /* Ensures that the content div is above the delete div */
 }
@@ -209,14 +224,14 @@ div.todo-input:focus {
   top: 50%;           
   transform: translateY(-50%);
   right: 10px;        
-  background-color: #f0f0f0;
+  background-color: var(--link-hover-color);
   padding: 5px;      
   border-radius: 3px;
 }
 
 .highlighted-due {
-  color: #272725;
-  background-color: #e7b91b;
+  color: var(--background-color);
+  background-color: var(--main-color);
 }
 
 .todos-header-container { 
@@ -263,7 +278,7 @@ div.todo-input:focus {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background-color: #8d8271;
+  background-color: var(--text-color);
   border: none;
   cursor: pointer;
   position: relative;
@@ -276,7 +291,7 @@ div.todo-input:focus {
   width: 25px;
   height: 25px;
   font-size: 1.4em;
-  color: #272725;
+  color: var(--background-color);
   line-height: 22px;
 }
 
@@ -305,8 +320,8 @@ div.todo-input:focus {
   height: 50px;
   background: none;
   font-size: 1.5em;
-	color: #8d8271; 
-	font-family: 'Helvetica Neue', sans-serif; 
+	color: var(--text-color); 
+	font-family: var(--font-family); 
 	font-weight: bold; 
   border: none;
 }
@@ -315,8 +330,8 @@ div.todo-input:focus {
   height: 50px;
   background: none;
   font-size: 1.5em;
-	color: #8d8271; 
-	font-family: 'Helvetica Neue', sans-serif; 
+	color: var(--text-color); 
+	font-family: var(--font-family); 
 	font-weight: bold; 
   border: none;
 }
@@ -346,7 +361,7 @@ div.todo-input:focus {
 /* Ratings and reviews ------------------ */
 
 #ratingForm {
-    background-color: #2C2C2C;  /* Grey */
+    background-color: var(--dark-grey);  /* Grey */
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -359,9 +374,9 @@ div.todo-input:focus {
     height: 120px;
     padding: 10px;
     border: none;
-    background-color: #272725;  /* Dark Grey */
-    color: #8d8271;  /* Orangy Grey */
-    font-family: 'Helvetica Neue', sans-serif;
+    background-color: var(--background-color);  /* Dark Grey */
+    color: var(--text-color);  /* Orangy Grey */
+    font-family: var(--font-family);
     font-weight: bold;
     border-radius: 8px;
     margin-top: 20px;
@@ -371,16 +386,16 @@ div.todo-input:focus {
 
 #ratingForm textarea:focus {
     outline: none;
-    border: 2px solid #e7b91b; /* Mustard Yellow */
+    border: 2px solid var(--main-color); /* Mustard Yellow */
 }
 
 #ratingForm button {
     display: block;
     width: 100%;
     padding: 10px;
-    background-color: #e7b91b;  /* Mustard Yellow */
+    background-color: var(--main-color);  /* Mustard Yellow */
     border: none;
-    color: #272725;  /* Dark Grey */
+    color: var(--background-color);  /* Dark Grey */
     font-weight: bold;
     border-radius: 8px;
     cursor: pointer;
@@ -389,7 +404,7 @@ div.todo-input:focus {
 }
 
 #ratingForm button:hover {
-    background-color: #d1a116;  /* A darker shade of Mustard Yellow */
+    background-color: var(--darker-main-color);  /* A darker shade of Mustard Yellow */
 }
 
 .chart-container {
@@ -411,9 +426,9 @@ div.todo-input:focus {
     display: inline-block;
     width: 30px;
     height: 30px;
-    background-color: #272725;  /* Dark Grey */
-    color: #8d8271;  /* Orangy Grey */
-    border: 2px solid #8d8271;  /* Orangy Grey */
+    background-color: var(--background-color);  /* Dark Grey */
+    color: var(--text-color);  /* Orangy Grey */
+    border: 2px solid var(--text-color);  /* Orangy Grey */
     border-radius: 50%;  /* Makes it circular */
     text-align: center;
     line-height: 30px;  /* Vertically center the text */
@@ -422,14 +437,14 @@ div.todo-input:focus {
 }
 
 .rating-group label:hover {
-    background-color: #8d8271;  /* Orangy Grey */
-    color: #272725;  /* Dark Grey */
+    background-color: var(--text-color);  /* Orangy Grey */
+    color: var(--background-color);  /* Dark Grey */
 }
 
 .rating-group input[type="radio"]:checked + label {
-    background-color: #e7b91b;  /* Mustard Yellow */
-    color: #272725;  /* Dark Grey */
-    border: 2px solid #e7b91b;  /* Mustard Yellow */
+    background-color: var(--main-color);  /* Mustard Yellow */
+    color: var(--background-color);  /* Dark Grey */
+    border: 2px solid var(--main-color);  /* Mustard Yellow */
 }
 
 #review-container {
@@ -439,7 +454,7 @@ div.todo-input:focus {
 }
 
 #reviewForm {
-    background-color: #2C2C2C;  /* Grey */
+    background-color: var(--dark-grey);  /* Grey */
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -450,9 +465,9 @@ div.todo-input:focus {
     display: block;
     width: 100%;
     padding: 10px;
-    background-color: #e7b91b;  /* Mustard Yellow */
+    background-color: var(--main-color);  /* Mustard Yellow */
     border: none;
-    color: #272725;  /* Dark Grey */
+    color: var(--background-color);  /* Dark Grey */
     font-weight: bold;
     border-radius: 8px;
     cursor: pointer;
@@ -463,9 +478,9 @@ div.todo-input:focus {
 #reviewForm input {
     padding: 10px;
     border: none;
-    background-color: #272725;  /* Dark Grey */
-    color: #8d8271;  /* Orangy Grey */
-    font-family: 'Helvetica Neue', sans-serif;
+    background-color: var(--background-color);  /* Dark Grey */
+    color: var(--text-color);  /* Orangy Grey */
+    font-family: var(--font-family);
     font-weight: bold;
     border-radius: 8px;
     margin-top: 20px;
@@ -478,9 +493,9 @@ div.todo-input:focus {
     height: 120px;
     padding: 10px;
     border: none;
-    background-color: #272725;  /* Dark Grey */
-    color: #8d8271;  /* Orangy Grey */
-    font-family: 'Helvetica Neue', sans-serif;
+    background-color: var(--background-color);  /* Dark Grey */
+    color: var(--text-color);  /* Orangy Grey */
+    font-family: var(--font-family);
     font-weight: bold;
     border-radius: 8px;
     margin-top: 20px;
@@ -491,7 +506,7 @@ div.todo-input:focus {
 #reviewForm label {
     display: block;
     margin-top: 20px;
-    color: #8d8271;
+    color: var(--text-color);
     font-weight: bold;
     font-size: 1.5em;
     text-align: center;
@@ -503,8 +518,8 @@ div.todo-input:focus {
     width: 100%;
     padding: 10px;
     margin-top: 10px;
-    background-color: #272725;
-    color: #8d8271;
+    background-color: var(--background-color);
+    color: var(--text-color);
     border: none;
     border-radius: 4px;
 }
@@ -514,7 +529,7 @@ div.todo-input:focus {
 #reviewForm input[type="number"]:focus,
 #reviewForm textarea:focus {
     outline: none;
-    border: 2px solid #e7b91b; /* Mustard Yellow */
+    border: 2px solid var(--main-color); /* Mustard Yellow */
 }
 
 .review-category {
@@ -537,7 +552,7 @@ div.todo-input:focus {
 
 
 .default-form {
-    background-color: #2C2C2C;  /* Grey */
+    background-color: var(--dark-grey);
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -550,9 +565,9 @@ div.todo-input:focus {
     height: 120px;
     padding: 10px;
     border: none;
-    background-color: #272725;  /* Dark Grey */
-    color: #8d8271;  /* Orangy Grey */
-    font-family: 'Helvetica Neue', sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    font-family: var(--font-family);
     font-weight: bold;
     border-radius: 8px;
     margin-top: 20px;
@@ -564,9 +579,9 @@ div.todo-input:focus {
     width: 100%;
     padding: 10px;
     border: none;
-    background-color: #272725;  /* Dark Grey */
-    color: #8d8271;  /* Orangy Grey */
-    font-family: 'Helvetica Neue', sans-serif;
+    background-color: var(--background-color);  /* Dark Grey */
+    color: var(--text-color);  /* Orangy Grey */
+    font-family: var(--font-family);
     font-weight: bold;
     border-radius: 8px;
     margin-top: 20px;
@@ -576,16 +591,16 @@ div.todo-input:focus {
 
 .default-form textarea:focus {
     outline: none;
-    border: 2px solid #e7b91b; /* Mustard Yellow */
+    border: 2px solid var(--main-color); /* Mustard Yellow */
 }
 
 .default-form button {
     display: block;
     width: 100%;
     padding: 10px;
-    background-color: #e7b91b;  /* Mustard Yellow */
+    background-color: var(--main-color);  /* Mustard Yellow */
     border: none;
-    color: #272725;  /* Dark Grey */
+    color: var(--background-color);  /* Dark Grey */
     font-weight: bold;
     border-radius: 8px;
     cursor: pointer;
@@ -594,7 +609,7 @@ div.todo-input:focus {
 }
 
 .default-form button:hover {
-    background-color: #d1a116;  /* A darker shade of Mustard Yellow */
+    background-color: var(--darker-main-color);  /* A darker shade of Mustard Yellow */
 }
 
 /* TODOs */
@@ -603,8 +618,8 @@ div.todo-input:focus {
   position: fixed;
   z-index: 1000;
   width: 150px;
-  background: #2c2c2c;
-  border: 1px solid #868680;
+  background: var(--dark-grey);
+  border: 1px solid var(--light-grey);
 }
 
 .context-menu-item {
@@ -613,6 +628,6 @@ div.todo-input:focus {
 }
 
 .context-menu-item:hover {
-  background: #272725;
+  background: var(--background-color);
 }
 
