@@ -923,6 +923,7 @@ function showContextMenu(event, todo) {
   }
   event.preventDefault();
   const isTodoContextMenu = !!todo;
+  selectedTodo = todo;
   const contextMenuId = isTodoContextMenu ? 'todoContextMenu' : 'contextMenu';
   contextMenu = document.getElementById(contextMenuId);
   
