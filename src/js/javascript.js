@@ -505,6 +505,10 @@ function isTodoDueToday(todo) {
          dueDate.getDate() === currentDate.getDate() || todo.due;
 }
 
+function todoCountString(todo) {
+  return `${todo.count}/${!!todo.incrementTarget ? todo.incrementTarget : todo.targetCount}`;
+}
+
 let selectedTodo = null;
 function addTodo(uL, todo) {
   TODOS_SET.add(todo)
@@ -552,9 +556,10 @@ function addTodo(uL, todo) {
     showContextMenu(event, todo);
   });
 
+  let countElement;
   if (todo.targetCount != null) {
-      const countElement = document.createElement('span');
-      countElement.innerHTML = `${todo.count}/${!!todo.incrementTarget ? todo.incrementTarget : todo.targetCount}`;
+      countElement = document.createElement('span');
+      countElement.innerHTML = todoCountString(todo)
       // TODO different class?
       countElement.className = 'due-date-box';
       contentDiv.appendChild(countElement);
@@ -670,6 +675,7 @@ function addTodo(uL, todo) {
           if (event.key === 'Enter') {
               const newCount = parseInt(countInput.value, 10);
               todo.count = newCount
+              countElement.innerHTML = todoCountString(todo)
               // TODO make the backend handle updating this particular case
               update(todo, true)
                 .then(val => {
