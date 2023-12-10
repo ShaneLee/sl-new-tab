@@ -9,6 +9,7 @@ const headers = {
 
 // Endpoints
 const todosEndpoint = `${host}/todos`
+const importantEndpoint = `${todosEndpoint}/important`
 const rankEndpoint = `${host}/todos/rank`
 const deleteTodosEndpointFn = (thisInstance) => `${host}/todos?thisInstance=${thisInstance}`
 const completeEndpoint = `${host}/todos/complete`

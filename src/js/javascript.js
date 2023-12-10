@@ -298,6 +298,13 @@ function deathCountdown() {
   return Math.abs(today.diff(moment('1994-03-28'), 'weeks'))
 }
 
+function importantTodos() {
+  return api(importantEndpoint, {
+      method: 'GET',
+      headers: headers,
+  }).then(response => response.json());
+}
+
 function uncomplete(todo) {
   api(uncompleteEndpoint, {
       method: 'PATCH',
@@ -1092,6 +1099,9 @@ function addTodoListener() {
 }
 
 function getDaysUntilTargetDate(targetDate) {
+    if (!targetDate) {
+      return ''
+    }
     const currentDate = new Date();
     const daysUntil = Math.ceil((targetDate - currentDate) / (1000 * 60 * 60 * 24));
     const day = targetDate.getDate();
@@ -1105,18 +1115,22 @@ function getDaysUntilTargetDate(targetDate) {
     return `${daysUntil} day${daysUntil !== 1 ? 's' : ''} until ${formattedDate}`;
 }
 
+function mapWithDueDate(todos) {
+  return todos.map(todo => {
+    return { 
+      "todo": todo,
+      "target": !!todo.dueDate ? new Date(todo.dueDate) : null
+   }})
+  .map(val => `${val.todo.todo} ${getDaysUntilTargetDate(val.target)}</br>`).join('');
+}
+
 function targetNote() {
   const note = document.getElementById('note')
-
-  const targets = [
-    { "name": "Charles Darwin", "target": new Date('December 22, 2023') },
-    { "name": "Florence Nightingale", "target": new Date('January 5, 2024') },
-    { "name": "Vincent van Gogh", "target": new Date('January 19, 2024') },
-    { "name": "Isambard Kingdom Brunel", "target": new Date('February 2, 2024') },
-  ]
-
-  const internal = targets.map(val => `${val.name} ${getDaysUntilTargetDate(val.target)}</br>`).join('');
-  note.innerHTML = internal
+  const important = importantTodos()
+    .then(mapWithDueDate)
+    .then(val => {
+      note.innerHTML = val
+    })
 }
 
 
