@@ -424,6 +424,11 @@ function todoFormSubmitEvent(event) {
   let todo = stripSpanTags(todoElement.innerHTML)
   let category = document.getElementById('category-input').value;
   let categoryChanged = false
+  let important = false
+  if (todo.startsWith('!!')) {
+    todo = todo.replace('!! ', '').replace('!!', '')
+    important = true
+  }
   if (todo.startsWith('@')) {
     const split = todo.split('@')
     categoryChanged = split[1] !== category
@@ -438,7 +443,11 @@ function todoFormSubmitEvent(event) {
     }
   }
 
-  const formData = JSON.stringify({ 'todo': todo, 'category': category === 'all' ? null : category })
+  const formData = JSON.stringify({
+    'todo': todo,
+    'important': important,
+    'category': category === 'all' ? null : category
+  })
   api(todosEndpoint, {
       method: 'POST',
       headers: headers,
