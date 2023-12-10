@@ -423,12 +423,13 @@ function stripSpanTags(str) {
     return tempDiv.textContent || tempDiv.innerText || "";
 }
 
-function todoFormSubmitEvent(event) {
+function createTodoWithLinked(todo, linkedTodoId) {
   const todoElement = document.getElementById('todo-input');
-  const form = document.getElementById('todo-form');
-  event.preventDefault();
+  return createTodo(todo, todoElement, linkedTodoId)
+}
 
-  let todo = stripSpanTags(todoElement.innerHTML)
+function createTodo(todo, todoElement, linkedTodoId) {
+  // todo is the string here
   let category = document.getElementById('category-input').value;
   let categoryChanged = false
   let important = false
@@ -453,9 +454,10 @@ function todoFormSubmitEvent(event) {
   const formData = JSON.stringify({
     'todo': todo,
     'important': important,
+    'linkedCountTodoId': linkedTodoId,
     'category': category === 'all' ? null : category
   })
-  api(todosEndpoint, {
+  return api(todosEndpoint, {
       method: 'POST',
       headers: headers,
       body: formData
@@ -473,7 +475,17 @@ function todoFormSubmitEvent(event) {
     }
     return ''
   })
-  .then(_ => todoElement.innerHTML = '')
+
+}
+
+function todoFormSubmitEvent(event) {
+  const todoElement = document.getElementById('todo-input');
+  const form = document.getElementById('todo-form');
+  event.preventDefault();
+
+  let todo = stripSpanTags(todoElement.innerHTML)
+  createTodo(todo, todoElement)
+    .then(_ => todoElement.innerHTML = '')
 }
 
 function todoForm() {
@@ -948,6 +960,16 @@ function showContextMenu(event, todo) {
   selectedTodo = todo;
   const contextMenuId = isTodoContextMenu ? 'todoContextMenu' : 'contextMenu';
   contextMenu = document.getElementById(contextMenuId);
+
+  const linkedCountId = 'addLinkedCountAction'
+  if (isTodoContextMenu && todo.targetCount != null) {
+    const existing = document.getElementById(linkedCountId)
+    existing.style.display = 'block'
+  }
+  else {
+    const existing = document.getElementById(linkedCountId)
+    existing.style.display = 'none'
+  }
   
   // Ensure the context menu is visible before retrieving dimensions
   contextMenu.style.display = 'block';
@@ -980,10 +1002,10 @@ function showContextMenu(event, todo) {
 }
 
 function hideContextMenu() {
-    if (!!contextMenu) {
-      contextMenu.style.display = 'none';
-      contextMenu = null
-    }
+  if (!!contextMenu) {
+    contextMenu.style.display = 'none';
+    contextMenu = null
+  }
 }
 
 function addTodoListener() {
@@ -1014,12 +1036,22 @@ function addTodoListener() {
   const changeCategoryAction = document.getElementById('changeCategoryAction');
   const changeAllCategoryAction = document.getElementById('changeAllCategoryAction');
   const moveAllNextAction = document.getElementById('moveAllNextAction');
+  const addLinkedCountAction = document.getElementById('addLinkedCountAction');
 
   document.addEventListener('contextmenu', function(event) {
     hideContextMenu()
     showContextMenu(event)
   });
 
+  addLinkedCountAction.addEventListener('click', function() {
+    const todo = selectedTodo
+    const task = prompt('Add linked todo:', todo.todo);
+    if (!!task && todo.todo !== task) {
+      createTodoWithLinked(task, todo.id)
+    }
+    selectedTodo = null
+    hideContextMenu();
+  });
 
   deleteThisInstanceAction.addEventListener('click', function() {
     deleteTodo(selectedTodo, true)
