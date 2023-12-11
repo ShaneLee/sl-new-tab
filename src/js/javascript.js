@@ -962,12 +962,22 @@ function showContextMenu(event, todo) {
   contextMenu = document.getElementById(contextMenuId);
 
   const linkedCountId = 'addLinkedCountAction'
+  const removeDueDateActionId = 'removeDueDateAction'
   if (isTodoContextMenu && todo.targetCount != null) {
     const existing = document.getElementById(linkedCountId)
     existing.style.display = 'block'
   }
   else {
     const existing = document.getElementById(linkedCountId)
+    existing.style.display = 'none'
+  }
+
+  if (isTodoContextMenu && todo.dueDate != null) {
+    const existing = document.getElementById(removeDueDateActionId)
+    existing.style.display = 'block'
+  }
+  else {
+    const existing = document.getElementById(removeDueDateActionId)
     existing.style.display = 'none'
   }
   
@@ -1037,10 +1047,81 @@ function addTodoListener() {
   const changeAllCategoryAction = document.getElementById('changeAllCategoryAction');
   const moveAllNextAction = document.getElementById('moveAllNextAction');
   const addLinkedCountAction = document.getElementById('addLinkedCountAction');
+  const editDueDateAction = document.getElementById('editDueDateAction');
+  const removeDueDateAction = document.getElementById('removeDueDateAction');
 
   document.addEventListener('contextmenu', function(event) {
     hideContextMenu()
     showContextMenu(event)
+  });
+
+  removeDueDateAction.addEventListener('click', function() { 
+    const todo = selectedTodo
+    const dueDate = todo.dueDate
+    if (!!dueDate) {
+      todo.dueDate = null;
+      update(todo)
+    }
+    selectedTodo = null;
+    hideContextMenu();
+  })
+
+
+  editDueDateAction.addEventListener('click', function() {
+    const todo = selectedTodo
+    const dueDate = todo.dueDate
+
+    const datePicker = document.createElement('input');
+    datePicker.type = 'date';
+
+    // If the due date is set use that, otherwise set yesterday, 
+    // reason for this is that we only submit on a change, 
+    // if we wanted to set today, we couldn't if today was set
+    if (dueDate) {
+        const formattedDueDate = dueDate.toISOString().split('T')[0];
+        datePicker.value = formattedDueDate;
+    } else {
+        const today = new Date();
+        const yesterday = new Date(today);
+        yesterday.setDate(today.getDate() - 1);
+        const formatted = yesterday.toISOString().split('T')[0];
+        datePicker.value = formatted;
+    }
+
+    // Set the position of the date picker relative to the context menu
+    const rect = editDueDateAction.getBoundingClientRect();
+    datePicker.style.position = 'absolute';
+    // datePicker.className = 'default-form';
+    datePicker.style.top = window.scrollY + rect.bottom + 'px';
+    datePicker.style.left = window.scrollX + rect.left + 'px';
+
+    datePicker.addEventListener('change', function() {
+        const selectedDate = new Date(datePicker.value);
+
+        selectedTodo.dueDate = selectedDate
+        update(selectedTodo)
+        
+        document.body.removeChild(datePicker);
+
+        selectedTodo = null;
+        hideContextMenu();
+    });
+
+    // Add a global click event listener to remove the date picker if clicked outside
+    function clickOutsideDatePickerHandler(event) {
+        if (!datePicker.contains(event.target) && event.target !== editDueDateAction) {
+            document.removeEventListener('click', clickOutsideDatePickerHandler);
+            document.body.removeChild(datePicker);
+            selectedTodo = null;
+            hideContextMenu();
+        }
+    }
+
+    document.addEventListener('click', clickOutsideDatePickerHandler);
+
+
+    // Append the date picker to the body
+    document.body.appendChild(datePicker);
   });
 
   addLinkedCountAction.addEventListener('click', function() {
