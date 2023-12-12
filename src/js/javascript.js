@@ -931,19 +931,20 @@ function updateReviewLink() {
 }
 
 function parseFrequencyString(val) {
-    const localDatePattern = /\b\d{4}-\d{2}-\d{2}\b/g;
-    const everyPattern = /every (\d+(?:st|nd|rd|th)?)?\s?(days?|weeks?|months?|quarters?|years?|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)?/i;
-    const dayTimePattern = /(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|Today|Tomorrow)\s*(@|at)\s*(\d{1,2}[ap]m)/ig;
-    const categoryPattern = /@([^@]+)@/g;
+  const localDatePattern = /\b\d{4}-\d{2}-\d{2}\b/g;
+  const everyPattern = /every (\d+(?:st|nd|rd|th)?)?\s?(days?|weeks?|months?|quarters?|years?|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)?/i;
+  const dayOnlyPattern = /(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|today|tomorrow)\b/i;
+  const dayTimePattern = /\b(?:@|at)\s*(\d{1,2}[ap]m)/i;
+  const categoryPattern = /@([^@]+)@/g;
 
-
-    // Replaces matched patterns with highlighted version
-    val = val.replace(everyPattern, '<span style="background-color: yellow;">$&</span>');
-    val = val.replace(dayTimePattern, '<span style="background-color: yellow;">$&</span>');
-    val = val.replace(categoryPattern, '<span style="background-color: yellow;">$&</span>');
-    val = val.replace(localDatePattern, '<span style="background-color: yellow;">$&</span>');
-    
-    return val;
+  // Replaces matched patterns with highlighted version
+  val = val.replace(everyPattern, '<span style="background-color: yellow;">$&</span>');
+  val = val.replace(dayOnlyPattern, '<span style="background-color: yellow;">$&</span>');
+  val = val.replace(dayTimePattern, '<span style="background-color: yellow;">$&</span>');
+  val = val.replace(categoryPattern, '<span style="background-color: yellow;">$&</span>');
+  val = val.replace(localDatePattern, '<span style="background-color: yellow;">$&</span>');
+  
+  return val;
 }
 
 function highlightMatches() {
