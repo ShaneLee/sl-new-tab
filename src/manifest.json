@@ -24,7 +24,7 @@
     "newtab": "template/index.html"
   },
   "action": {
-
+    "default_popup": "template/login.html"
   },
   "options_page": "template/settings.html",
   "commands": {
