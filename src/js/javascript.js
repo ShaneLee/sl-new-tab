@@ -707,7 +707,10 @@ function addTodo(uL, todo) {
               // TODO make the backend handle updating this particular case
               update(todo, true)
                 .then(val => {
-                  if (newCount >= todo.targetCount || newCount >= todo.incrementTarget) {
+                  // Why check if incrementTarget is not null?
+                  // Because 1 >= null = true in javascript land. What the fuck.
+                  if (newCount >= todo.targetCount
+                    || (todo.incrementTarget != null && newCount >= todo.incrementTarget)) {
                       // Continue with the normal click function
                       LAST.push(todo);
                       xhr.send(JSON.stringify(todo));
