@@ -1240,7 +1240,9 @@ function mapWithDueDate(todos) {
       "todo": todo,
       "target": !!todo.dueDate ? new Date(todo.dueDate) : null
    }})
-  .map(val => `${val.todo.todo} ${getDaysUntilTargetDate(val.target)}</br>`).join('');
+  .map(val => `${val.todo.todo} ${getDaysUntilTargetDate(val.target)}</br>`)
+  .slice(0, 5)
+  .join('');
 }
 
 function targetNote() {
