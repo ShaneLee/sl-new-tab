@@ -1152,9 +1152,18 @@ function addTodoListener() {
     hideContextMenu();
   });
 
+  const nextCategoryFn = (match) => { 
+     const val = parseInt(match, 10) + 1
+     // There are 52 weeks
+     if (val === 53) {
+       return 1
+     }
+     return val
+  }
+
   moveNextAction.addEventListener('click', function() {
     const todo = selectedTodo
-    const category = todo?.category.replace(/\d+/, (match) => parseInt(match, 10) + 1);
+    const category = todo?.category.replace(/\d+/, nextCategoryFn);
     if (!!category) {
       todo.category = category
       update(todo)
@@ -1178,7 +1187,7 @@ function addTodoListener() {
     // TODO update the backend to have a list edit endpoint
     // will need to validate that all are for the same user
     TODOS_SET.forEach(todo => {
-      const category = todo?.category.replace(/\d+/, (match) => parseInt(match, 10) + 1);
+      const category = todo?.category.replace(/\d+/, nextCategoryFn);
       if (!!category) {
         todo.category = category
         update(todo)
