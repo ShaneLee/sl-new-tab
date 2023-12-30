@@ -1,0 +1,37 @@
+{
+  "manifest_version": 2,
+  "name": "Shane Lee's New Tab",
+  "description": "Shane Lee's New Tab",
+  "version": "1.0.0",
+  "permissions": [
+    "https://localhost:8080/*",
+    "scripting",
+    "tabs",
+    "activeTab",
+    "storage",
+    "contextMenus",
+    "identity",
+    "webRequest",
+    "webRequestBlocking",
+    "<all_urls>"
+  ],
+  "background": {
+    "scripts": ["js/background.js"],
+    "persistent": false
+  },
+  "chrome_url_overrides": {
+    "newtab": "template/index.html"
+  },
+  "browser_action": {
+    "default_popup": "template/login.html"
+  },
+  "options_page": "template/settings.html",
+  "commands": {
+    "ideaBucketPopup": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+Y"
+      },
+      "description": "Open Extension Popup"
+    }
+  }
+}
