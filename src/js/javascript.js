@@ -824,7 +824,7 @@ function addLinks() {
 
 function updateTimeTrackingSummaryLink() {
   const link = document.getElementById('time-tracking-summary-link');
-  link.href = `chrome-extension://${chrome.runtime.id}/template/time-tracking-summary.html`
+  link.href = `${browserExtension}://${extensionId}/template/time-tracking-summary.html`
   link.innerHTML = `Time tracking summary`
   if (withEmojis) {
     link.innerHTML = `🕰️ Time tracking summary`
@@ -833,7 +833,7 @@ function updateTimeTrackingSummaryLink() {
 
 function updateReadingListLink() {
   const link = document.getElementById('reading-list-link');
-  link.href = `chrome-extension://${chrome.runtime.id}/template/reading-list.html`
+  link.href = `${browserExtension}://${extensionId}/template/reading-list.html`
   link.innerHTML = `Reading List`
   if (withEmojis) {
     link.innerHTML = `📚 Reading List`
@@ -842,7 +842,7 @@ function updateReadingListLink() {
 
 function updateRatingsLink() {
   const link = document.getElementById('ratings-link');
-  link.href = `chrome-extension://${chrome.runtime.id}/template/ratings.html`
+  link.href = `${browserExtension}://${extensionId}/template/ratings.html`
   link.innerHTML = `Mood Ratings`
   if (withEmojis) {
     link.innerHTML = `🌺 Mood Ratings`
@@ -851,7 +851,7 @@ function updateRatingsLink() {
 
 function updateIdeaBucketLink() {
   const link = document.getElementById('idea-bucket-link');
-  link.href = `chrome-extension://${chrome.runtime.id}/template/idea-bucket.html`
+  link.href = `${browserExtension}://${extensionId}/template/idea-bucket.html`
     link.innerHTML = `Idea Bucket`
   if (withEmojis) {
     link.innerHTML = `💡 Idea Bucket`
@@ -860,7 +860,7 @@ function updateIdeaBucketLink() {
 
 function updateReviewLink() {
   const link = document.getElementById('review-link');
-  link.href = `chrome-extension://${chrome.runtime.id}/template/review.html`
+  link.href = `${browserExtension}://${extensionId}/template/review.html`
     link.innerHTML = `Review`
   if (withEmojis) {
     link.innerHTML = `🌱 Review`

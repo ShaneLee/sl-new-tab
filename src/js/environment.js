@@ -2,6 +2,10 @@ host='http://localhost:8080'
 host='http://192.168.0.46:8080'
 const tempUserId = 'bd11dcc2-77f6-430f-8e87-5839d31ab0e3'
 
+const isChrome = /Chrome/.test(navigator.userAgent);
+const browserExtension = isChrome ? "chrome-extension" : "moz-extension";
+const extensionId = isChrome ? chrome.runtime.id : browser.runtime.id
+
 const headers = {
   'Content-Type': 'application/json',
   'tempUserId': tempUserId
