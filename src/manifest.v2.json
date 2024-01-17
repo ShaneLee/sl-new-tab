@@ -19,6 +19,11 @@
     "scripts": ["js/background.js"],
     "persistent": false
   },
+  "browser_specific_settings": {
+      "gecko": {
+          "id": "me@shanel.ee"
+      }
+  },
   "chrome_url_overrides": {
     "newtab": "template/index.html"
   },
