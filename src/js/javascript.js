@@ -989,6 +989,7 @@ function addTodoListener() {
   const addLinkedCountAction = document.getElementById('addLinkedCountAction');
   const editDueDateAction = document.getElementById('editDueDateAction');
   const removeDueDateAction = document.getElementById('removeDueDateAction');
+  const moveToBacklogAction = document.getElementById('moveToBacklogAction');
 
   document.addEventListener('contextmenu', function(event) {
     hideContextMenu()
@@ -1102,6 +1103,15 @@ function addTodoListener() {
       todo.category = category
       update(todo)
     }
+    selectedTodo = null
+    hideContextMenu();
+  });
+
+  moveToBacklogAction.addEventListener('click', function() {
+    const todo = selectedTodo
+    const category = 'Backlog'
+    todo.category = category
+    update(todo)
     selectedTodo = null
     hideContextMenu();
   });
