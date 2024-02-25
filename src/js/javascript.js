@@ -370,6 +370,26 @@ function refreshTodos() {
   todos()
 }
 
+function filterAndSlice(array, count, week) { 
+  const weekNum = Number(week.split(' ')[1])
+  let result = [];
+  let foundWeeks = 0;
+  
+  for (let i = 0; i < array.length; i++) {
+    if (array[i].match(/^Week \d+$/)) {
+      const iWeekNum = Number(array[i].split(' ')[1])
+      if ((iWeekNum <= weekNum + count && iWeekNum >= weekNum) && foundWeeks < count) {
+        result.push(array[i]);
+        foundWeeks++;
+      }
+    } else {
+      result.push(array[i]);
+    }
+  }
+  
+  return result;
+}
+
 function categories() {
   const categories = document.getElementById('category-input');
   categories.onchange = refreshTodos
@@ -394,7 +414,8 @@ function categories() {
       categories.appendChild(all)
     }
     if (!!val) {
-      val.filter(category => category !== week)
+
+      filterAndSlice(val.filter(category => category !== week), 3, week) // Keep 3+ weeks
         .forEach(category => {
           CATEGORIES_SET.add(category)
           const item = document.createElement('option');  
