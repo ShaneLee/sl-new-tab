@@ -1212,9 +1212,10 @@ function mapWithDueDate(todos) {
   return todos.map(todo => {
     return { 
       "todo": todo,
-      "target": !!todo.dueDate ? new Date(todo.dueDate) : null
+      "target": !!todo.dueDate ? new Date(todo.dueDate) : null,
+      "countRemaining": !!todo.count ? `${todo.targetCount - todo.count} to go!` : ""
    }})
-  .map(val => `${val.todo.todo} ${getDaysUntilTargetDate(val.target)}</br>`)
+  .map(val => `${val.todo.todo} ${getDaysUntilTargetDate(val.target)}${val.countRemaining}</br>`)
   .slice(0, 5)
   .join('');
 }
