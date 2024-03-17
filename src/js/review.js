@@ -104,9 +104,10 @@ function renderMoodTable(ratings) {
   ratings.forEach((ratingData, index) => {
     const row = table.insertRow(index + 1); // +1 to skip the header row
 
-    // Format the createdAt date as YYYY-MM-DD
     const createdAtDate = new Date(ratingData.createdAt);
-    const createdAtText = `${createdAtDate.getFullYear()}-${(createdAtDate.getMonth() + 1)
+    const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const dayOfWeekText = daysOfWeek[createdAtDate.getDay()];
+    const createdAtText = `${dayOfWeekText} ${createdAtDate.getFullYear()}-${(createdAtDate.getMonth() + 1)
       .toString()
       .padStart(2, '0')}-${createdAtDate.getDate().toString().padStart(2, '0')}`;
 
