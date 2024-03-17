@@ -1040,7 +1040,9 @@ function addTodoListener() {
     // reason for this is that we only submit on a change, 
     // if we wanted to set today, we couldn't if today was set
     if (dueDate) {
-        const formattedDueDate = dueDate.toISOString().split('T')[0];
+        const formattedDueDate = (typeof dueDate === "string"
+          ? dueDate
+          : dueDate.toISOString()).split('T')[0];
         datePicker.value = formattedDueDate;
     } else {
         const today = new Date();
