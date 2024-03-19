@@ -47,7 +47,7 @@ a:hover {
   overflow: hidden;
   margin-left: 25%;
   margin-right: 25%;
-  margin-top: 15%;
+  margin-top: 0%;
   text-align: center;
 }
 
@@ -63,7 +63,6 @@ h4 {
 }		
 
 h5 {
-  margin-top: 60px;
   font-size: 2em;
 }
 
