@@ -841,6 +841,7 @@ function addLinks() {
   updateIdeaBucketLink()
   updateReviewLink()
   updateReadingListLink()
+  updateSpendTrackerLink()
 }
 
 function updateTimeTrackingSummaryLink() {
@@ -849,6 +850,15 @@ function updateTimeTrackingSummaryLink() {
   link.innerHTML = `Time tracking summary`
   if (withEmojis) {
     link.innerHTML = `🕰️ Time tracking summary`
+  }
+}
+
+function updateSpendTrackerLink() {
+  const link = document.getElementById('spend-tracker-link');
+  link.href = `${browserExtension}://${extensionId}/template/spend-tracker.html`
+  link.innerHTML = `Spend Tracker`
+  if (withEmojis) {
+    link.innerHTML = `💰 Spend Tracker`
   }
 }
 
