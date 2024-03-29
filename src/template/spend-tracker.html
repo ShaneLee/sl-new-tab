@@ -25,15 +25,32 @@
 <body>
     <h1>Spend Tracker 💰</h1>
 
-		<h1>Create Transaction</h1>
-    <form id="transactionForm" class="default-form">
-      <input type="text" id="account" name="account" placeholder="Account" required><br>
-      <input type="text" id="amount" name="amount" placeholder="Amount" pattern="\d+(\.\d{2})?" required><br>
-      <input type="text" id="description" name="description" placeholder="Description" required><br>
-      <input type="date" id="date" name="date" placeholder="Date" required><br>
-      <textarea id="notes" name="notes" placeholder="Notes"></textarea><br>
-      <input type="text" id="category" name="category" placeholder="Category" required><br>
-      <button type="submit">Submit</button>
-    </form>
+    <section>
+      <h1>Create Transaction</h1>
+      <form id="transactionForm" class="default-form">
+        <input type="text" id="account" name="account" placeholder="Account" required><br>
+        <input type="text" id="amount" name="amount" placeholder="Amount" pattern="\d+(\.\d{2})?" required><br>
+        <input type="text" id="description" name="description" placeholder="Description" required><br>
+        <input type="date" id="date" name="date" placeholder="Date" required><br>
+        <textarea id="notes" name="notes" placeholder="Notes"></textarea><br>
+        <input type="text" id="category" name="category" placeholder="Category" required><br>
+        <button type="submit">Submit</button>
+      </form>
+    </section>
+    <section>
+      <table>
+          <thead>
+              <tr>
+                  <th>Date</th>
+                  <th>Description</th>
+                  <th>Category</th>
+                  <th>Amount</th>
+                  <th>Notes</th>
+              </tr>
+          </thead>
+          <tbody id="spend-tracker-table">
+          </tbody>
+      </table>
+    </section>
 </body>
 </html>
