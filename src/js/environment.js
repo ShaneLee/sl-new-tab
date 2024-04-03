@@ -38,7 +38,12 @@ const reviewEndpoint = `${host}/review`
 const reviewEndpointFn = date => `${host}/review?reviewDate=${date}`
 const tempFormId = '91f2994f-2446-459c-806d-f99387fd2f1c'
 const formEndpoint = `${host}/review/form?formId=${tempFormId}`
-const todoReviewEndpoint = (type, category) => `${host}/todos/review?type=${type}${category && `&category=${category}`}`
+const todoReviewEndpoint = (type, category) => `${host}/todos/review?type=${type}${categoryParam(category)}`
+
+
+function categoryParam(category) {
+  return !!category ? `&category=${category}` : ''
+}
 
 const userPreferences = `${host}/preferences`
 

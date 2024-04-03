@@ -3,6 +3,7 @@ const reviewLink = date => `chrome-extension://gplimlhmjfiokbijcgiokhjofgdhlplj/
 let weekNumber
 let formReviewId = getFormId();
 let formIdTitle = `Review ${formReviewId.replace('-week-', ' Week ')}`
+let isQuarterly = false
 
 let todoReviewSummary
 let timeTrackingSummary
@@ -15,6 +16,14 @@ function getQueryParam(paramName) {
 function loadPage() {
   const dateParam = getQueryParam("date");
   const typeParam = getQueryParam("type") || "WEEK";
+  const nameParam = getQueryParam("name") || null;
+
+  if (!!nameParam && nameParam.includes("Quarter")) {
+    isQuarterly = true
+    const temp = formIdTitle.split("Week")[0]
+    formIdTitle = temp + " " + nameParam;
+    formReviewId = formReviewId.split("week")[0] + nameParam.toLowerCase()
+  }
   if (dateParam) {
       new Date(dateParam)
       getCompletedReviewForWeek(dateParam)
@@ -129,7 +138,7 @@ function renderMoodTable(ratings) {
 
 function renderTodosForType(type) {
   const todoListsElement = getTodoListsElement()
-  fetch(todoReviewEndpoint(type, `Week ${weekNumber}`), {
+  fetch(todoReviewEndpoint(type, !isQuarterly ? `Week ${weekNumber}` : undefined), {
       method: 'GET',
       headers: headers,
   })

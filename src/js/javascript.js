@@ -840,6 +840,7 @@ function addLinks() {
   updateRatingsLink()
   updateIdeaBucketLink()
   updateReviewLink()
+  updateQuarterReviewLink()
   updateReadingListLink()
   updateSpendTrackerLink()
 }
@@ -896,6 +897,26 @@ function updateReviewLink() {
   if (withEmojis) {
     link.innerHTML = `🌱 Review`
   }
+}
+
+function updateQuarterReviewLink() {
+  const link = document.getElementById('quarter-review-link');
+  // Using YEAR as the type will enable reviews for the current quarter include any weeks 
+  // that have elapsed since the end of the quarter
+  link.href = `${browserExtension}://${extensionId}/template/review.html?type=YEAR&name="Quarter1"`
+  link.innerHTML = `Quarterly Review`
+  if (withEmojis) {
+    link.innerHTML = `🍀 Quarterly Review`
+  }
+
+  link.addEventListener('click', function(event) {
+    event.preventDefault();
+
+    const quarterNumber = prompt('Enter the quarter number:');
+    if (quarterNumber) {
+      window.location.href = `${browserExtension}://${extensionId}/template/review.html?type=YEAR&name=Quarter${quarterNumber}`;
+    }
+  });
 }
 
 function parseFrequencyString(val) {
