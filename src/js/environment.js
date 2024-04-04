@@ -52,9 +52,46 @@ const userPreferences = `${host}/preferences`
 function api(endpoint, obj, rethrow) {
   if (rethrow) {
     return fetch(endpoint, obj)
+      .then(val => withFeedback(val, obj));
   }
   return fetch(endpoint, obj)
+    .then(val => withFeedback(val, obj))
     .catch(err => null)
+}
+
+function withFeedback(response, obj) {
+  try {
+    const feedback = document.getElementById('feedback')
+    if (!feedback || obj.method === "GET" || obj.noFeedback === true) {
+      return response
+    }
+
+    if (response.ok) {
+        feedback.classList.add('success');
+        feedback.classList.remove('failure');
+        feedback.classList.remove('hidden');
+        feedback.textContent = obj.successMessage || '✊ Nice one, submitted successfully';
+      } else {
+        feedback.classList.add('failure');
+        feedback.classList.remove('success');
+        feedback.classList.remove('hidden');
+        feedback.textContent = data.error
+        || obj.failureMessage || '🙈 Failed to submit. Please try again later';
+      }
+  } catch (error) {
+    console.error('Error submitting:', error);
+    // Rethrow the error
+    throw error;
+  }
+
+  // Remove the feedback message after 5 seconds
+  setTimeout(() => {
+    feedback.classList.add('hidden');
+    feedback.textContent = '';
+    feedback.classList.remove('success', 'failure');
+  }, 5000); 
+
+  return response
 }
 
 const defaultTheme = new Map()

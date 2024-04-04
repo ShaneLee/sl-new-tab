@@ -79,6 +79,31 @@ ul {
   list-style: none;
 }
 
+.hidden {
+  display: none;
+}
+
+/* FEEDBACK */
+
+.feedback {
+  margin: 5px auto;
+  width: fit-content;
+  font-size: larger;
+  color: white;
+  padding: 8px 30px;
+  border-radius: 7px;
+}
+
+.success {
+  background: #03f403; /* colour bright green */
+}
+
+.failure {
+  background: #f40303; /* colour bright red */
+}
+
+/* END FEEDBACK */
+
 .todos {
   text-align: left;
   font-size: 1.5em;

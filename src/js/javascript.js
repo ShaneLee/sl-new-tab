@@ -326,6 +326,7 @@ function update(todo, dontRefresh) {
 
 function updateRanks(todos) {
   return api(rankEndpoint, {
+      noFeedback: true,
       method: 'PUT',
       headers: headers,
       body: JSON.stringify(todos)
@@ -342,6 +343,8 @@ function complete(todo) {
 
 function deleteTodo(todo, thisInstance) {
   api(deleteTodosEndpointFn(thisInstance), {
+      successMessage: '🐸 The task has been deleted',
+      failureMessage: '🙉 Oh no! The task failed to delete. Please try again later',
       method: 'DELETE',
       headers: headers,
       body: JSON.stringify(todo)
