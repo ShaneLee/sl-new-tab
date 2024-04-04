@@ -14,7 +14,7 @@ function addTransactionFormListener() {
       body: JSON.stringify(jsonObject)
     })
 
-    .then(response => response.status === 200 ? response?.json() : null)
+    .then(response => response.status === 200 || response.status === 201 ? response?.json() : null)
 
   });
 
@@ -61,7 +61,9 @@ function populateSpendsTable(transactions) {
   });
 
   addTransactionToTable(tbody, {})
-  addTransactionToTable(tbody, {'amount': total, 'description': 'TOTAL'})
+  addTransactionToTable(tbody, {
+    'amount': total,
+    'description': 'TOTAL'})
 
 }
 
@@ -83,6 +85,26 @@ function addTransactionToTable(tbody, transaction) {
   const amountCell = document.createElement('td');
   amountCell.textContent = transaction.amount && `£${transaction.amount.toFixed(2)}`;
   row.appendChild(amountCell);
+
+  console.log(transaction)
+  const checkboxCell = document.createElement('td');
+  if (!!transaction.description && transaction.description !== 'TOTAL') {
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.checked = transaction.deducted;
+    checkbox.addEventListener('change', function() {
+      transaction.deducted = this.checked;
+      api(transactionEndpoint, {
+        method: 'PUT',
+        headers: headers,
+        body: JSON.stringify(transaction)
+      })
+      .then(response => response.status === 200 || response.status === 201 ? response?.json() : null)
+    });
+  checkboxCell.appendChild(checkbox);
+
+  }
+  row.appendChild(checkboxCell);
 
   const notesCell = document.createElement('td');
   notesCell.textContent = transaction.notes || '';
