@@ -44,13 +44,28 @@ function getTransactions() {
     if (!!val) {
       populateSpendsTable(val)
     }
-  }).catch(err => {});
+  })
+  .then(val => api(transactionToDeductEndpoint, {
+      method: 'GET',
+      headers: headers
+      })
+  .then(response => response.status === 200 ? response?.json() : null))
+  .then(val => {
+    if (!!val) {
+      populateToDeductTable(val)
+    }
+  })
+  .catch(err => {});
 }
 
 
 function populateSpendsTable(transactions) {
   const tbody = document.getElementById('spend-tracker-table');
 
+  populateTable(tbody, transactions);
+}
+
+function populateTable(tbody, transactions) {
   // Clear the current content of the tbody
   tbody.innerHTML = '';
 
@@ -64,7 +79,12 @@ function populateSpendsTable(transactions) {
   addTransactionToTable(tbody, {
     'amount': total,
     'description': 'TOTAL'})
+}
 
+function populateToDeductTable(transactions) {
+  const tbody = document.getElementById('to-deduct-spend-tracker-table');
+
+  populateTable(tbody, transactions);
 }
 
 function addTransactionToTable(tbody, transaction) {
@@ -81,6 +101,10 @@ function addTransactionToTable(tbody, transaction) {
   const categoryCell = document.createElement('td');
   categoryCell.textContent = transaction.category;
   row.appendChild(categoryCell);
+
+  const accountAliasCell = document.createElement('td');
+  accountAliasCell.textContent = transaction.accountAlias;
+  row.appendChild(accountAliasCell);
 
   const amountCell = document.createElement('td');
   amountCell.textContent = transaction.amount && `£${transaction.amount.toFixed(2)}`;
