@@ -62,7 +62,7 @@ function getTransactions() {
 function populateSpendsTable(transactions) {
   const tbody = document.getElementById('spend-tracker-table');
 
-  populateTable(tbody, transactions);
+  populateTable(tbody, transactions, true);
 }
 
 function populateTable(tbody, transactions, shouldGroup) {
