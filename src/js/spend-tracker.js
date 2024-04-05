@@ -65,7 +65,7 @@ function populateSpendsTable(transactions) {
   populateTable(tbody, transactions);
 }
 
-function populateTable(tbody, transactions) {
+function populateTable(tbody, transactions, shouldGroup) {
   // Clear the current content of the tbody
   tbody.innerHTML = '';
 
@@ -76,15 +76,34 @@ function populateTable(tbody, transactions) {
   });
 
   addTransactionToTable(tbody, {})
+  if (shouldGroup) {
+    const grouped = groupTransactions(transactions)
+    Object.entries(grouped).forEach(([category, totalAmount]) => {
+        addTransactionToTable(tbody, {
+          'amount': totalAmount,
+          'noCheckbox': true,
+          'description': `${category} TOTAL`})
+          });
+  }
+
   addTransactionToTable(tbody, {
     'amount': total,
+    'noCheckbox': true,
     'description': 'TOTAL'})
+}
+
+function groupTransactions(transactions) {
+    return transactions.reduce((acc, transaction) => {
+        const { category, amount } = transaction;
+        acc[category] = (acc[category] || 0) + amount;
+        return acc;
+    }, {});
 }
 
 function populateToDeductTable(transactions) {
   const tbody = document.getElementById('to-deduct-spend-tracker-table');
 
-  populateTable(tbody, transactions);
+  populateTable(tbody, transactions, true);
 }
 
 function addTransactionToTable(tbody, transaction) {
@@ -111,7 +130,7 @@ function addTransactionToTable(tbody, transaction) {
   row.appendChild(amountCell);
 
   const checkboxCell = document.createElement('td');
-  if (!!transaction.description && transaction.description !== 'TOTAL') {
+  if (!!transaction.description && !transaction.noCheckbox) {
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
     checkbox.checked = transaction.deducted;
