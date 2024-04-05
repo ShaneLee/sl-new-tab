@@ -110,7 +110,6 @@ function addTransactionToTable(tbody, transaction) {
   amountCell.textContent = transaction.amount && `£${transaction.amount.toFixed(2)}`;
   row.appendChild(amountCell);
 
-  console.log(transaction)
   const checkboxCell = document.createElement('td');
   if (!!transaction.description && transaction.description !== 'TOTAL') {
     const checkbox = document.createElement('input');
