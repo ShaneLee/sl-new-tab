@@ -1,6 +1,7 @@
 quotesEnabled=false
 timerEnabled=true
 spendTrackingEnabled=true
+importantTodosEnabled=true
 // Should we default to all todos or the current week number
 defaultToAll=false
 const withEmojis=true
@@ -1268,7 +1269,9 @@ function targetNote() {
 
 window.onload = function() {
   addTodoListener()
-  targetNote()
+  if (importantTodosEnabled) {
+    targetNote()
+  }
   if (spendTrackingEnabled) {
     getTotalMonthSpend()
   }
