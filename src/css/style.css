@@ -15,6 +15,8 @@
   --link-color: #8d8271;
   --link-hover-color: #f0f0f0;
   --highlighted-todo-color: #f0f0f0;
+  --bright-red-color: #f40303;
+  --bright-green-color: #03f403;
   --font-family: 'Helvetica Neue', sans-serif;
   --main-color: #e7b91b;
   --darker-main-color: #d1a116;
@@ -95,11 +97,11 @@ ul {
 }
 
 .success {
-  background: #03f403; /* colour bright green */
+  background: var(--bright-green-color);
 }
 
 .failure {
-  background: #f40303; /* colour bright red */
+  background: var(--bright-red-color);
 }
 
 /* END FEEDBACK */
@@ -260,6 +262,11 @@ div.todo-input:focus {
 .highlighted-due {
   color: var(--background-color);
   background-color: var(--main-color);
+}
+
+.highlighted-red {
+  color: var(--background-color);
+  background-color: var(--bright-red-color);
 }
 
 .todos-header-container { 

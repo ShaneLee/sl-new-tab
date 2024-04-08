@@ -604,6 +604,17 @@ function addTodo(uL, todo) {
       contentDiv.appendChild(countElement);
   }
 
+  if (!!todo.movedWeeksCount && todo.movedWeeksCount >= 3) {
+      const movedWeeksCountElement = document.createElement('span');
+      movedWeeksCountElement.title = `Put off for ${todo.movedWeeksCount} weeks`;
+      movedWeeksCountElement.innerHTML = withEmojis ? '🕷️' : '***'
+
+      movedWeeksCountElement.className = 'due-date-box';
+      movedWeeksCountElement.classList.add('highlighted-red');
+
+      contentDiv.appendChild(movedWeeksCountElement);
+  }
+
   if (todo.dueDate) {
       const dueDateElement = document.createElement('span');
       const currentDate = new Date();
