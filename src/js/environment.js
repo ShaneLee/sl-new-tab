@@ -56,7 +56,7 @@ function api(endpoint, obj, rethrow) {
   }
   return fetch(endpoint, obj)
     .then(val => withFeedback(val, obj))
-    .catch(err => null)
+    .catch(err => withFeedback({ok: false}, obj))
 }
 
 function withFeedback(response, obj) {
@@ -75,8 +75,7 @@ function withFeedback(response, obj) {
         feedback.classList.add('failure');
         feedback.classList.remove('success');
         feedback.classList.remove('hidden');
-        feedback.textContent = data.error
-        || obj.failureMessage || '🙈 Failed to submit. Please try again later';
+        feedback.textContent = obj.failureMessage || '🙈 Failed to submit. Please try again later';
       }
   } catch (error) {
     console.error('Error submitting:', error);
