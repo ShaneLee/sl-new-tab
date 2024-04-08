@@ -78,10 +78,10 @@ function populateTable(tbody, transactions, shouldGroup) {
   addTransactionToTable(tbody, {})
   if (shouldGroup) {
     const grouped = groupTransactions(transactions)
-    Object.entries(grouped).forEach(([category, totalAmount]) => {
+    Object.entries(grouped).forEach(([category, transaction]) => {
         addTransactionToTable(tbody, {
-          'amount': totalAmount,
-          'noCheckbox': true,
+          'amount': transaction.totalAmount,
+          'checkboxFn': () => markAsDeductedOrNot(transaction.transactions, true),
           'description': `${category} TOTAL`})
           });
   }
@@ -95,7 +95,11 @@ function populateTable(tbody, transactions, shouldGroup) {
 function groupTransactions(transactions) {
     return transactions.reduce((acc, transaction) => {
         const { category, amount } = transaction;
-        acc[category] = (acc[category] || 0) + amount;
+        if (!acc[category]) {
+            acc[category] = { totalAmount: 0, transactions: [] };
+        }
+        acc[category].totalAmount += amount;
+        acc[category].transactions.push(transaction);
         return acc;
     }, {});
 }
@@ -130,21 +134,19 @@ function addTransactionToTable(tbody, transaction) {
   row.appendChild(amountCell);
 
   const checkboxCell = document.createElement('td');
-  if (!!transaction.description && !transaction.noCheckbox) {
+  if (!!transaction.description && !transaction.noCheckbox && !transaction.checkboxFn) {
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
     checkbox.checked = transaction.deducted;
-    checkbox.addEventListener('change', function() {
-      transaction.deducted = this.checked;
-      api(transactionEndpoint, {
-        method: 'PUT',
-        headers: headers,
-        body: JSON.stringify(transaction)
-      })
-      .then(response => response.status === 200 || response.status === 201 ? response?.json() : null)
-    });
-  checkboxCell.appendChild(checkbox);
-
+    checkbox.addEventListener('change', () => markAsDeductedOrNot([transaction], checkbox.checked));
+    checkboxCell.appendChild(checkbox);
+  }
+  else if (transaction.checkboxFn) {
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.checked = false;
+    checkbox.addEventListener('change', transaction.checkboxFn);
+    checkboxCell.appendChild(checkbox);
   }
   row.appendChild(checkboxCell);
 
@@ -154,6 +156,20 @@ function addTransactionToTable(tbody, transaction) {
 
   tbody.appendChild(row);
 
+}
+
+function markAsDeductedOrNot(transactions, deducted) {
+  const promises = transactions.map(transaction => {
+    transaction.deducted = deducted
+    api(transactionEndpoint, {
+      method: 'PUT',
+      headers: headers,
+      body: JSON.stringify(transaction)
+    })
+    .then(response => response.status === 200 || response.status === 201 ? response?.json() : null)
+  });
+
+  return Promise.all(promises)
 }
 
 
