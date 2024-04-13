@@ -624,6 +624,21 @@ div.todo-input:focus {
     box-sizing: border-box;  /* Ensures padding is included in width */
 }
 
+
+.default-form select {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    background-color: var(--background-color);  /* Dark Grey */
+    color: var(--text-color);  /* Orangy Grey */
+    font-family: var(--font-family);
+    font-weight: bold;
+    border-radius: 8px;
+    margin-top: 20px;
+    resize: vertical;
+    box-sizing: border-box;  /* Ensures padding is included in width */
+}
+
 .default-form textarea:focus {
     outline: none;
     border: 2px solid var(--main-color); /* Mustard Yellow */

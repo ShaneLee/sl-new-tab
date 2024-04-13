@@ -23,6 +23,7 @@ const transactionsEndpointFn = (start, end) => `${host}/transaction?start=${star
 const transactionEndpoint = `${host}/transaction`
 const transactionToDeductEndpoint = `${host}/transaction/to-deduct`
 const loginEndpoint = `${host}/user/login`
+const spendCategoriesEndpoint = `${host}/spend-category`
 
 const runningTaskEndpoint = `${host}/tracking/running`
 const timeTrackingEndpoint = `${host}/tracking`

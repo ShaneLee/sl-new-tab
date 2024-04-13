@@ -173,7 +173,41 @@ function markAsDeductedOrNot(transactions, deducted) {
 }
 
 
+function getSpendCategories() {
+  return api(spendCategoriesEndpoint, {
+    method: 'GET',
+    headers: headers})
+  .then(response => response.status === 200 ? response?.json() : null)
+  .then(addCategories)
+}
+
+function addCategories(categories) {
+  if (!categories) {
+    return
+  }
+  const categoryDropdown = document.getElementById('category');
+
+  // Clear existing options
+  categoryDropdown.innerHTML = '';
+
+  // Add default option
+  const defaultOption = document.createElement('option');
+  defaultOption.value = '';
+  defaultOption.textContent = 'Select Category';
+  defaultOption.disabled = true;
+  defaultOption.selected = true;
+  categoryDropdown.appendChild(defaultOption);
+
+  categories.forEach(function(category) {
+    const option = document.createElement('option');
+    option.value = category;
+    option.textContent = category;
+    categoryDropdown.appendChild(option);
+  });
+}
+
 
 
 window.addEventListener("load", addTransactionFormListener);
 window.addEventListener("load", getTransactions);
+window.addEventListener("load", getSpendCategories);

@@ -35,7 +35,9 @@
         <input type="text" id="description" name="description" placeholder="Description" required><br>
         <input type="date" id="date" name="date" placeholder="Date" required><br>
         <textarea id="notes" name="notes" placeholder="Notes"></textarea><br>
-        <input type="text" id="category" name="category" placeholder="Category" required><br>
+        <select id="category" name="category" required>
+          <option value="" disabled selected>Select Category</option>
+        </select><br>
         <button type="submit">Submit</button>
       </form>
     </section>
