@@ -11,6 +11,26 @@ function getIdeas() {
   });
 }
 
+function addIdeaFormListener() {
+  document.getElementById('ideaForm').addEventListener('submit', function (event) {
+    event.preventDefault();
+
+    const formData = new FormData(this);
+    const jsonObject = {};
+    formData.forEach(function(value, key){
+      jsonObject[key] = value;
+    });
+
+    api(bucketEndpoint, {
+      method: 'POST',
+      headers: headers,
+      body: JSON.stringify(jsonObject)
+    })
+
+    .then(response => response.status === 200 || response.status === 201 ? response?.json() : null)
+  });
+}
+
 
 function populateIdeaTable(ideas) {
   const tbody = document.getElementById('idea-bucket-table');
@@ -50,3 +70,4 @@ function populateIdeaTable(ideas) {
 
 
 window.addEventListener("load", getIdeas);
+window.addEventListener("load", addIdeaFormListener);
