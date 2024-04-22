@@ -821,7 +821,7 @@ function updateIndividualTodoRank(todoObject, todosMap, rankOrder) {
 function rerank(todoElements, todosMaps) {
 
   const updated = todoElements.map((element, index) => {
-    const todo = todosMap.get(element.id)
+    const todo = todosMaps.get(element.id)
     return {
       ...todo,
       rankOrder: (index + 1) * DEFAULT_RANK, // default rank is the arbitary gap
