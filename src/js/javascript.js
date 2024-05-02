@@ -1057,6 +1057,7 @@ function addTodoListener() {
   const editDueDateAction = document.getElementById('editDueDateAction');
   const removeDueDateAction = document.getElementById('removeDueDateAction');
   const moveToBacklogAction = document.getElementById('moveToBacklogAction');
+  const moveToIdeaAction = document.getElementById('moveToIdeaAction');
 
   document.addEventListener('contextmenu', function(event) {
     hideContextMenu()
@@ -1185,6 +1186,23 @@ function addTodoListener() {
     hideContextMenu();
   });
 
+  moveToIdeaAction.addEventListener('click', function() {
+    const todo = selectedTodo
+    const idea = { 'idea': todo.todo }
+    const category = prompt('Enter the new category:');
+    if (!!category) {
+      idea.category = category
+    }
+    const notes = prompt('Enter the any notes:');
+    if (!!notes) {
+      idea.notes = notes
+    }
+    createIdea(idea)
+      .then(val => deleteTodo(todo, true))
+    selectedTodo = null
+    hideContextMenu();
+  });
+
   changeCategoryAction.addEventListener('click', function() {
     const todo = selectedTodo
     const category = prompt('Enter the new category:');
@@ -1237,6 +1255,15 @@ function addTodoListener() {
   window.addEventListener('click', function() {
     hideContextMenu();
   });
+}
+
+function createIdea(idea) {
+  return api(bucketEndpoint, {
+    method: 'POST',
+    headers: headers,
+    body: JSON.stringify(idea)
+  })
+  .then(response => response.status === 200 || response.status === 201 ? response?.json() : null)
 }
 
 function getDaysUntilTargetDate(targetDate) {
