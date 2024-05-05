@@ -273,6 +273,10 @@ div.todo-input:focus {
   background-color: var(--bright-red-color);
 }
 
+.highlighted-red.emoji {
+  font-size: 0.8em;
+}
+
 .todos-header-container { 
     display: flex;
     justify-content: space-between;

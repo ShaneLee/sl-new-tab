@@ -614,6 +614,9 @@ function addTodo(uL, todo) {
 
       movedWeeksCountElement.className = 'due-date-box';
       movedWeeksCountElement.classList.add('highlighted-red');
+      if (withEmojis) {
+        movedWeeksCountElement.classList.add('emoji');
+      }
 
       contentDiv.appendChild(movedWeeksCountElement);
       spanItemCount++
