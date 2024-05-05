@@ -218,6 +218,10 @@ div.todo-input:focus {
   overflow: hidden;
 }
 
+.margin-right-todo-span {
+  margin-right: 35px;
+}
+
 .content {
   transition: transform 0.3s;
   background-color: var(--background-color);  /* This ensures that .content is solid and covers the .delete div */

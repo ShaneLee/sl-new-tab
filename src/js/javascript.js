@@ -596,12 +596,15 @@ function addTodo(uL, todo) {
   });
 
   let countElement;
+  // TODO come up with a better name for these
+  let spanItemCount = 0;
   if (todo.targetCount != null) {
       countElement = document.createElement('span');
       countElement.innerHTML = todoCountString(todo)
       // TODO different class?
       countElement.className = 'due-date-box';
       contentDiv.appendChild(countElement);
+      spanItemCount++
   }
 
   if (!!todo.movedWeeksCount && todo.movedWeeksCount >= 3) {
@@ -613,6 +616,11 @@ function addTodo(uL, todo) {
       movedWeeksCountElement.classList.add('highlighted-red');
 
       contentDiv.appendChild(movedWeeksCountElement);
+      spanItemCount++
+  }
+
+  if (spanItemCount > 1 && !!countElement) {
+    countElement.classList.add('margin-right-todo-span');
   }
 
   if (todo.dueDate) {
