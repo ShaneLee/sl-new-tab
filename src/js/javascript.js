@@ -1,3 +1,4 @@
+IMPORTANT_TODO_DISPLAY_COUNT=3
 quotesEnabled=false
 timerEnabled=true
 spendTrackingEnabled=true
@@ -1302,7 +1303,7 @@ function mapWithDueDate(todos) {
       "countRemaining": !!todo.count ? `${todo.targetCount - todo.count} to go!` : ""
    }})
   .map(val => `${val.todo.todo} ${getDaysUntilTargetDate(val.target)}${val.countRemaining}</br>`)
-  .slice(0, 5)
+  .slice(0, IMPORTANT_TODO_DISPLAY_COUNT)
   .join('');
 }
 
