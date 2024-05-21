@@ -21,6 +21,8 @@ const uncompleteEndpoint = `${host}/todos/uncomplete`
 const categoriesEndpoint = `${host}/todos/categories`
 const transactionsEndpointFn = (start, end) => `${host}/transaction?start=${start}&endInclusive=${end}`
 const transactionEndpoint = `${host}/transaction`
+const eventsEndpointFn = (start, end) => `${host}/event?start=${start}&endInclusive=${end}`
+const eventEndpoint = `${host}/event`
 const transactionToDeductEndpoint = `${host}/transaction/to-deduct`
 const loginEndpoint = `${host}/user/login`
 const spendCategoriesEndpoint = `${host}/spend-category`

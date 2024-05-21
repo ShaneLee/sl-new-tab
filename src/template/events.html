@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="../css/style.css">
+    <script src="../js/environment.js" charset="UTF-8"></script>
+    <script src="../js/events.js" charset="UTF-8"></script>
+    <title>Events</title>
+</head>
+<body>
+    <h1>Events</h1>
+    <div id="feedback" class="feedback hidden"></div>
+    <section>
+      <h1>Create Event 🐸</h1>
+      <form id="eventForm" class="default-form">
+          <input type="text" id="name" name="name" placeholder="Event Name" required><br>
+          <input type="date" id="date" name="date" required><br>
+          <input type="time" id="startTime" name="startTime" required><br>
+          <input type="time" id="endTime" name="endTime"><br>
+          <textarea id="notes" name="notes" placeholder="Notes"></textarea><br>
+          <button type="submit">Submit</button>
+      </form>
+    </section>
+</body>
+</html>

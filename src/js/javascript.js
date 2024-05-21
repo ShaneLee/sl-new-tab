@@ -1,6 +1,7 @@
 IMPORTANT_TODO_DISPLAY_COUNT=3
 quotesEnabled=false
 timerEnabled=true
+eventsEnabled=true
 spendTrackingEnabled=true
 importantTodosEnabled=true
 // Should we default to all todos or the current week number
@@ -66,6 +67,24 @@ function startOfMonthCurrentDatePair() {
   return { 'start': formattedStartOfMonth, 'end': formattedCurrentDate }
 }
 
+function formatDate(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+function getEventStartAndEndDates() {
+  const today = new Date();
+  const futureDate = new Date();
+  futureDate.setDate(today.getDate() + 60);
+
+  const todayFormatted = formatDate(today);
+  const futureDateFormatted = formatDate(futureDate);
+
+  return { 'start': todayFormatted, 'end': futureDateFormatted }
+}
+
 // TODO call
 function getTotalMonthSpend() {
   const datePair = startOfMonthCurrentDatePair() 
@@ -95,6 +114,47 @@ function formatNumberToTwoDecimalPlaces(number) {
         throw new Error('Input must be a number');
     }
     return number.toFixed(2);
+}
+
+function displayEvents(events) {
+  const eventsContainer = document.getElementById('events');
+  eventsContainer.innerHTML = ''; 
+
+  events.forEach(val => {
+    const listItem = document.createElement('li');
+    
+    // Format the date, start time, and optionally the end time
+    const eventDate = val.date;
+    const startTime = val.startTime.slice(0, 5); // Truncate seconds from start time
+    const endTime = val.endTime ? ` - ${val.endTime.slice(0, 5)}` : ''; // Truncate seconds from end time if present
+    const eventName = val.name;
+
+    const displayText = `${eventDate} - ${startTime}${endTime} - ${eventName}`;
+    listItem.textContent = displayText;
+
+    // Add a tooltip with the notes if they exist
+    if (val.notes) {
+        listItem.title = val.notes;
+    }
+
+    eventsContainer.appendChild(listItem);
+  });
+}
+
+function getEvents(start, end) {
+  if (!eventsEnabled) {
+    return
+  }
+  api(eventsEndpointFn(start, end), {
+      method: 'GET',
+      headers: headers
+      })
+  .then(response => response.status === 200 ? response?.json() : null)
+  .then(val => {
+    if (!!val) {
+      displayEvents(val)
+    }
+  }).catch(err => {});
 }
 
 
@@ -870,6 +930,16 @@ function addLinks() {
   updateQuarterReviewLink()
   updateReadingListLink()
   updateSpendTrackerLink()
+  updateEventsLink()
+}
+
+function updateEventsLink() {
+  const link = document.getElementById('events-link');
+  link.href = `${browserExtension}://${extensionId}/template/events.html`
+  link.innerHTML = `Events`
+  if (withEmojis) {
+    link.innerHTML = `🐸 Events`
+  }
 }
 
 function updateTimeTrackingSummaryLink() {
@@ -1333,6 +1403,8 @@ window.onload = function() {
     getRunningTask()
     addLinks()
   }
+  const eventDates = getEventStartAndEndDates()
+  getEvents(eventDates['start'], eventDates['end'])
   categories()
   const weeksUsed = deathCountdown()
   let clicked = false
