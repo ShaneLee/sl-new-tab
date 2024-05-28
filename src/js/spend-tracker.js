@@ -23,19 +23,24 @@ function addTransactionFormListener() {
   document.getElementById('date').value = today;
 }
 
-function startOfMonthCurrentDatePair() {
+function monthDates() {
   const currentDate = new Date();
+  
   const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
   const formattedStartOfMonth = `${startOfMonth.getFullYear()}-${(startOfMonth.getMonth() + 1).toString().padStart(2, '0')}-01`;
+  
+  const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+  const formattedEndOfMonth = `${endOfMonth.getFullYear()}-${(endOfMonth.getMonth() + 1).toString().padStart(2, '0')}-${endOfMonth.getDate().toString().padStart(2, '0')}`;
+  
   const formattedCurrentDate = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1).toString().padStart(2, '0')}-${currentDate.getDate().toString().padStart(2, '0')}`;
 
-  return { 'start': formattedStartOfMonth, 'end': formattedCurrentDate }
+  return { 'start': formattedStartOfMonth, 'end': formattedEndOfMonth, 'current': formattedCurrentDate }
 }
 
 function getTransactions() {
-  const datePair = startOfMonthCurrentDatePair() 
+  const dates = monthDates() 
 
-  api(transactionsEndpointFn(datePair.start, datePair.end), {
+  api(transactionsEndpointFn(dates.start, dates.current), {
       method: 'GET',
       headers: headers
       })
@@ -45,7 +50,7 @@ function getTransactions() {
       populateSpendsTable(val)
     }
   })
-  .then(val => api(transactionToDeductEndpoint, {
+  .then(val => api(transactionToDeductEndpointFn(dates.end), {
       method: 'GET',
       headers: headers
       })
