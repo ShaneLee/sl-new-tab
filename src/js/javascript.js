@@ -403,9 +403,9 @@ function complete(todo) {
   }).then(_ => refreshTodos())
 }
 
-function deleteTodo(todo, thisInstance) {
+function deleteTodo(todo, thisInstance, alternateSuccessMessage) {
   api(deleteTodosEndpointFn(thisInstance), {
-      successMessage: '🐸 The task has been deleted',
+      successMessage: alternateSuccessMessage ?? '🐸 The task has been deleted',
       failureMessage: '🙉 Oh no! The task failed to delete. Please try again later',
       method: 'DELETE',
       headers: headers,
@@ -1280,7 +1280,7 @@ function addTodoListener() {
       idea.notes = notes
     }
     createIdea(idea)
-      .then(val => deleteTodo(todo, true))
+      .then(val => deleteTodo(todo, true, "🧞‍♂️ The Todo has been moved to an idea"))
     selectedTodo = null
     hideContextMenu();
   });
