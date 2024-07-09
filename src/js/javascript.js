@@ -646,7 +646,7 @@ function addTodo(uL, todo) {
 
   const contentDiv = document.createElement('div');
   contentDiv.className = 'content';
-  contentDiv.innerHTML = todo.todo;
+  contentDiv.innerHTML = todo.todo.replace('<', '').replace('>', '');
 
   listItem.appendChild(contentDiv);
   listItem.addEventListener('contextmenu', function(event) {
