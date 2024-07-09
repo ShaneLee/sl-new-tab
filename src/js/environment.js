@@ -75,7 +75,18 @@ function withFeedback(response, obj) {
         feedback.classList.remove('failure');
         feedback.classList.remove('hidden');
         feedback.textContent = obj.successMessage || '✊ Nice one, submitted successfully';
-      } else {
+      }
+      else if (response.status >= 400 && response.status < 500) {
+        response.json().then(body => {
+          const serverMessage = !!body[0]?.message ? `🌝 Failed to submit because: ${body[0].message}` : null
+          const message = serverMessage || obj.failureMessage || '🌝 Failed to submit because of an invalid request';
+          feedback.classList.add('failure');
+          feedback.classList.remove('success');
+          feedback.classList.remove('hidden');
+          feedback.textContent = message;
+        });
+      }
+      else {
         feedback.classList.add('failure');
         feedback.classList.remove('success');
         feedback.classList.remove('hidden');
