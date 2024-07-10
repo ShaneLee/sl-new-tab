@@ -27,6 +27,7 @@ const transactionToDeductEndpoint = `${host}/transaction/to-deduct`
 const transactionToDeductEndpointFn = (end) => `${host}/transaction/to-deduct?endInclusive=${end}`
 const loginEndpoint = `${host}/user/login`
 const spendCategoriesEndpoint = `${host}/spend-category`
+const wellEndpoint = (date) => `${host}/well?date=${date}`
 
 const runningTaskEndpoint = `${host}/tracking/running`
 const timeTrackingEndpoint = `${host}/tracking`
