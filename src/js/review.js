@@ -87,6 +87,7 @@ function getReviewForm(typeParam) {
     .then(val => renderMoodForType(typeParam))
     .then(val => renderTodosForType(typeParam))
     .then(val => renderTimeTrackingSummary(typeParam))
+    .then(val => renderWellForType(typeParam))
 }
 
 function renderMoodForType(type) {
@@ -95,6 +96,7 @@ function renderMoodForType(type) {
 }
 
 function renderMoodTable(ratings) {
+  if (!ratings) return
 	const table = document.createElement('table');
 	table.className = 'time-tracking-summary'
 
@@ -134,6 +136,37 @@ function renderMoodTable(ratings) {
 
   const container = document.getElementById('ratings-table-container'); 
   container.appendChild(table);
+}
+
+function getWellForType(type) {
+  return fetch(wellEndpoint(type), {
+      method: 'GET',
+      headers: headers
+      })
+  .then(response => response.status === 200 ? response?.json() : null)
+  .then(val => {
+    if (!!val) {
+      return val
+    }
+  })
+
+}
+
+function renderWellForType(type) {
+   getWellForType(type)
+    .then(renderWellList)
+}
+
+function renderWellList(things) {
+  const container = document.getElementById('well-list'); 
+  
+  container.innerHTML = '';
+
+  things.map(val => val.things).forEach(thing => {
+      const thingItem = document.createElement('li');
+      thingItem.textContent = thing;
+      container.appendChild(thingItem);
+  });
 }
 
 function renderTodosForType(type) {
