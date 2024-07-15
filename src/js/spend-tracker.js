@@ -1,3 +1,30 @@
+let contextMenu;
+let selectedSpend;
+
+function createTransaction(spend) {
+  return api(transactionEndpoint, {
+    method: 'POST',
+    headers: headers,
+    body: JSON.stringify(spend)
+  })
+}
+
+function updateTransaction(spend) {
+  return api(transactionEndpoint, {
+    method: 'PUT',
+    headers: headers,
+    body: JSON.stringify(spend)
+  })
+}
+
+function deleteTransaction(spend) {
+  return api(transactionEndpoint, {
+    method: 'DELETE',
+    headers: headers,
+    body: JSON.stringify(spend)
+  })
+}
+
 function addTransactionFormListener() {
   document.getElementById('transactionForm').addEventListener('submit', function (event) {
     event.preventDefault();
@@ -8,13 +35,8 @@ function addTransactionFormListener() {
       jsonObject[key] = value;
     });
 
-    api(transactionEndpoint, {
-      method: 'POST',
-      headers: headers,
-      body: JSON.stringify(jsonObject)
-    })
-
-    .then(response => response.status === 200 || response.status === 201 ? response?.json() : null)
+    createTransaction(jsonObject)
+      .then(response => response.status === 200 || response.status === 201 ? response?.json() : null)
 
   });
 
@@ -85,6 +107,7 @@ function populateTable(tbody, transactions, shouldGroup) {
     const grouped = groupTransactions(transactions)
     Object.entries(grouped).forEach(([category, transaction]) => {
         addTransactionToTable(tbody, {
+          'grouped': true,
           'amount': transaction.totalAmount,
           'checkboxFn': () => markAsDeductedOrNot(transaction.transactions, true),
           'description': `${category} TOTAL`})
@@ -158,6 +181,15 @@ function addTransactionToTable(tbody, transaction) {
   const notesCell = document.createElement('td');
   notesCell.textContent = transaction.notes || '';
   row.appendChild(notesCell);
+  const grouped = transaction.grouped
+  if (!grouped) {
+    row.addEventListener('contextmenu', function(event) {
+      if (!!contextMenu) {
+        hideContextMenu()
+      }
+      showContextMenu(event, transaction);
+    });
+  }
 
   tbody.appendChild(row);
 
@@ -211,8 +243,87 @@ function addCategories(categories) {
   });
 }
 
+function addContextMenuListener() {
+
+  contextMenu = document.getElementById('spendContextMenu');
+  const deleteAction = document.getElementById('deleteAction');
+  const changeCategoryAction = document.getElementById('changeCategoryAction');
+
+  deleteAction.addEventListener('click', function() {
+    deleteSpend(selectedSpend)
+    selectedSpend = null
+    hideContextMenu();
+  });
+
+  changeCategoryAction.addEventListener('click', function() {
+    const spend = selectedSpend
+    const category = prompt('Enter the new category:');
+    if (!!category) {
+      spend.category = category
+      updateTransaction(spend)
+    }
+    selectedSpend = null
+    hideContextMenu();
+  });
+
+  // Event listener to hide context menu on window click
+  window.addEventListener('click', function() {
+    hideContextMenu();
+  });
+}
+
+function showContextMenu(event, spend) {
+  // Check if the right-click occurred outside of an 'a' tag
+  if (event.target.tagName.toLowerCase() === 'a') {
+    return;
+  }
+  event.preventDefault();
+  selectedSpend = spend;
+  const contextMenuId = 'spendContextMenu';
+  contextMenu = document.getElementById(contextMenuId);
+
+  // Ensure the context menu is visible before retrieving dimensions
+  contextMenu.style.display = 'block';
+  
+  const contextMenuWidth = contextMenu.offsetWidth;
+  const contextMenuHeight = contextMenu.offsetHeight;
+  const viewportWidth = window.innerWidth;
+  const viewportHeight = window.innerHeight;
+  
+  let left = event.clientX;
+  let top = event.clientY;
+  
+  // Adjust left position if the context menu goes off the right edge
+  if (left + contextMenuWidth > viewportWidth) {
+    left = viewportWidth - contextMenuWidth;
+  }
+  
+  // Adjust top position if the context menu goes off the bottom edge
+  if (top + contextMenuHeight > viewportHeight) {
+    top = viewportHeight - contextMenuHeight;
+  }
+  
+  // Ensure the top position is never negative
+  top = Math.max(top, 0);
+  
+  contextMenu.style.left = `${left}px`;
+  contextMenu.style.top = `${top}px`;
+  
+  event.stopPropagation();
+}
+
+function hideContextMenu() {
+  if (!!contextMenu) {
+    contextMenu.style.display = 'none';
+    contextMenu = null
+  }
+}
+
 
 
 window.addEventListener("load", addTransactionFormListener);
 window.addEventListener("load", getTransactions);
 window.addEventListener("load", getSpendCategories);
+window.onload = function() {
+  addContextMenuListener()
+}
