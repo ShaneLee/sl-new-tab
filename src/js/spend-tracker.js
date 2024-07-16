@@ -250,7 +250,7 @@ function addContextMenuListener() {
   const changeCategoryAction = document.getElementById('changeCategoryAction');
 
   deleteAction.addEventListener('click', function() {
-    deleteSpend(selectedSpend)
+    deleteTransaction(selectedSpend)
     selectedSpend = null
     hideContextMenu();
   });
