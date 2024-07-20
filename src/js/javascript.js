@@ -931,6 +931,7 @@ function addLinks() {
   updateReadingListLink()
   updateSpendTrackerLink()
   updateEventsLink()
+  updateLogsLink()
 }
 
 function updateEventsLink() {
@@ -939,6 +940,15 @@ function updateEventsLink() {
   link.innerHTML = `Events`
   if (withEmojis) {
     link.innerHTML = `🐸 Events`
+  }
+}
+
+function updateLogsLink() {
+  const link = document.getElementById('logs-link');
+  link.href = `http://192.168.0.46/logs`
+  link.innerHTML = `Logs`
+  if (withEmojis) {
+    link.innerHTML = `🤖 Logs`
   }
 }
 
@@ -953,6 +963,7 @@ function updateTimeTrackingSummaryLink() {
 
 function updateSpendTrackerLink() {
   const link = document.getElementById('spend-tracker-link');
+
   link.href = `${browserExtension}://${extensionId}/template/spend-tracker.html`
   link.innerHTML = `Spend Tracker`
   if (withEmojis) {
