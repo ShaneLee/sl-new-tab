@@ -745,6 +745,7 @@ function addTodo(uL, todo) {
           if (event.key === 'Enter') {
               const newCount = parseInt(countInput.value, 10);
               todo.count = newCount
+              todo.todo = replaceEmbeddedCount(todo.todo, newCount)
               countElement.innerHTML = todoCountString(todo)
               // TODO make the backend handle updating this particular case
               update(todo, true)
@@ -781,6 +782,10 @@ function addTodo(uL, todo) {
     return false
   });
   uL.appendChild(listItem);
+}
+
+function replaceEmbeddedCount(todo, newCount) {
+  return todo.replace(/<\d+>/, `<${newCount}>`);
 }
 
 function handleDragOver(event) {
