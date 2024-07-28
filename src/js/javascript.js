@@ -374,7 +374,11 @@ function uncomplete(todo) {
   }).then(_ => refreshTodos())
 }
 
-function update(todo, dontRefresh) {
+
+function update(todo, dontRefresh, dontShowSuccessMessage) {
+  if (!!dontShowSuccessMessage) {
+    todo.noSuccessFeedback = true
+  }
   return api(todosEndpoint, {
       method: 'PUT',
       headers: headers,
@@ -884,7 +888,7 @@ function updateIndividualTodoRank(todoObject, todosMap, rankOrder) {
   const todo = todosMap.get(todoObject.id)
   todo.rankOrder = rankOrder
   // Call the backend to persist the new order
-  update(todo, true)
+  update(todo, true, true)
 }
 
 /** 

@@ -72,6 +72,9 @@ function withFeedback(response, obj) {
     }
 
     if (response.ok) {
+      if (obj.noSuccessFeedback) {
+        return response
+      }
         feedback.classList.add('success');
         feedback.classList.remove('failure');
         feedback.classList.remove('hidden');
