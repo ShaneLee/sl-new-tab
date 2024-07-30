@@ -589,8 +589,29 @@ function todoForm() {
   form.addEventListener('submit', todoFormSubmitEvent);
 }
 
+function pendingTodos() {
+  const endpoint = `${todosEndpoint}?category=PENDING`
+  api(endpoint, {
+    method: 'GET', 
+    headers: headers
+  })
+  .then(response => {
+    const noPending = response.status == 204
+    const pendingElement = document.getElementById('pendingTodos')
+    if (!noPending) {
+      pendingElement.classList.remove('hidden');
+      pendingElement.innerHTML = `${withEmojis ? '📋 ' : ''}There are pending todos`
+    }
+    else {
+      pendingElement.classList.add('hidden');
+    }
+  })
+
+}
+
 
 function todos() {
+  pendingTodos()
   const category = document.getElementById('category-input').value;
   const today = new Date();
   today.setHours(0, 0, 0, 0);

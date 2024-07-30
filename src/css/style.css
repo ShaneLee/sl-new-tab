@@ -16,6 +16,7 @@
   --link-hover-color: #f0f0f0;
   --highlighted-todo-color: #f0f0f0;
   --bright-red-color: #f40303;
+  --bright-orange-color: #f47903;
   --bright-green-color: #03f403;
   --font-family: 'Helvetica Neue', sans-serif;
   --main-color: #e7b91b;
@@ -102,6 +103,10 @@ ul {
 
 .failure {
   background: var(--bright-red-color);
+}
+
+.warning {
+  background: var(--bright-orange-color);
 }
 
 /* END FEEDBACK */
