@@ -598,7 +598,7 @@ function pendingTodos() {
   .then(response => {
     const noPending = response.status == 204
     const pendingElement = document.getElementById('pendingTodos')
-    if (!noPending) {
+    if (!noPending && response.ok) {
       pendingElement.classList.remove('hidden');
       pendingElement.innerHTML = `${withEmojis ? '📋 ' : ''}There are pending todos`
     }
