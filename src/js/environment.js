@@ -29,6 +29,8 @@ const loginEndpoint = `${host}/user/login`
 const spendCategoriesEndpoint = `${host}/spend-category`
 const wellEndpoint = (type) => `${host}/well?rangeType=${type}`
 
+const weightTrackingEndpoint = `${host}/tracking/weight`
+
 const runningTaskEndpoint = `${host}/tracking/running`
 const timeTrackingEndpoint = `${host}/tracking`
 const stopTaskEndpoint = `${host}/tracking/stop`

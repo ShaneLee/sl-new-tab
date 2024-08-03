@@ -962,6 +962,7 @@ function addLinks() {
   updateSpendTrackerLink()
   updateEventsLink()
   updateLogsLink()
+  updateWeightTrackerLink()
 }
 
 function updateEventsLink() {
@@ -998,6 +999,16 @@ function updateSpendTrackerLink() {
   link.innerHTML = `Spend Tracker`
   if (withEmojis) {
     link.innerHTML = `💰 Spend Tracker`
+  }
+}
+
+function updateWeightTrackerLink() {
+  const link = document.getElementById('weight-tracker-link');
+
+  link.href = `${browserExtension}://${extensionId}/template/weight-tracker.html`
+  link.innerHTML = `Weight Tracker`
+  if (withEmojis) {
+    link.innerHTML = `⚖️ Weight Tracker`
   }
 }
 

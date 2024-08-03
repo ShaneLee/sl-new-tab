@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="../css/style.css">
+    <script src="../js/environment.js" charset="UTF-8"></script>
+    <script src="../js/weight-tracker.js" charset="UTF-8"></script>
+    <script src="../js/chart.js" charset="UTF-8"></script>
+    <title>Spend Tracker</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 80%;
+            margin: 20px auto;
+        }
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+        th {
+        }
+    </style>
+</head>
+<body>
+    <div id="feedback" class="feedback hidden"></div>
+    <h1>Weight Tracker ⚖️</h1>
+
+    <div id="weightContextMenu" class="context-menu">
+      <div class="context-menu-item" id="deleteAction">Delete</div>
+    </div>
+    <section>
+      <canvas id="weightTrackerChart" width="400" height="200"></canvas>
+    </section>
+    <section>
+      <table>
+          <thead>
+              <tr>
+                  <th>Date</th>
+                  <th>Weight (KG)</th>
+                  <th>Body Fat (%)</th>
+                  <th>Body Water (%)</th>
+                  <th>Muscle Mass (KG)</th>
+                  <th>Visercal Fat</th>
+                  <th>Recommended Calorie Intake</th>
+              </tr>
+          </thead>
+          <tbody id="weight-tracker-table">
+          </tbody>
+      </table>
+    </section>
+
+</body>
+</html>
