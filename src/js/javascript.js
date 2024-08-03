@@ -134,7 +134,24 @@ function displayEvents(events) {
 
     // Add a tooltip with the notes if they exist
     if (val.notes) {
+      //
+      // Regular expression to find URLs in notes
+      const urlRegex = /https?:\/\/[^\s]+/;
+      const match = val.notes.match(urlRegex);
+
+      // Check if notes contain a URL
+      if (match) {
+        const url = match[0];
+        const link = document.createElement('a');
+        link.href = url;
+        link.target = '_blank'; // Open in a new tab
+        link.textContent = displayText; // Set the text content of the link
+        listItem.innerHTML = ''; // Clear previous text content
+        listItem.appendChild(link);
         listItem.title = val.notes;
+      } else {
+        listItem.title = val.notes;
+      }
     }
 
     eventsContainer.appendChild(listItem);
