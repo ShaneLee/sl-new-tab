@@ -1174,6 +1174,7 @@ function addTodoListener() {
   const editAction = document.getElementById('editAction');
   const moveNextAction = document.getElementById('moveNextAction');
   const changeCategoryAction = document.getElementById('changeCategoryAction');
+  const thisWeekcategoryAction = document.getElementById('thisWeekCategoryAction');
   const changeAllCategoryAction = document.getElementById('changeAllCategoryAction');
   const moveAllNextAction = document.getElementById('moveAllNextAction');
   const addLinkedCountAction = document.getElementById('addLinkedCountAction');
@@ -1333,6 +1334,14 @@ function addTodoListener() {
       todo.category = category
       update(todo)
     }
+    selectedTodo = null
+    hideContextMenu();
+  });
+
+  thisWeekCategoryAction.addEventListener('click', function() {
+    const todo = selectedTodo
+    todo.category = `Week ${currentWeekNumber()}`
+    update(todo)
     selectedTodo = null
     hideContextMenu();
   });
