@@ -980,6 +980,7 @@ function addLinks() {
   updateEventsLink()
   updateLogsLink()
   updateWeightTrackerLink()
+  updateNotesLink()
 }
 
 function updateEventsLink() {
@@ -1026,6 +1027,16 @@ function updateWeightTrackerLink() {
   link.innerHTML = `Weight Tracker`
   if (withEmojis) {
     link.innerHTML = `⚖️ Weight Tracker`
+  }
+}
+
+function updateNotesLink() {
+  const link = document.getElementById('notes-link');
+
+  link.href = `file:///Users/shane/.bin/notes/`
+  link.innerHTML = `Notes`
+  if (withEmojis) {
+    link.innerHTML = `🗒️ Notes`
   }
 }
 
