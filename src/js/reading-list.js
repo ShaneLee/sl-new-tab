@@ -1,3 +1,6 @@
+let contextMenu;
+let selectedReading;
+
 function getReadingList() {
   fetch(readingListEndpoint, {
       method: 'GET',
@@ -50,10 +53,110 @@ function populateTable(vals) {
       createdAt.textContent = new Date(val.createdAtUtc)
       row.appendChild(createdAt);
 
+      row.addEventListener('contextmenu', function(event) {
+        if (!!contextMenu) {
+          hideContextMenu()
+        }
+        showContextMenu(event, val);
+      });
+
       tbody.appendChild(row);
   });
 
 }
 
+function createTodo(todo) {
+  return api(todosEndpoint, {
+      method: 'POST',
+      headers: headers,
+      body: JSON.stringify(todo)
+  })
+}
+
+function addContextMenuListener() {
+
+  contextMenu = document.getElementById('readingContextMenu');
+  const deleteAction = document.getElementById('deleteAction');
+  const createTodoAction = document.getElementById('createTodoAction');
+  const createNoteAction = document.getElementById('createNoteAction');
+
+  deleteAction.addEventListener('click', function() {
+    console.log('todo')
+    hideContextMenu();
+  });
+
+  createTodoAction.addEventListener('click', function() {
+    const reading = selectedReading
+    const todo = { 
+      readingListId: reading.id,
+      todo: `${reading.title} ${reading.url}`
+    }
+    const category = prompt('Enter the new category:');
+    todo.category = !!category ? category : 'PENDING'
+
+    createTodo(todo)
+    selectedReading = null
+    hideContextMenu();
+  });
+
+  createNoteAction.addEventListener('click', function() {
+    console.log('todo')
+    hideContextMenu();
+  });
+
+  // Event listener to hide context menu on window click
+  window.addEventListener('click', function() {
+    hideContextMenu();
+  });
+}
+
+function showContextMenu(event, reading) {
+  // Check if the right-click occurred outside of an 'a' tag
+  if (event.target.tagName.toLowerCase() === 'a') {
+    return;
+  }
+  event.preventDefault();
+  selectedReading = reading;
+  const contextMenuId = 'readingContextMenu';
+  contextMenu = document.getElementById(contextMenuId);
+
+  // Ensure the context menu is visible before retrieving dimensions
+  contextMenu.style.display = 'block';
+  
+  const contextMenuWidth = contextMenu.offsetWidth;
+  const contextMenuHeight = contextMenu.offsetHeight;
+  const viewportWidth = window.innerWidth;
+  const viewportHeight = window.innerHeight;
+  
+  let left = event.clientX;
+  let top = event.clientY;
+  
+  // Adjust left position if the context menu goes off the right edge
+  if (left + contextMenuWidth > viewportWidth) {
+    left = viewportWidth - contextMenuWidth;
+  }
+  
+  // Adjust top position if the context menu goes off the bottom edge
+  if (top + contextMenuHeight > viewportHeight) {
+    top = viewportHeight - contextMenuHeight;
+  }
+  
+  // Ensure the top position is never negative
+  top = Math.max(top, 0);
+  
+  contextMenu.style.left = `${left}px`;
+  contextMenu.style.top = `${top}px`;
+  
+  event.stopPropagation();
+}
+
+function hideContextMenu() {
+  if (!!contextMenu) {
+    contextMenu.style.display = 'none';
+    contextMenu = null
+  }
+}
+
 
 window.addEventListener("load", getReadingList);
+window.onload = addContextMenuListener
