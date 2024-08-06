@@ -35,7 +35,10 @@ function populateTable(vals) {
       row.appendChild(valCell);
 
       const categoryCell = document.createElement('td');
-      categoryCell.textContent = val.url;
+      const link = document.createElement('a');
+      link.href = val.url;
+      link.textContent = val.url;
+      categoryCell.appendChild(link);
       row.appendChild(categoryCell);
 
       const notesCell = document.createElement('td');
