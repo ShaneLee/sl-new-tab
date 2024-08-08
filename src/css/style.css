@@ -23,6 +23,7 @@
   --darker-main-color: #d1a116;
   --dark-grey: #2c2c2c;
   --light-grey: #868680;
+  --very-dark: #272725;
 }
 
 @-moz-document url-prefix() {
@@ -689,6 +690,11 @@ div.todo-input:focus {
     background-color: var(--darker-main-color);  /* A darker shade of Mustard Yellow */
 }
 
+.default-form button:disabled, button[disabled], button:disabled:hover, button[disabled]:hover {
+    background-color: var(--light-grey);
+}
+
+
 /* TODOs */
 .context-menu {
   display: none;
@@ -708,3 +714,46 @@ div.todo-input:focus {
   background: var(--background-color);
 }
 
+
+/* Podcasts */
+.episodes {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Responsive grid */
+  gap: 16px; /* Spacing between grid items */
+  padding: 20px;
+}
+
+.episode {
+  background-color: var(--very-dark);
+  border: 1px solid var(--light-grey);
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+i transition: transform 0.2s ease-in-out;
+}
+
+.episode img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+.episode h3 {
+  font-size: 18px;
+  margin-bottom: 8px;
+}
+
+.episode audio {
+  width: 100%;
+  margin-top: 8px;
+}
+
+.episode p {
+  font-size: 14px;
+  color: #555;
+}
+
+.episode:hover {
+  transform: scale(1.05);
+}

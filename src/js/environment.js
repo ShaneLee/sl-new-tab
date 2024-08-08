@@ -48,6 +48,9 @@ const tempFormId = '91f2994f-2446-459c-806d-f99387fd2f1c'
 const formEndpoint = `${host}/review/form?formId=${tempFormId}`
 const todoReviewEndpoint = (type, category) => `${host}/todos/review?type=${type}${categoryParam(category)}`
 
+const podcastSubscribeEndpoint = `${host}/podcast/subscribe`
+const podcastNewEpisodesEndpointFn = (page, size, sort) => `${host}/podcast/new?page=${page}&size=${size}&sort=${sort}`
+const podcastAllSubsribedEpisodesEndpointFn = (page, size, sort) => `${host}/podcast/all?page=${page}&size=${size}&sort=${sort}`
 
 function categoryParam(category) {
   return !!category ? `&category=${category}` : ''

@@ -981,6 +981,7 @@ function addLinks() {
   updateLogsLink()
   updateWeightTrackerLink()
   updateNotesLink()
+  updatePodcastsLink()
 }
 
 function updateEventsLink() {
@@ -1073,6 +1074,15 @@ function updateReviewLink() {
     link.innerHTML = `Review`
   if (withEmojis) {
     link.innerHTML = `🌱 Review`
+  }
+}
+
+function updatePodcastsLink() {
+  const link = document.getElementById('podcasts-link');
+  link.href = `${browserExtension}://${extensionId}/template/podcasts.html`
+    link.innerHTML = `Podcasts`
+  if (withEmojis) {
+    link.innerHTML = `🎧 Podcasts`
   }
 }
 
@@ -1474,7 +1484,6 @@ function targetNote() {
       note.innerHTML = val
     })
 }
-
 
 window.onload = function() {
   addTodoListener()

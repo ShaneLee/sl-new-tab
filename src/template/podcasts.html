@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title id="title">Podcast Episodes</title>
+    <script type="text/javascript" src="../js/moment-with-locales.min.js" charset="UTF-8"></script>
+    <script type="text/javascript" src="../js/moment.min.js" charset="UTF-8"></script>
+    <script src="../js/environment.js" charset="UTF-8"></script>
+    <script src="../js/podcasts.js" charset="UTF-8"></script>
+    <script src="../js/jquery-3.5.0.min.js" charset="utf-8"></script>
+    <link rel="stylesheet" type="text/css" href="../css/style.css">
+    <meta charset="UTF-8">
+  </head>
+<body>
+
+<div class="main" id="main">
+  <h1>Podcast Episodes 🎧</h1>
+  <div id="feedback" class="feedback hidden"></div>
+  <section>
+    <h1>Subscribe to new Podcast</h1>
+    <form id="podcastForm" class="default-form">
+      <input type="text" id="url" name="url" placeholder="Podcast RSS Feed" required><br>
+      <button type="submit">Submit</button>
+    </form>
+  </section>
+  <div class="episodes" id="episodes"></div>
+  <div id="pagination" class="default-form">
+      <button id="prevPage" disabled>Previous</button>
+      <button id="nextPage">Next</button>
+  </div>
+</div>
+
+</body>
+</html>
