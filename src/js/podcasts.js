@@ -1,5 +1,24 @@
 const userId = tempUserId;
 let page = 0;
+let contextMenu;
+let selectedEpisode;
+
+function addContextMenuListener() {
+
+  contextMenu = document.getElementById('podcastContextMenu');
+  const trackAction = document.getElementById('trackAction');
+
+  trackAction.addEventListener('click', function() {
+    markAsListened(selectedEpisode.id)
+    selectedEpisode = null
+    hideContextMenu();
+  });
+
+  // Event listener to hide context menu on window click
+  window.addEventListener('click', function() {
+    hideContextMenu();
+  });
+}
 
 function addPodcastFormListener() {
   document.getElementById('podcastForm').addEventListener('submit', function (event) {
@@ -15,6 +34,14 @@ function addPodcastFormListener() {
       .then(response => response.status === 200 || response.status === 201 ? response?.json() : null)
 
   });
+}
+
+function markAsListened(episodeId) {
+  return api(podcastTrack, {
+      method: 'PUT',
+      headers: headers,
+      body: JSON.stringify({'episodeId':episodeId})
+      })
 }
 
 function subscribe(url) {
@@ -81,8 +108,61 @@ function displayEpisodes(episodes) {
           Your browser does not support the audio element.
       </audio>
     `;
+    episodeDiv.addEventListener('contextmenu', function(event) {
+      if (!!contextMenu) {
+        hideContextMenu()
+      }
+      showContextMenu(event, episode);
+    });
       episodesDiv.appendChild(episodeDiv);
   });
+}
+
+function showContextMenu(event, episode) {
+  // Check if the right-click occurred outside of an 'a' tag
+  if (event.target.tagName.toLowerCase() === 'a') {
+    return;
+  }
+  event.preventDefault();
+  selectedEpisode = episode;
+  const contextMenuId = 'podcastContextMenu';
+  contextMenu = document.getElementById(contextMenuId);
+
+  // Ensure the context menu is visible before retrieving dimensions
+  contextMenu.style.display = 'block';
+  
+  const contextMenuWidth = contextMenu.offsetWidth;
+  const contextMenuHeight = contextMenu.offsetHeight;
+  const viewportWidth = window.innerWidth;
+  const viewportHeight = window.innerHeight;
+  
+  let left = event.clientX;
+  let top = event.clientY;
+  
+  // Adjust left position if the context menu goes off the right edge
+  if (left + contextMenuWidth > viewportWidth) {
+    left = viewportWidth - contextMenuWidth;
+  }
+  
+  // Adjust top position if the context menu goes off the bottom edge
+  if (top + contextMenuHeight > viewportHeight) {
+    top = viewportHeight - contextMenuHeight;
+  }
+  
+  // Ensure the top position is never negative
+  top = Math.max(top, 0);
+  
+  contextMenu.style.left = `${left}px`;
+  contextMenu.style.top = `${top}px`;
+  
+  event.stopPropagation();
+}
+
+function hideContextMenu() {
+  if (!!contextMenu) {
+    contextMenu.style.display = 'none';
+    contextMenu = null
+  }
 }
 
 function updatePaginationButtons(data) {
@@ -94,4 +174,5 @@ window.onload = () => {
   addEventListeners()
   addPodcastFormListener()
   fetchPodcastEpisodes()
+  addContextMenuListener()
 }

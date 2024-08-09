@@ -49,6 +49,7 @@ const formEndpoint = `${host}/review/form?formId=${tempFormId}`
 const todoReviewEndpoint = (type, category) => `${host}/todos/review?type=${type}${categoryParam(category)}`
 
 const podcastSubscribeEndpoint = `${host}/podcast/subscribe`
+const podcastTrack = `${host}/podcast/track`
 const podcastNewEpisodesEndpointFn = (page, size, sort) => `${host}/podcast/new?page=${page}&size=${size}&sort=${sort}`
 const podcastAllSubsribedEpisodesEndpointFn = (page, size, sort) => `${host}/podcast/all?page=${page}&size=${size}&sort=${sort}`
 
