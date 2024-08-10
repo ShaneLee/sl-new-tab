@@ -52,6 +52,7 @@ const podcastSubscribeEndpoint = `${host}/podcast/subscribe`
 const podcastTrack = `${host}/podcast/track`
 const podcastNewEpisodesEndpointFn = (page, size, sort) => `${host}/podcast/new?page=${page}&size=${size}&sort=${sort}`
 const podcastAllSubsribedEpisodesEndpointFn = (page, size, sort) => `${host}/podcast/all?page=${page}&size=${size}&sort=${sort}`
+const podcastAllSubsribedEndpointFn = (page, size) => `${host}/podcast/subscribed?page=${page}&size=${size}&sort=createdAtUtc,desc`
 
 function categoryParam(category) {
   return !!category ? `&category=${category}` : ''

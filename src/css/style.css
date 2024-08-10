@@ -757,3 +757,16 @@ i transition: transform 0.2s ease-in-out;
 .episode:hover {
   transform: scale(1.05);
 }
+
+
+/** Default table **/
+.default-table table {
+  border-collapse: collapse;
+  width: 80%;
+  margin: 20px auto;
+}
+.default-table th, td {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}

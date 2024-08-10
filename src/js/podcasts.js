@@ -1,7 +1,9 @@
 const userId = tempUserId;
 let page = 0;
+let podcastPage = 0;
 let contextMenu;
 let selectedEpisode;
+let selectedPodcast;
 
 function addContextMenuListener() {
 
@@ -68,6 +70,28 @@ function addEventListeners() {
 
 }
 
+function fetchSubscribedPodcasts() {
+  const size = 50;
+
+  api(podcastAllSubsribedEndpointFn(page, size), {
+      method: 'GET',
+      headers: headers
+      })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            displayPodcasts(data.content);
+            //updatePodcastPaginationButtons(data);
+        })
+        .catch(error => {
+            console.error("Error fetching podcast episodes:", error);
+        });
+}
+
 function fetchPodcastEpisodes() {
   const size = 50;
   const sort = "publishedDate,desc";
@@ -92,6 +116,42 @@ function fetchPodcastEpisodes() {
         });
 }
 
+function displayPodcasts(podcasts) {
+  const podcastsTable = document.getElementById("podcastsTable");
+  podcasts.forEach(podcast => {
+    addPodcastToTable(podcastsTable, podcast)
+  })
+}
+
+function addPodcastToTable(tbody, podcast) {
+  const row = document.createElement('tr');
+
+  const imgCell = document.createElement('td');
+  imgCell.innerHtml = `<img src="${podcast.coverUrl}" alt="Cover Image" />`
+  row.appendChild(imgCell);
+      
+
+  const titleCell = document.createElement('td');
+  titleCell.textContent = podcast.podcastTitle;
+  row.appendChild(titleCell);
+
+  const subcribedAtCell = document.createElement('td');
+  subcribedAtCell.textContent = new Date(podcast.createdAtUtc);
+  row.appendChild(subcribedAtCell);
+
+  row.addEventListener('contextmenu', function(event) {
+    if (!!contextMenu) {
+      hideContextMenu()
+    }
+    showContextMenu(event,
+      podcast,
+      (val) => { selectedPodcast = val },
+      'podcastContextMenu');
+  });
+
+  tbody.appendChild(row);
+
+}
 function displayEpisodes(episodes) {
   const episodesDiv = document.getElementById("episodes");
   episodesDiv.innerHTML = "";
@@ -119,20 +179,22 @@ function displayEpisodes(episodes) {
       if (!!contextMenu) {
         hideContextMenu()
       }
-      showContextMenu(event, episode);
+      showContextMenu(event,
+        episode,
+        (val) => { selectedEpisode = val },
+        'podcastEpisodeContextMenu');
     });
       episodesDiv.appendChild(episodeDiv);
   });
 }
 
-function showContextMenu(event, episode) {
+function showContextMenu(event, val, setterFn, contextMenuId) {
   // Check if the right-click occurred outside of an 'a' tag
   if (event.target.tagName.toLowerCase() === 'a') {
     return;
   }
   event.preventDefault();
-  selectedEpisode = episode;
-  const contextMenuId = 'podcastContextMenu';
+  setterFn(val)
   contextMenu = document.getElementById(contextMenuId);
 
   // Ensure the context menu is visible before retrieving dimensions
@@ -181,5 +243,6 @@ window.onload = () => {
   addEventListeners()
   addPodcastFormListener()
   fetchPodcastEpisodes()
+  fetchSubscribedPodcasts()
   addContextMenuListener()
 }

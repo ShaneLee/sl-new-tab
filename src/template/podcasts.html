@@ -21,15 +21,34 @@
       <input type="text" id="url" name="url" placeholder="Podcast RSS Feed" required><br>
       <button type="submit">Submit</button>
     </form>
-    <div id="podcastContextMenu" class="context-menu">
+    <div id="podcastEpisodeContextMenu" class="context-menu">
       <div class="context-menu-item" id="trackAction">Mark as Played</div>
     </div>
+    <div id="podcastContextMenu" class="context-menu">
+      <div class="context-menu-item" id="unsubscribeAction">Unsubscribe</div>
+    </div>
   </section>
-  <div class="episodes" id="episodes"></div>
-  <div id="pagination" class="default-form">
-      <button id="prevPage" disabled>Previous</button>
-      <button id="nextPage">Next</button>
-  </div>
+  <section>
+    <div class="episodes" id="episodes"></div>
+    <div id="pagination" class="default-form">
+        <button id="prevPage" disabled>Previous</button>
+        <button id="nextPage">Next</button>
+    </div>
+  </section>
+
+  <section>
+      <table class="default-table">
+          <thead>
+              <tr>
+                  <th></th>
+                  <th>Title</th>
+                  <th>Subscribed At</th>
+              </tr>
+          </thead>
+          <tbody id="podcastsTable">
+          </tbody>
+      </table>
+  </section>
 </div>
 
 </body>
