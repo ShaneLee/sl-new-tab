@@ -108,6 +108,13 @@ function displayEpisodes(episodes) {
           Your browser does not support the audio element.
       </audio>
     `;
+
+    const audioElement = episodeDiv.querySelector('audio');
+
+    audioElement.addEventListener('ended', function() {
+      markAsListened(episode.id)
+    });
+
     episodeDiv.addEventListener('contextmenu', function(event) {
       if (!!contextMenu) {
         hideContextMenu()
