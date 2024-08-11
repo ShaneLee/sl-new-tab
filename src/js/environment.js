@@ -120,6 +120,36 @@ function withFeedback(response, obj) {
   return response
 }
 
+function withFeedbackMessage(type, message) {
+    const feedback = document.getElementById('feedback')
+
+    if (type === 'success') {
+      feedback.classList.add('success');
+      feedback.classList.remove('failure');
+      feedback.classList.remove('hidden');
+      feedback.textContent = message
+      }
+    if (type === 'error') {
+      feedback.classList.add('failure');
+      feedback.classList.remove('success');
+      feedback.classList.remove('hidden');
+      feedback.textContent = message
+    }
+    if (type === 'wariing') {
+      feedback.classList.add('warning');
+      feedback.classList.remove('success');
+      feedback.classList.remove('hidden');
+      feedback.textContent = message
+    }
+  //
+  // Remove the feedback message after 5 seconds
+  setTimeout(() => {
+    feedback.classList.add('hidden');
+    feedback.textContent = '';
+    feedback.classList.remove('success', 'failure', 'warning');
+  }, 5000); 
+}
+
 const defaultTheme = new Map()
 defaultTheme.set("--background-color", "#272725")
 defaultTheme.set("--text-color", "#8d8271")
