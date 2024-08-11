@@ -445,7 +445,7 @@ function currentWeekNumber() {
 }
 
 function playAudio() {
-    new Audio('../sounds/great-success.ogg').play();
+    new Audio('../sounds/great-success.mp3').play();
 }
 
 
