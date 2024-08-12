@@ -195,6 +195,7 @@ ul {
 }
 
 div.todo-input {
+  white-space: -moz-pre-space;
   min-height: 50px;
   max-height: 200px;
   overflow-y: auto;
