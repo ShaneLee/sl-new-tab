@@ -17,7 +17,7 @@ function unsubscribe() {
   return api(podcastSubscribeEndpoint, {
       method: 'DELETE',
       headers: headers,
-      body: JSON.stringify({'id': id})
+      body: JSON.stringify({'id': podcastId})
       })
 }
 
