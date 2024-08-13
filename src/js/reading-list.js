@@ -76,6 +76,13 @@ function createTodo(todo) {
   })
 }
 
+function deleteReadingListItem(item) {
+  return api(readingListEndpointDeleteFn(item.id), {
+      method: 'DELETE',
+      headers: headers
+  })
+}
+
 function addContextMenuListener() {
 
   contextMenu = document.getElementById('readingContextMenu');
@@ -84,7 +91,8 @@ function addContextMenuListener() {
   const createNoteAction = document.getElementById('createNoteAction');
 
   deleteAction.addEventListener('click', function() {
-    console.log('todo')
+    deleteReadingListItem(selectedReading)
+    selectedReading = null
     hideContextMenu();
   });
 

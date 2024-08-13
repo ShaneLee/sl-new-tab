@@ -37,6 +37,7 @@ const stopTaskEndpoint = `${host}/tracking/stop`
 const taskSummaryEndpoint = type => `${host}/tracking/summary?type=${type}`
 const readingListEndpoint = `${host}/reading-list`
 const readingListEndpointReadFn = (id, read) => `${host}/reading-list?id=${id}&isRead=${read}`
+const readingListEndpointDeleteFn = (id) => `${host}/reading-list?id=${id}`
 
 const bucketEndpoint = `${host}/bucket`
 
