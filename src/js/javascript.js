@@ -1123,10 +1123,20 @@ function parseFrequencyString(val) {
   return val;
 }
 
+function containsLink(str) {
+  const urlPattern = /(https?:\/\/[^\s]+)/g;
+  return urlPattern.test(str);
+}
+
+function parseLink(str) {
+  const urlPattern = /(https?:\/\/[^\s]+)/g;
+  return str.match(urlPattern) || [];
+}
+
 function highlightMatches() {
-    const div = document.getElementById('todo-input');
-    const content = div.innerHTML;
-    div.innerHTML = parseFrequencyString(content);
+  const div = document.getElementById('todo-input');
+  const content = div.innerHTML;
+  div.innerHTML = parseFrequencyString(content);
 }
 
 function showContextMenu(event, todo) {
@@ -1142,6 +1152,7 @@ function showContextMenu(event, todo) {
 
   const linkedCountId = 'addLinkedCountAction'
   const removeDueDateActionId = 'removeDueDateAction'
+  const openLinkActionId = 'openLinkAction'
   if (isTodoContextMenu && todo.targetCount != null) {
     const existing = document.getElementById(linkedCountId)
     existing.style.display = 'block'
@@ -1157,6 +1168,16 @@ function showContextMenu(event, todo) {
   }
   else {
     const existing = document.getElementById(removeDueDateActionId)
+    existing.style.display = 'none'
+  }
+
+  // TODO contains link method
+  if (isTodoContextMenu && containsLink(todo.todo)) {
+    const existing = document.getElementById(openLinkActionId)
+    existing.style.display = 'block'
+  }
+  else {
+    const existing = document.getElementById(openLinkActionId)
     existing.style.display = 'none'
   }
   
@@ -1231,6 +1252,7 @@ function addTodoListener() {
   const removeDueDateAction = document.getElementById('removeDueDateAction');
   const moveToBacklogAction = document.getElementById('moveToBacklogAction');
   const moveToIdeaAction = document.getElementById('moveToIdeaAction');
+  const openLinkAction = document.getElementById('openLinkAction');
 
   document.addEventListener('contextmenu', function(event) {
     hideContextMenu()
@@ -1244,6 +1266,15 @@ function addTodoListener() {
       todo.dueDate = null;
       update(todo)
     }
+    selectedTodo = null;
+    hideContextMenu();
+  })
+
+  openLinkAction.addEventListener('click', function() { 
+    const todo = selectedTodo
+    // If this has been clicked we already know that there is a link in there
+    const link = parseLink(todo.todo)
+    window.location.href = link;
     selectedTodo = null;
     hideContextMenu();
   })
