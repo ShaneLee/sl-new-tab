@@ -10,6 +10,7 @@
     "activeTab",
     "storage",
     "contextMenus",
+    "downloads",
     "identity",
     "webRequest",
     "webRequestBlocking",

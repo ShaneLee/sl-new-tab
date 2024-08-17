@@ -83,6 +83,26 @@ function deleteReadingListItem(item) {
   })
 }
 
+function santiseString(val) {
+  return val
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, '')
+    .replace(/\s+/g, '-')
+}
+
+
+
+function createNote(item) {
+  const blob = new Blob([`${item.url}`], {type: "text/plain"});
+  const url = URL.createObjectURL(blob);
+
+  browser.downloads.download({
+      url: url,
+      filename: `${santiseString(item.title)}.md`,
+      saveAs: true
+  });
+}
+
 function addContextMenuListener() {
 
   contextMenu = document.getElementById('readingContextMenu');
@@ -111,7 +131,8 @@ function addContextMenuListener() {
   });
 
   createNoteAction.addEventListener('click', function() {
-    console.log('todo')
+    createNote(selectedReading)
+    selectedReading = null
     hideContextMenu();
   });
 
