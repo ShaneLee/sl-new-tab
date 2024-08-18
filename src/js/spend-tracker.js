@@ -120,6 +120,19 @@ function populateTable(tbody, transactions, shouldGroup) {
     'description': 'TOTAL'})
 }
 
+// tODO use thsi
+function groupTransactionsByAccount(transactions) {
+    return transactions.reduce((acc, transaction) => {
+        const { accountAlias, amount } = transaction;
+        if (!acc[accountAlias]) {
+            acc[accountAlias] = { totalAmount: 0, transactions: [] };
+        }
+        acc[accountAlias].totalAmount += amount;
+        acc[accountAlias].transactions.push(transaction);
+        return acc;
+    }, {});
+}
+
 function groupTransactions(transactions) {
     return transactions.reduce((acc, transaction) => {
         const { category, amount } = transaction;
