@@ -3,6 +3,7 @@ host='http://192.168.0.46:8080'
 const webTrackerEndpoint = `${host}/tracking/web`
 const readingListEndpoint = `${host}/reading-list`
 const stopEndpoint = `${host}/tracking/web/stop`
+const podcastSubscribeEndpoint = `${host}/podcast/subscribe`
 const webTrackingEnabled = false
 const tempUserId = 'bd11dcc2-77f6-430f-8e87-5839d31ab0e3'
 
@@ -101,6 +102,14 @@ function endTracking(previous) {
   });
 }
 
+function subscribeToPodcast(rss) {
+  return fetch(podcastSubscribeEndpoint, {
+      method: 'POST',
+      headers: headers,
+      body: JSON.stringify(rss)
+      })
+}
+
 chrome.contextMenus.onClicked.addListener((info, tab) => {
   if (info.menuItemId === "saveToReadingList") {
     addToReadingList({
@@ -108,6 +117,11 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
       'title': info.title || tab.title,
       'text': info.selectionText
     })
+  } 
+  else if (info.menuItemId === "subscribeToPodcast") {
+    subscribeToPodcast({
+      url: info.linkUrl,
+    });
   }
 });
 
@@ -128,6 +142,12 @@ chrome.runtime.onInstalled.addListener(() => {
     id: "saveToReadingList",
     title: "Save to Reading List",
     contexts: ["page", "selection"]
+  });
+
+  chrome.contextMenus.create({
+    id: "subscribeToPodcast",
+    title: "Subscribe to podcast",
+    contexts: ["link"]
   });
 });
 
