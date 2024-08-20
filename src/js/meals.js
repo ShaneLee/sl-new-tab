@@ -92,7 +92,7 @@ function addMealPlanFormListener() {
     });
 }
 
-function init() {
+function addMealOptions() {
   fetchMealOptions().then((meals) => {
     if (meals) {
       populateMealOptions(meals);
@@ -304,6 +304,12 @@ function addFoodItem() {
   const nutrientInfoElement = document.createElement("div");
   nutrientInfoElement.id = `nutrient-info-${index}`;
 
+  const foodSelect = document.getElementById('foodSelect');
+
+  // Unselect the selected option
+  foodSelect.selectedIndex = -1;
+
+
   selectElement.addEventListener("change", function () {
     sliderElement.style.display = "block";
     sliderValueElement.style.display = "inline"; // Show slider when item is selected
@@ -354,6 +360,19 @@ function addMealFormListener() {
     });
 }
 
+function createMeal(meal) {
+    return api(mealEndpoint, {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify(meal)
+    })
+    .then(response => {
+        if (response) {
+            return response.json();
+        }
+    });
+}
+
 window.addEventListener("load", addFoodItemOptions);
 window.addEventListener("load", addFoodItemFormListener);
-window.addEventListener("load", init);
+window.addEventListener("load", addMealOptions);
