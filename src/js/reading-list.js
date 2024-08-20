@@ -1,15 +1,23 @@
 let contextMenu;
 let selectedReading;
+let currentPage = 0;
+let pageSize = 10;
 
-function getReadingList() {
-  fetch(readingListEndpoint, {
+function getReadingList(page, size) {
+  fetch(readingListEndpointFn(page, size), {
       method: 'GET',
       headers: headers
       })
   .then(response => response.status === 200 ? response?.json() : null)
   .then(val => {
     if (!!val) {
-      populateTable(val)
+      currentPage++
+      if (val.last) {
+        disableLoadMoreButton()
+
+
+      }
+      populateTable(val.content, page === 0);
     }
   });
 }
@@ -22,10 +30,13 @@ function updateReadStatus(val, read) {
 }
 
 
-function populateTable(vals) {
+function populateTable(vals, shouldClear) {
   const tbody = document.getElementById('reading-list-table');
 
-  tbody.innerHTML = '';
+  if (shouldClear) {
+    tbody.innerHTML = '';
+  }
+
 
   vals.forEach(val => {
       const row = document.createElement('tr');
@@ -189,6 +200,22 @@ function hideContextMenu() {
   }
 }
 
+function setupLoadMoreButton() {
+  const loadMoreButton = document.getElementById('load-more-button');
+  loadMoreButton.addEventListener('click', function() {
+    getReadingList(currentPage + 1, pageSize);
+  });
+}
 
-window.addEventListener("load", getReadingList);
+function disableLoadMoreButton() {
+  const loadMoreButton = document.getElementById('load-more-button');
+  loadMoreButton.disabled = true;
+}
+
+
+window.addEventListener("load", function() {
+  getReadingList(0, pageSize);
+  setupLoadMoreButton();
+  addContextMenuListener();
+});
 window.onload = addContextMenuListener

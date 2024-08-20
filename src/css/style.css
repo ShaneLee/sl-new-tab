@@ -730,7 +730,7 @@ div.todo-input:focus {
   border-radius: 8px;
   padding: 16px;
   text-align: center;
-i transition: transform 0.2s ease-in-out;
+  transition: transform 0.2s ease-in-out;
 }
 
 .episode img {

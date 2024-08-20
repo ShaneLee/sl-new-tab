@@ -35,7 +35,7 @@ const runningTaskEndpoint = `${host}/tracking/running`
 const timeTrackingEndpoint = `${host}/tracking`
 const stopTaskEndpoint = `${host}/tracking/stop`
 const taskSummaryEndpoint = type => `${host}/tracking/summary?type=${type}`
-const readingListEndpoint = `${host}/reading-list`
+const readingListEndpointFn = (page, size) => `${host}/reading-list?page=${page}&size=${size}`
 const readingListEndpointReadFn = (id, read) => `${host}/reading-list?id=${id}&isRead=${read}`
 const readingListEndpointDeleteFn = (id) => `${host}/reading-list?id=${id}`
 
