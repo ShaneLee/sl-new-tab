@@ -493,10 +493,15 @@ function addMealFormListener() {
       const formData = new FormData(this);
       const components = [];
 
-      formData.getAll("components[]").forEach((amount, index) => {
-        const foodItemId = document.querySelector(`#amount-${index}`).dataset
-          .id;
-        if (amount) {
+      const foodItemsContainer = document.getElementById("foodItemsContainer");
+
+      foodItemsContainer.querySelectorAll(".food-item").forEach((foodItem, index) => {
+        const foodItemId = foodItem.querySelector(`#foodItemSelect-${index}`).value;
+        const slider = foodItem.querySelector(`#foodItemSlider-${index}`)
+        const foodItemObj  = foodItems.find(val => val.id === foodItemId)
+        const amount = `${slider.value}:${foodItemObj.reference.unit}`;
+        
+        if (amount && foodItemId) {
           components.push({
             id: foodItemId,
             amount: amount,
@@ -512,6 +517,7 @@ function addMealFormListener() {
       createMeal(meal);
     });
 }
+
 
 function createMeal(meal) {
   return api(mealEndpoint, {
