@@ -1,7 +1,7 @@
 let contextMenu;
 let selectedReading;
 let currentPage = 0;
-let pageSize = 10;
+let pageSize = 50;
 
 function getReadingList(page, size) {
   fetch(readingListEndpointFn(page, size), {
