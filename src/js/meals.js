@@ -31,24 +31,142 @@ function populateMealOptions(meals) {
   ];
   const daysContainer = document.getElementById("days");
 
+  daysContainer.innerHTML = "";
+
   days.forEach((day) => {
     const dayContainer = document.createElement("div");
+    dayContainer.classList.add("day-container");
     dayContainer.innerHTML = `<h3>${day}</h3>`;
 
-    const select = document.createElement("select");
-    select.name = day.toLowerCase() + "[]";
-    select.multiple = true;
+    const mealList = document.createElement("ul");
+    mealList.classList.add("meal-list");
+    mealList.dataset.day = day.toLowerCase();
 
+    const nutrientTotals = {
+      calories: 0,
+      carbohydrate: 0,
+      fat: 0,
+      protein: 0,
+    };
+    const nutrientDisplay = document.createElement("div");
+    nutrientDisplay.classList.add("nutrient-display");
+
+    const mealSelect = document.createElement("select");
+    mealSelect.innerHTML = `<option value="">Select a meal</option>`;
     meals.forEach((meal) => {
       const option = document.createElement("option");
       option.value = meal.id;
       option.text = meal.name;
-      select.appendChild(option);
+      mealSelect.appendChild(option);
     });
 
-    dayContainer.appendChild(select);
+    // Button to add selected meal to the list
+    const addButton = document.createElement("button");
+    addButton.textContent = "Add Meal";
+    addButton.addEventListener("click", function (e) {
+      e.preventDefault();
+      const selectedMealId = mealSelect.value;
+      const selectedMeal = meals.find((meal) => meal.id === selectedMealId);
+
+      if (selectedMealId && selectedMeal) {
+        const mealItem = document.createElement("li");
+        mealItem.textContent = selectedMeal.name;
+        mealItem.dataset.mealId = selectedMealId;
+        mealItem.draggable = true;
+
+        const removeButton = document.createElement("span");
+        removeButton.textContent = "×";
+        removeButton.classList.add("remove-button");
+        removeButton.addEventListener("click", function () {
+          mealItem.remove();
+          updateNutrientTotals(
+            selectedMeal,
+            -1,
+            nutrientTotals,
+            nutrientDisplay
+          );
+        });
+
+        mealItem.appendChild(removeButton);
+
+        mealItem.addEventListener("dragstart", handleDragStart);
+        mealItem.addEventListener("dragover", handleDragOver);
+        mealItem.addEventListener("drop", handleDrop);
+        mealItem.addEventListener("dragend", handleDragEnd);
+
+        mealList.appendChild(mealItem);
+
+        updateNutrientTotals(selectedMeal, 1, nutrientTotals, nutrientDisplay);
+      }
+    });
+
+    dayContainer.appendChild(mealSelect);
+    dayContainer.appendChild(addButton);
+    dayContainer.appendChild(mealList);
+    dayContainer.appendChild(nutrientDisplay);
     daysContainer.appendChild(dayContainer);
   });
+}
+
+// Handle drag and drop events
+let draggedItem = null;
+
+function handleDragStart(e) {
+  draggedItem = this;
+  setTimeout(() => (this.style.display = "none"), 0);
+}
+
+function handleDragOver(e) {
+  e.preventDefault();
+}
+
+function handleDrop(e) {
+  e.preventDefault();
+  if (this !== draggedItem) {
+    const list = this.parentNode;
+    list.insertBefore(draggedItem, this);
+  }
+}
+
+function handleDragEnd() {
+  setTimeout(() => (this.style.display = "block"), 0);
+  draggedItem = null;
+}
+
+function updateNutrientTotals(meal, multiplier, totals, displayElement) {
+  const nutrients = meal.nutrients;
+
+  // Noddy hack
+  if (!nutrients.calories?.amount) {
+    nutrients.calories = { amount: nutrients.calories, unit: "UNIT" };
+  }
+
+  const updatedNutrients = {
+    calories: nutrientValueCalculation(
+      nutrients.calories,
+      1,
+      nutrients.calories
+    ),
+    carbohydrate: nutrientValueCalculation(
+      nutrients.carbohydrate,
+      1,
+      nutrients.carbohydrate
+    ),
+    fat: nutrientValueCalculation(nutrients.fat, 1, nutrients.fat),
+    protein: nutrientValueCalculation(nutrients.protein, 1, nutrients.protein),
+  };
+
+  totals.calories += parseFloat(updatedNutrients.calories.amount) * multiplier;
+  totals.carbohydrate +=
+    parseFloat(updatedNutrients.carbohydrate.amount) * multiplier;
+  totals.fat += parseFloat(updatedNutrients.fat.amount) * multiplier;
+  totals.protein += parseFloat(updatedNutrients.protein.amount) * multiplier;
+
+  displayElement.textContent = `Total Nutrients:
+    Calories: ${totals.calories.toFixed(2)} g,
+    Carbohydrate: ${totals.carbohydrate.toFixed(2)} g,
+    Fat: ${totals.fat.toFixed(2)} g,
+    Protein: ${totals.protein.toFixed(2)} g`;
 }
 
 function addMealPlanFormListener() {
@@ -240,30 +358,66 @@ function updateNutrientInfoAndTotals() {
 }
 
 function nutrientValueCalculation(nutrient, referenceValue, originalReference) {
-    function convertToBaseUnit(amount, unit) {
-        switch (unit) {
-            case 'µg': return amount / 1e6; // µg to g
-            case 'mg': return amount / 1e3; // mg to g
-            default: return amount
-        }
+  function convertToBaseUnit(amount, unit) {
+    switch (unit) {
+      case "µg":
+        return amount / 1e6; // µg to g
+      case "mg":
+        return amount / 1e3; // mg to g
+      default:
+        return amount;
+    }
+  }
+
+  function valueAmount(nutrient) {
+    if (!!nutrient.value?.amount) {
+      return parseFloat(nutrient.value.amount);
     }
 
-    const nutrientAmount = parseFloat(nutrient.value.amount);
-    const nutrientUnit = nutrient.unit;
-    const referenceAmount = parseFloat(referenceValue);
-    const originalReferenceAmount = parseFloat(originalReference.value.amount);
-    const originalReferenceUnit = originalReference.value.unit;
+    if (!isNaN(nutrient.amount)) {
+      return parseFloat(nutrient.amount);
+    }
 
-    const baseNutrientAmount = convertToBaseUnit(nutrientAmount, nutrientUnit);
-    const baseOriginalReferenceAmount = convertToBaseUnit(originalReferenceAmount, originalReferenceUnit);
-    const baseReferenceAmount = convertToBaseUnit(referenceAmount, originalReferenceUnit);
+    return parseFloat(nutrient.amount.amount);
+  }
 
-    const adjustedAmount = (baseNutrientAmount * baseReferenceAmount / baseOriginalReferenceAmount).toFixed(2);
+  function valueUnit(nutrient) {
+    if (!!nutrient.value?.unit) {
+      return nutrient.value.unit;
+    }
 
-    return {
-        ...nutrient,
-        amount: adjustedAmount
-    };
+    if (!!nutrient.amount?.unit) {
+      return nutrient.amount.unit;
+    }
+
+    return nutrient.unit;
+  }
+
+  const nutrientAmount = valueAmount(nutrient);
+  const nutrientUnit = valueUnit(nutrient);
+  const referenceAmount = parseFloat(referenceValue);
+  const originalReferenceAmount = valueAmount(originalReference);
+  const originalReferenceUnit = valueUnit(originalReference);
+
+  const baseNutrientAmount = convertToBaseUnit(nutrientAmount, nutrientUnit);
+  const baseOriginalReferenceAmount = convertToBaseUnit(
+    originalReferenceAmount,
+    originalReferenceUnit
+  );
+  const baseReferenceAmount = convertToBaseUnit(
+    referenceAmount,
+    originalReferenceUnit
+  );
+
+  const adjustedAmount = (
+    (baseNutrientAmount * baseReferenceAmount) /
+    baseOriginalReferenceAmount
+  ).toFixed(2);
+
+  return {
+    ...nutrient,
+    amount: adjustedAmount,
+  };
 }
 
 function handleSliderChange(event) {
@@ -304,11 +458,10 @@ function addFoodItem() {
   const nutrientInfoElement = document.createElement("div");
   nutrientInfoElement.id = `nutrient-info-${index}`;
 
-  const foodSelect = document.getElementById('foodSelect');
+  const foodSelect = document.getElementById("foodSelect");
 
   // Unselect the selected option
   foodSelect.selectedIndex = -1;
-
 
   selectElement.addEventListener("change", function () {
     sliderElement.style.display = "block";
@@ -361,16 +514,15 @@ function addMealFormListener() {
 }
 
 function createMeal(meal) {
-    return api(mealEndpoint, {
-        method: 'POST',
-        headers: headers,
-        body: JSON.stringify(meal)
-    })
-    .then(response => {
-        if (response) {
-            return response.json();
-        }
-    });
+  return api(mealEndpoint, {
+    method: "POST",
+    headers: headers,
+    body: JSON.stringify(meal),
+  }).then((response) => {
+    if (response) {
+      return response.json();
+    }
+  });
 }
 
 window.addEventListener("load", addFoodItemOptions);
