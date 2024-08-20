@@ -60,7 +60,6 @@ function populateMealOptions(meals) {
       mealSelect.appendChild(option);
     });
 
-    // Button to add selected meal to the list
     const addButton = document.createElement("button");
     addButton.textContent = "Add Meal";
     addButton.addEventListener("click", function (e) {
@@ -141,26 +140,11 @@ function updateNutrientTotals(meal, multiplier, totals, displayElement) {
     nutrients.calories = { amount: nutrients.calories, unit: "UNIT" };
   }
 
-  const updatedNutrients = {
-    calories: nutrientValueCalculation(
-      nutrients.calories,
-      1,
-      nutrients.calories
-    ),
-    carbohydrate: nutrientValueCalculation(
-      nutrients.carbohydrate,
-      1,
-      nutrients.carbohydrate
-    ),
-    fat: nutrientValueCalculation(nutrients.fat, 1, nutrients.fat),
-    protein: nutrientValueCalculation(nutrients.protein, 1, nutrients.protein),
-  };
-
-  totals.calories += parseFloat(updatedNutrients.calories.amount) * multiplier;
+  totals.calories += parseFloat(nutrients.calories.amount) * multiplier;
   totals.carbohydrate +=
-    parseFloat(updatedNutrients.carbohydrate.amount) * multiplier;
-  totals.fat += parseFloat(updatedNutrients.fat.amount) * multiplier;
-  totals.protein += parseFloat(updatedNutrients.protein.amount) * multiplier;
+    parseFloat(nutrients.carbohydrate.amount) * multiplier;
+  totals.fat += parseFloat(nutrients.fat.amount) * multiplier;
+  totals.protein += parseFloat(nutrients.protein.amount) * multiplier;
 
   displayElement.textContent = `Total Nutrients:
     Calories: ${totals.calories.toFixed(2)} g,
