@@ -982,6 +982,7 @@ function addLinks() {
   updateWeightTrackerLink()
   updateNotesLink()
   updatePodcastsLink()
+  updateFoodLink()
 }
 
 function updateEventsLink() {
@@ -1083,6 +1084,15 @@ function updatePodcastsLink() {
     link.innerHTML = `Podcasts`
   if (withEmojis) {
     link.innerHTML = `🎧 Podcasts`
+  }
+}
+
+function updateFoodLink() {
+  const link = document.getElementById('food-link');
+  link.href = `${browserExtension}://${extensionId}/template/meals.html`
+    link.innerHTML = `Nutrition`
+  if (withEmojis) {
+    link.innerHTML = `🥗 Nutrition`
   }
 }
 
