@@ -515,6 +515,32 @@ function createMeal(meal) {
   });
 }
 
+function addFoodItemCsvFormListener() {
+  document
+    .getElementById("foodItemCsvForm")
+    .addEventListener("submit", function (event) {
+      event.preventDefault();
+
+      const formData = new FormData(this);
+
+      const csv = formData.get("csvFoodItems");
+      createMealFromCSV(csv);
+    });
+}
+
+function createMealFromCSV(csv) {
+  return api(foodItemCsvEndpoint, {
+    method: "POST",
+    headers: headers,
+    body: csv,
+  }).then((response) => {
+    if (response) {
+      return response.json();
+    }
+  });
+}
+
 window.addEventListener("load", addFoodItemOptions);
 window.addEventListener("load", addFoodItemFormListener);
+window.addEventListener("load", addFoodItemCsvFormListener);
 window.addEventListener("load", addMealOptions);

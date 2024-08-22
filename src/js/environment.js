@@ -61,6 +61,7 @@ const mealEndpoint = `${host}/nutrition/food/meal`
 const allMealsEndpoint = `${host}/nutrition/food/meal/all`
 const mealPlanEndpoint = `${host}/nutrition/food/meal/plan`
 const foodItemEndpoint = `${host}/nutrition/food/item`
+const foodItemCsvEndpoint = `${host}/nutrition/food/item/csv`
 
 function categoryParam(category) {
   return !!category ? `&category=${category}` : ''
