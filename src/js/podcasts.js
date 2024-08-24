@@ -32,6 +32,15 @@ function addContextMenuListener() {
     hideContextMenu();
   });
 
+  const notInterestedAction = document.getElementById('notInterestedAction');
+
+  notInterestedAction.addEventListener('click', function() {
+    markAsNotInterested(selectedEpisode.id)
+    selectedEpisode = null
+    hideContextMenu();
+  });
+
+
   contextMenu = document.getElementById('podcastEpisodeContextMenu');
 
   const unsubscribeAction = document.getElementById('unsubscribeAction')
@@ -66,6 +75,14 @@ function addPodcastFormListener() {
 
 function markAsListened(episodeId) {
   return api(podcastTrack, {
+      method: 'PUT',
+      headers: headers,
+      body: JSON.stringify({'episodeId':episodeId})
+      })
+}
+
+function markAsNotInterested(episodeId) {
+  return api(podcastNotInterested, {
       method: 'PUT',
       headers: headers,
       body: JSON.stringify({'episodeId':episodeId})
