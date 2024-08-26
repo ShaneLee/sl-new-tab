@@ -4,7 +4,7 @@ const tempUserId = 'bd11dcc2-77f6-430f-8e87-5839d31ab0e3'
 
 const isChrome = /Chrome/.test(navigator.userAgent);
 const browserExtension = isChrome ? "chrome-extension" : "moz-extension";
-const extensionId = isChrome ? chrome.runtime.id : '32fbc78b-8a30-4de8-93b2-2080291501eb'
+const extensionId = isChrome ? chrome.runtime.id : 'afadb1cf-b426-431a-a9f7-47adf0ceff91'
 
 const headers = {
   'Content-Type': 'application/json',
