@@ -725,6 +725,20 @@ function addTodo(uL, todo) {
       spanItemCount++
   }
 
+  if (todo.important) {
+      const importantElement = document.createElement('span');
+      importantElement.innerHTML = withEmojis ? '🌟' : '!'
+
+      importantElement.className = 'due-date-box';
+      importantElement.classList.add('no-highlight');
+      if (withEmojis) {
+        importantElement.classList.add('emoji');
+      }
+
+      contentDiv.appendChild(importantElement);
+      spanItemCount++
+  }
+
   if (spanItemCount > 1 && !!countElement) {
     countElement.classList.add('margin-right-todo-span');
   }
@@ -1263,6 +1277,7 @@ function addTodoListener() {
   const moveToBacklogAction = document.getElementById('moveToBacklogAction');
   const moveToIdeaAction = document.getElementById('moveToIdeaAction');
   const openLinkAction = document.getElementById('openLinkAction');
+  const markImportantAction = document.getElementById('markImportantAction');
 
   document.addEventListener('contextmenu', function(event) {
     hideContextMenu()
@@ -1276,6 +1291,14 @@ function addTodoListener() {
       todo.dueDate = null;
       update(todo)
     }
+    selectedTodo = null;
+    hideContextMenu();
+  })
+
+  markImportantAction.addEventListener('click', function() { 
+    const todo = selectedTodo
+    todo.important = true;
+    update(todo)
     selectedTodo = null;
     hideContextMenu();
   })

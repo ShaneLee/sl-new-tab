@@ -284,6 +284,14 @@ div.todo-input:focus {
   border-radius: 3px;
 }
 
+.due-date-box.emoji {
+  font-size: 0.8rem;
+}
+
+.no-highlight {
+  background-color: var(--background-color);
+}
+
 .highlighted-due {
   color: var(--background-color);
   background-color: var(--main-color);
