@@ -40,6 +40,14 @@ function addContextMenuListener() {
     hideContextMenu();
   });
 
+  const listenLaterAction = document.getElementById('addToListenLaterAction');
+
+  listenLaterAction.addEventListener('click', function() {
+    addToListenLater(selectedEpisode.id)
+    selectedEpisode = null
+    hideContextMenu();
+  });
+
 
   contextMenu = document.getElementById('podcastEpisodeContextMenu');
 
@@ -84,6 +92,14 @@ function markAsListened(episodeId) {
 function markAsNotInterested(episodeId) {
   return api(podcastNotInterested, {
       method: 'PUT',
+      headers: headers,
+      body: JSON.stringify({'episodeId':episodeId})
+      })
+}
+
+function addToListenLater(episodeId) {
+  return api(podcastListenLater, {
+      method: 'POST',
       headers: headers,
       body: JSON.stringify({'episodeId':episodeId})
       })
