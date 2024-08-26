@@ -18,6 +18,59 @@ let timerInterval;
 let contextMenu;
 let TODOS_SET = new Set()
 
+class Page {
+  constructor({ id, url, name, emoji, shortcut, clickHandler }) {
+    this.id = id;
+    this.url = url;
+    this.name = name;
+    this.emoji = emoji;
+    this.shortcut = shortcut ? shortcut.split('') : [];
+    this.clickHandler = clickHandler;
+
+    this.createLink();
+    if (this.shortcut.length > 0) {
+      this.bindShortcut();
+    }
+  }
+
+  createLink() {
+    const link = document.getElementById(this.id);
+    if (!link) return;
+    link.href = this.url;
+    link.innerHTML = this.emoji ? `${this.emoji} ${this.name}` : this.name;
+
+    if (this.clickHandler) {
+      link.addEventListener('click', this.clickHandler);
+    }
+  }
+
+  bindShortcut() {
+    let pressedKeys = [];
+
+    document.addEventListener('keydown', (event) => {
+      pressedKeys.push(event.key);
+
+      if (this.shortcut.every((key, index) => key === pressedKeys[index])) {
+        if (pressedKeys.length === this.shortcut.length) {
+          this.openPage();
+          event.preventDefault();
+          pressedKeys = [];
+        }
+      }
+    });
+  }
+
+  openPage() {
+    window.location.href = this.url;
+  }
+
+  init() {
+    this.createLink()
+    this.bindShortcut()
+  }
+
+}
+
 document.addEventListener('keydown', (event) => {
   if (event.key === '~') {
     document.getElementById('main').style.display = 'none'
@@ -983,153 +1036,6 @@ function createGrid(width, height, numToColor) {
   }
 }
 
-function addLinks() {
-  updateTimeTrackingSummaryLink() 
-  updateRatingsLink()
-  updateIdeaBucketLink()
-  updateReviewLink()
-  updateQuarterReviewLink()
-  updateReadingListLink()
-  updateSpendTrackerLink()
-  updateEventsLink()
-  updateLogsLink()
-  updateWeightTrackerLink()
-  updateNotesLink()
-  updatePodcastsLink()
-  updateFoodLink()
-}
-
-function updateEventsLink() {
-  const link = document.getElementById('events-link');
-  link.href = `${browserExtension}://${extensionId}/template/events.html`
-  link.innerHTML = `Events`
-  if (withEmojis) {
-    link.innerHTML = `🐸 Events`
-  }
-}
-
-function updateLogsLink() {
-  const link = document.getElementById('logs-link');
-  link.href = `http://192.168.0.46/logs`
-  link.innerHTML = `Logs`
-  if (withEmojis) {
-    link.innerHTML = `🤖 Logs`
-  }
-}
-
-function updateTimeTrackingSummaryLink() {
-  const link = document.getElementById('time-tracking-summary-link');
-  link.href = `${browserExtension}://${extensionId}/template/time-tracking-summary.html`
-  link.innerHTML = `Time tracking summary`
-  if (withEmojis) {
-    link.innerHTML = `🕰️ Time tracking summary`
-  }
-}
-
-function updateSpendTrackerLink() {
-  const link = document.getElementById('spend-tracker-link');
-
-  link.href = `${browserExtension}://${extensionId}/template/spend-tracker.html`
-  link.innerHTML = `Spend Tracker`
-  if (withEmojis) {
-    link.innerHTML = `💰 Spend Tracker`
-  }
-}
-
-function updateWeightTrackerLink() {
-  const link = document.getElementById('weight-tracker-link');
-
-  link.href = `${browserExtension}://${extensionId}/template/weight-tracker.html`
-  link.innerHTML = `Weight Tracker`
-  if (withEmojis) {
-    link.innerHTML = `⚖️ Weight Tracker`
-  }
-}
-
-function updateNotesLink() {
-  const link = document.getElementById('notes-link');
-
-  link.href = `file:///Users/shane/.bin/notes/`
-  link.innerHTML = `Notes`
-  if (withEmojis) {
-    link.innerHTML = `🗒️ Notes`
-  }
-}
-
-function updateReadingListLink() {
-  const link = document.getElementById('reading-list-link');
-  link.href = `${browserExtension}://${extensionId}/template/reading-list.html`
-  link.innerHTML = `Reading List`
-  if (withEmojis) {
-    link.innerHTML = `📚 Reading List`
-  }
-}
-
-function updateRatingsLink() {
-  const link = document.getElementById('ratings-link');
-  link.href = `${browserExtension}://${extensionId}/template/ratings.html`
-  link.innerHTML = `Mood Ratings`
-  if (withEmojis) {
-    link.innerHTML = `🌺 Mood Ratings`
-  }
-}
-
-function updateIdeaBucketLink() {
-  const link = document.getElementById('idea-bucket-link');
-  link.href = `${browserExtension}://${extensionId}/template/idea-bucket.html`
-    link.innerHTML = `Idea Bucket`
-  if (withEmojis) {
-    link.innerHTML = `💡 Idea Bucket`
-  }
-}
-
-function updateReviewLink() {
-  const link = document.getElementById('review-link');
-  link.href = `${browserExtension}://${extensionId}/template/review.html`
-    link.innerHTML = `Review`
-  if (withEmojis) {
-    link.innerHTML = `🌱 Review`
-  }
-}
-
-function updatePodcastsLink() {
-  const link = document.getElementById('podcasts-link');
-  link.href = `${browserExtension}://${extensionId}/template/podcasts.html`
-    link.innerHTML = `Podcasts`
-  if (withEmojis) {
-    link.innerHTML = `🎧 Podcasts`
-  }
-}
-
-function updateFoodLink() {
-  const link = document.getElementById('food-link');
-  link.href = `${browserExtension}://${extensionId}/template/meals.html`
-    link.innerHTML = `Nutrition`
-  if (withEmojis) {
-    link.innerHTML = `🥗 Nutrition`
-  }
-}
-
-function updateQuarterReviewLink() {
-  const link = document.getElementById('quarter-review-link');
-  // Using YEAR as the type will enable reviews for the current quarter include any weeks 
-  // that have elapsed since the end of the quarter
-  link.href = `${browserExtension}://${extensionId}/template/review.html?type=YEAR&name="Quarter1"`
-  link.innerHTML = `Quarterly Review`
-  if (withEmojis) {
-    link.innerHTML = `🍀 Quarterly Review`
-  }
-
-  link.addEventListener('click', function(event) {
-    event.preventDefault();
-
-    const quarterNumber = prompt('Enter the quarter number:');
-    if (quarterNumber) {
-      window.location.href = `${browserExtension}://${extensionId}/template/review.html?type=YEAR&name=Quarter${quarterNumber}`;
-    }
-  });
-}
-
 function parseFrequencyString(val) {
   const localDatePattern = /\b\d{4}-\d{2}-\d{2}\b/g;
   const everyPattern = /every (\d+(?:st|nd|rd|th)?)?\s?(days?|weeks?|months?|quarters?|years?|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)?/i;
@@ -1540,6 +1446,108 @@ function mapWithDueDate(todos) {
   .join('');
 }
 
+const pages = [
+    new Page({
+      id: 'events-link',
+      url: `${browserExtension}://${extensionId}/template/events.html`,
+      name: 'Events',
+      emoji: withEmojis ? '🐸' : '',
+      shortcut: ',e'
+    }),
+    new Page({
+      id: 'logs-link',
+      url: `http://192.168.0.46/logs`,
+      name: 'Logs',
+      emoji: withEmojis ? '🤖' : '',
+      shortcut: ',l'
+    }),
+    new Page({
+      id: 'time-tracking-summary-link',
+      url: `${browserExtension}://${extensionId}/template/time-tracking-summary.html`,
+      name: 'Time tracking summary',
+      emoji: withEmojis ? '🕰️' : '',
+      shortcut: ',t'
+    }),
+    new Page({
+      id: 'spend-tracker-link',
+      url: `${browserExtension}://${extensionId}/template/spend-tracker.html`,
+      name: 'Spend Tracker',
+      emoji: withEmojis ? '💰' : '',
+      shortcut: ',s'
+    }),
+    new Page({
+      id: 'weight-tracker-link',
+      url: `${browserExtension}://${extensionId}/template/weight-tracker.html`,
+      name: 'Weight Tracker',
+      emoji: withEmojis ? '⚖️' : '',
+      shortcut: ',w'
+    }),
+    new Page({
+      id: 'notes-link',
+      url: `file:///Users/shane/.bin/notes/`,
+      name: 'Notes',
+      emoji: withEmojis ? '🗒️' : '',
+      shortcut: ',n'
+    }),
+    new Page({
+      id: 'reading-list-link',
+      url: `${browserExtension}://${extensionId}/template/reading-list.html`,
+      name: 'Reading List',
+      emoji: withEmojis ? '📚' : '',
+      shortcut: ',r'
+    }),
+    new Page({
+      id: 'ratings-link',
+      url: `${browserExtension}://${extensionId}/template/ratings.html`,
+      name: 'Mood Ratings',
+      emoji: withEmojis ? '🌺' : '',
+      shortcut: ',m'
+    }),
+    new Page({
+      id: 'idea-bucket-link',
+      url: `${browserExtension}://${extensionId}/template/idea-bucket.html`,
+      name: 'Idea Bucket',
+      emoji: withEmojis ? '💡' : '',
+      shortcut: ',i'
+    }),
+    new Page({
+      id: 'review-link',
+      url: `${browserExtension}://${extensionId}/template/review.html`,
+      name: 'Review',
+      emoji: withEmojis ? '🌱' : '',
+      shortcut: ',v'
+    }),
+    new Page({
+      id: 'podcasts-link',
+      url: `${browserExtension}://${extensionId}/template/podcasts.html`,
+      name: 'Podcasts',
+      emoji: withEmojis ? '🎧' : '',
+      shortcut: ',p'
+    }),
+    new Page({
+      id: 'food-link',
+      url: `${browserExtension}://${extensionId}/template/meals.html`,
+      name: 'Nutrition',
+      emoji: withEmojis ? '🥗' : '',
+      shortcut: ',f'
+    }),
+    new Page({
+      id: 'quarter-review-link',
+      url: `${browserExtension}://${extensionId}/template/review.html?type=YEAR&name="Quarter1"`,
+      name: 'Quarterly Review',
+      emoji: withEmojis ? '🍀' : '',
+      shortcut: ',q',
+      clickHandler: function (event) {
+        event.preventDefault();
+
+        const quarterNumber = prompt('Enter the quarter number:');
+        if (quarterNumber) {
+          window.location.href = `${browserExtension}://${extensionId}/template/review.html?type=YEAR&name=Quarter${quarterNumber}`;
+        }
+      }
+    })
+  ];
+
 function targetNote() {
   const note = document.getElementById('note')
   const important = importantTodos()
@@ -1563,8 +1571,8 @@ window.onload = function() {
   if (timerEnabled) {
     updateTaskButton(false)
     getRunningTask()
-    addLinks()
   }
+  pages.forEach(page => page.init())
   const eventDates = getEventStartAndEndDates()
   getEvents(eventDates['start'], eventDates['end'])
   categories()
