@@ -12,6 +12,12 @@ function addFindEpisodesContextListener() {
   window.location.href = currentUrl.toString();
 }
 
+function gotoListenLaterContextListener() {
+  const currentUrl = new URL(window.location.href);
+  currentUrl.searchParams.set('listenLater', true);
+  window.location.href = currentUrl.toString();
+}
+
 function unsubscribe() {
   const podcastId = selectedPodcast.id
   return api(podcastSubscribeEndpoint, {
@@ -58,6 +64,10 @@ function addContextMenuListener() {
   const findEpisodesAction = document.getElementById('findEpisodesAction')
 
   findEpisodesAction.addEventListener('click', addFindEpisodesContextListener)
+
+  const goToListenLaterAction = document.getElementById('gotoListenLaterAction')
+
+  goToListenLaterAction.addEventListener('click', gotoListenLaterContextListener)
 
   // Event listener to hide context menu on window click
   window.addEventListener('click', function() {
@@ -149,6 +159,28 @@ function fetchSubscribedPodcasts() {
         .catch(error => {
             console.error("Error fetching podcast episodes:", error);
         });
+}
+
+function fetchPodcastListenLater() {
+  const size = 50;
+
+  api(podcastListenLaterFn(page, size), {
+      method: 'GET',
+      headers: headers
+  })
+  .then(response => {
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.json();
+  })
+  .then(data => {
+      displayEpisodes(data.content);
+      updatePaginationButtons(data);
+  })
+  .catch(error => {
+      console.error("Error fetching podcast listen later:", error);
+  });
 }
 
 function fetchPodcastEpisodesByPodcastId(podcastId) {
@@ -331,6 +363,9 @@ window.onload = () => {
   const podcastId = getUrlParameter('podcastId')
   if (podcastId) {
     fetchPodcastEpisodesByPodcastId(podcastId)
+  }
+  else if (getUrlParameter('listenLater')) {
+    fetchPodcastListenLater()
   }
   else {
     fetchPodcastEpisodes()

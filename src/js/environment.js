@@ -52,6 +52,7 @@ const todoReviewEndpoint = (type, category) => `${host}/todos/review?type=${type
 const podcastSubscribeEndpoint = `${host}/podcast/subscribe`
 const podcastTrack = `${host}/podcast/track`
 const podcastListenLater = `${host}/podcast/listenLater`
+const podcastListenLaterFn = (page, size) => `${host}/podcast/listenLater?page=${page}&${size}`
 const podcastNotInterested = `${host}/podcast/notInterested`
 const podcastNewEpisodesEndpointFn = (page, size, sort) => `${host}/podcast/new?page=${page}&size=${size}&sort=${sort}`
 const podcastEpisodesEndpointFn = (podcastId, page, size) => `${host}/podcast/episodes?podcastId=${podcastId}&page=${page}&size=${size}`
