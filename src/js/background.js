@@ -4,6 +4,7 @@ const webTrackerEndpoint = `${host}/tracking/web`
 const readingListEndpoint = `${host}/reading-list`
 const stopEndpoint = `${host}/tracking/web/stop`
 const podcastSubscribeEndpoint = `${host}/podcast/subscribe`
+const podcastListenLater = `${host}/podcast/listenLater`
 const webTrackingEnabled = false
 const tempUserId = 'bd11dcc2-77f6-430f-8e87-5839d31ab0e3'
 
@@ -21,6 +22,14 @@ function addToReadingList(payload) {
     body: JSON.stringify(payload),
   })
 
+}
+
+function addToListenLater(url) {
+  return fetch(podcastListenLater, {
+      method: 'POST',
+      headers: headers,
+      body: JSON.stringify({'url':url})
+  })
 }
 
 if (webTrackingEnabled) {
@@ -123,6 +132,12 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
       url: info.linkUrl,
     });
   }
+
+  else if (info.menuItemId === "addToListenLater") {
+    addToListenLater({
+      url: info.linkUrl,
+    });
+  }
 });
 
 chrome.commands.onCommand.addListener((command) => {
@@ -147,6 +162,12 @@ chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.create({
     id: "subscribeToPodcast",
     title: "Subscribe to podcast",
+    contexts: ["link"]
+  });
+
+  chrome.contextMenus.create({
+    id: "addToListenLater",
+    title: "Add to Podcast Listen Later",
     contexts: ["link"]
   });
 });
