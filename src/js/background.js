@@ -48,11 +48,11 @@ function addToReadingList(payload) {
 
 }
 
-function addToListenLater(url) {
+function addToListenLater(listenLater) {
   return fetch(podcastListenLater, {
       method: 'POST',
       headers: headers,
-      body: JSON.stringify({'url':url})
+      body: JSON.stringify(listenLater)
   })
 }
 
