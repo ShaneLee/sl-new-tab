@@ -104,7 +104,13 @@ function santiseString(val) {
 
 
 function createNote(item) {
-  const blob = new Blob([`${item.url}`], {type: "text/plain"});
+  const blob = new Blob([[
+  `---`,
+  `tags:`,
+  `  -`,
+  `---`,
+  '',
+  `${item.url}`].join('\n')], {type: "text/plain"});
   const url = URL.createObjectURL(blob);
 
   browser.downloads.download({
