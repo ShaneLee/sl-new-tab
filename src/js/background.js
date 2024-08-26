@@ -15,6 +15,24 @@ const headers = {
 
 let previousTab = null;
 
+function santiseString(val) {
+  return val
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, '')
+    .replace(/\s+/g, '-')
+}
+
+function createNote(item) {
+  const blob = new Blob([`${item.url}`], {type: "text/plain"});
+  const url = URL.createObjectURL(blob);
+
+  browser.downloads.download({
+      url: url,
+      filename: `${santiseString(item.title)}.md`,
+      saveAs: true
+  });
+}
+
 function addToReadingList(payload) {
   fetch(readingListEndpoint, {
     method: 'POST',
@@ -138,6 +156,13 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
       url: info.linkUrl,
     });
   }
+  else if (info.menuItemId === "createNote") {
+    createNote({
+      'url': info.pageUrl,
+      'title': info.title || tab.title
+    })
+
+  }
 });
 
 chrome.commands.onCommand.addListener((command) => {
@@ -169,6 +194,12 @@ chrome.runtime.onInstalled.addListener(() => {
     id: "addToListenLater",
     title: "Add to Podcast Listen Later",
     contexts: ["link"]
+  });
+
+  chrome.contextMenus.create({
+    id: "createNote",
+    title: "Create Note",
+    contexts: ["page", "selection"]
   });
 });
 
