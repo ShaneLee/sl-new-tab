@@ -4,6 +4,8 @@ timerEnabled=true
 eventsEnabled=true
 spendTrackingEnabled=true
 importantTodosEnabled=true
+// Should we include this week's todos in the main note?
+importantTodosForThisWeek=false
 // Should we default to all todos or the current week number
 defaultToAll=false
 const withEmojis=true
@@ -1435,15 +1437,19 @@ function getDaysUntilTargetDate(targetDate) {
 }
 
 function mapWithDueDate(todos) {
-  return todos.map(todo => {
-    return { 
-      "todo": todo,
-      "target": !!todo.dueDate ? new Date(todo.dueDate) : null,
-      "countRemaining": !!todo.count ? `${todo.targetCount - todo.count} to go!` : ""
-   }})
-  .map(val => `${val.todo.todo} ${getDaysUntilTargetDate(val.target)}${val.countRemaining}</br>`)
-  .slice(0, IMPORTANT_TODO_DISPLAY_COUNT)
-  .join('');
+  const category = document.getElementById('category-input').value;
+  const weekCategory = category.includes('Week')
+  return todos
+    .filter(val => importantTodosForThisWeek || !(weekCategory && val.category === category))
+    .map(todo => {
+      return { 
+        "todo": todo,
+        "target": !!todo.dueDate ? new Date(todo.dueDate) : null,
+        "countRemaining": !!todo.count ? `${todo.targetCount - todo.count} to go!` : ""
+     }})
+    .map(val => `${val.todo.todo} ${getDaysUntilTargetDate(val.target)}${val.countRemaining}</br>`)
+    .slice(0, IMPORTANT_TODO_DISPLAY_COUNT)
+    .join('');
 }
 
 const pages = [
