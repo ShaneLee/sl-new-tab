@@ -160,6 +160,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
   else if (info.menuItemId === "addToListenLater") {
     addToListenLater({
       url: info.linkUrl,
+      episodeTitle: info.selectionText
     });
   }
   else if (info.menuItemId === "createNote") {
