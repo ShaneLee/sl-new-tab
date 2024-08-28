@@ -4,6 +4,7 @@ const webTrackerEndpoint = `${host}/tracking/web`
 const readingListEndpoint = `${host}/reading-list`
 const stopEndpoint = `${host}/tracking/web/stop`
 const podcastSubscribeEndpoint = `${host}/podcast/subscribe`
+const fileUploadEndpoint = `${host}/files/upload`
 const podcastListenLater = `${host}/podcast/listenLater`
 const webTrackingEnabled = false
 const tempUserId = 'bd11dcc2-77f6-430f-8e87-5839d31ab0e3'
@@ -14,6 +15,19 @@ const headers = {
 }
 
 let previousTab = null;
+
+
+function saveFile(file, metadata) {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
+
+  return fetch(fileUploadEndpoint, {
+    method: 'POST',
+    headers: headers,
+    body: formData
+  })
+}
 
 function santiseString(val) {
   return val
@@ -168,7 +182,24 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
       'url': info.pageUrl,
       'title': info.title || tab.title
     })
+  }
 
+  else if (info.menuItemId === "saveFile") {
+    const imageUrl = info.srcUrl;
+    const metadata = {
+      description: 'test',
+      notes: `Source: ${info.pageUrl}`
+    };
+
+    fetch(imageUrl)
+      .then(response => response.blob())
+      .then(blob => {
+        const file = new File([blob], info.srcUrl, { type: blob.type });
+        saveFile(file, metadata);
+      })
+      .catch(error => {
+        console.error('Error fetching image:', error);
+      });
   }
 });
 
@@ -207,6 +238,12 @@ chrome.runtime.onInstalled.addListener(() => {
     id: "createNote",
     title: "Create Note",
     contexts: ["page", "selection"]
+  });
+
+  chrome.contextMenus.create({
+    id: "saveFile",
+    title: "Save",
+    contexts: ["image", "audio", "video"]
   });
 });
 
