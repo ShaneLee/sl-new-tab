@@ -2,6 +2,7 @@ IMPORTANT_TODO_DISPLAY_COUNT=3
 quotesEnabled=false
 timerEnabled=true
 eventsEnabled=true
+showTags=true
 spendTrackingEnabled=true
 importantTodosEnabled=true
 // Should we include this week's todos in the main note?
@@ -12,6 +13,32 @@ const withEmojis=true
 
 const CATEGORIES_SET = new Set();
 const LAST = new Array();
+
+class CircularQueue {
+  constructor(elements) {
+    this.elements = elements;
+  }
+
+  get() {
+    const element = this.elements.pop();
+    this.elements.unshift(element);
+    return element;
+  }
+}
+
+const TAG_COLOURS = new Map();
+
+// TODO in the future remove any colours that are set by the user for given tags
+const DEFAULT_TAG_COLOURS = new CircularQueue(['red', 'yellow', 'green', 'cyan'])
+
+TAG_COLOURS.set('programming', '#00ffff')
+TAG_COLOURS.set('reading', '#1abf1a')
+TAG_COLOURS.set('work', '#f47903')
+TAG_COLOURS.set('motorbike', '#e7b91b')
+TAG_COLOURS.set('admin', '#a78e3a')
+TAG_COLOURS.set('house', '#7ee651')
+TAG_COLOURS.set('fitness', '#ef1add')
+TAG_COLOURS.set('learning', '#7d1aef')
 
 const DEFAULT_RANK = 1000
 
@@ -584,6 +611,17 @@ function stripSpanTags(str) {
     return tempDiv.textContent || tempDiv.innerText || "";
 }
 
+function getTagColour(tag) {
+  let colour = TAG_COLOURS.get(tag);
+
+  if (!colour) {
+    colour = DEFAULT_TAG_COLOURS.get()
+    TAG_COLOURS.set(tag, colour)
+  }
+
+  return colour
+}
+
 function createTodoWithLinked(todo, linkedTodoId) {
   const todoElement = document.getElementById('todo-input');
   return createTodo(todo, todoElement, linkedTodoId)
@@ -753,15 +791,37 @@ function addTodo(uL, todo) {
     showContextMenu(event, todo);
   });
 
+  const rightBoxes = document.createElement('div');
+  rightBoxes.className = 'right-boxes';
+  contentDiv.appendChild(rightBoxes)
+
   let countElement;
   // TODO come up with a better name for these
   let spanItemCount = 0;
+
+  if (showTags && !!todo.tags) {
+    todo.tags.forEach(tag => {
+      const tagElement = document.createElement('span');
+      tagElement.title = tag;
+      const colour = getTagColour(tag)
+
+      tagElement.className = 'tag-box';
+      tagElement.style.backgroundColor = colour
+      if (withEmojis) {
+        tagElement.classList.add('emoji');
+      }
+
+      rightBoxes.appendChild(tagElement);
+      spanItemCount++
+    })
+  }
+
   if (todo.targetCount != null) {
       countElement = document.createElement('span');
       countElement.innerHTML = todoCountString(todo)
       // TODO different class?
       countElement.className = 'due-date-box';
-      contentDiv.appendChild(countElement);
+      rightBoxes.appendChild(countElement);
       spanItemCount++
   }
 
@@ -776,9 +836,10 @@ function addTodo(uL, todo) {
         movedWeeksCountElement.classList.add('emoji');
       }
 
-      contentDiv.appendChild(movedWeeksCountElement);
+      rightBoxes.appendChild(movedWeeksCountElement);
       spanItemCount++
   }
+
 
   if (todo.important) {
       const importantElement = document.createElement('span');
@@ -790,9 +851,11 @@ function addTodo(uL, todo) {
         importantElement.classList.add('emoji');
       }
 
-      contentDiv.appendChild(importantElement);
+      rightBoxes.appendChild(importantElement);
       spanItemCount++
   }
+
+
 
   if (spanItemCount > 1 && !!countElement) {
     countElement.classList.add('margin-right-todo-span');
@@ -832,7 +895,7 @@ function addTodo(uL, todo) {
           dueDateElement.classList.add('highlighted-due');
       }
 
-      contentDiv.appendChild(dueDateElement);  
+      rightBoxes.appendChild(dueDateElement);  
   }
 
 
@@ -1186,6 +1249,7 @@ function addTodoListener() {
   const moveToIdeaAction = document.getElementById('moveToIdeaAction');
   const openLinkAction = document.getElementById('openLinkAction');
   const markImportantAction = document.getElementById('markImportantAction');
+  const addTagAction = document.getElementById('addTagAction');
 
   document.addEventListener('contextmenu', function(event) {
     hideContextMenu()
@@ -1353,6 +1417,17 @@ function addTodoListener() {
     const category = prompt('Enter the new category:');
     if (!!category) {
       todo.category = category
+      update(todo)
+    }
+    selectedTodo = null
+    hideContextMenu();
+  });
+
+  addTagAction.addEventListener('click', function() {
+    const todo = selectedTodo
+    const tags = prompt('Enter the new tag(s) comma separated:');
+    if (!!tags) {
+      todo.tags = tags.split(',')
       update(todo)
     }
     selectedTodo = null

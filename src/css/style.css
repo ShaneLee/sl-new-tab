@@ -145,6 +145,23 @@ ul {
 
 }
 
+.tag-box {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin: auto 3px;
+}
+
+.right-boxes {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  gap: 3px;
+}
+
 .countInput
   input::-webkit-outer-spin-button,
   input::-webkit-inner-spin-button {
@@ -275,10 +292,7 @@ div.todo-input:focus {
 }
 
 .due-date-box {
-  position: absolute; 
-  top: 50%;           
-  transform: translateY(-50%);
-  right: 10px;        
+  display: inline-block;
   background-color: var(--link-hover-color);
   padding: 5px;      
   border-radius: 3px;
