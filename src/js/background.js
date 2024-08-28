@@ -240,6 +240,7 @@ chrome.runtime.onInstalled.addListener(() => {
     contexts: ["page", "selection"]
   });
 
+  // TODO create context/popup form to get the metadata
   chrome.contextMenus.create({
     id: "saveFile",
     title: "Save",
