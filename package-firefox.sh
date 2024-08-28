@@ -2,6 +2,8 @@
 
 set -e
 
+cd src
+
 mv manifest.json manifest.v3.json
 mv manifest.v2.json manifest.json
 cp manifest.json manifest.v2.json.bak
@@ -14,3 +16,5 @@ rm files_array.json
 zip -r -FS ../sl.zip * --exclude '*.git*'
 mv manifest.v2.json.bak manifest.v2.json
 mv manifest.v3.json manifest.json
+
+cd -
