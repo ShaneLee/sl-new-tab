@@ -80,6 +80,7 @@ function getTransactions() {
   .then(val => {
     if (!!val) {
       populateToDeductTable(val)
+      populateToDeductByAccountTable(val)
     }
   })
   .catch(err => {});
@@ -92,7 +93,7 @@ function populateSpendsTable(transactions) {
   populateTable(tbody, transactions, true);
 }
 
-function populateTable(tbody, transactions, shouldGroup) {
+function populateTable(tbody, transactions, shouldGroup, groupingFunction) {
   // Clear the current content of the tbody
   tbody.innerHTML = '';
 
@@ -104,7 +105,7 @@ function populateTable(tbody, transactions, shouldGroup) {
 
   addTransactionToTable(tbody, {})
   if (shouldGroup) {
-    const grouped = groupTransactions(transactions)
+    const grouped = !!groupingFunction ? groupingFunction(transaction) : groupTransactions(transactions)
     Object.entries(grouped).forEach(([category, transaction]) => {
         addTransactionToTable(tbody, {
           'grouped': true,
@@ -149,6 +150,24 @@ function populateToDeductTable(transactions) {
   const tbody = document.getElementById('to-deduct-spend-tracker-table');
 
   populateTable(tbody, transactions, true);
+}
+
+function populateToDeductByAccountTable(transactions) {
+  const tbody = document.getElementById('to-deduct-by-account-spend-tracker-table');
+
+  const grouped = groupTransactionsByAccount(transactions)
+
+  tbody.innerHTML = '';
+
+  addTransactionToTable(tbody, {})
+  Object.entries(grouped).forEach(([account, transaction]) => {
+    console.log(account, transaction)
+      addTransactionToTable(tbody, {
+        'grouped': true,
+        'amount': transaction.totalAmount,
+        'checkboxFn': () => markAsDeductedOrNot(transaction.transactions, true),
+        'description': `${account} TOTAL`})
+        });
 }
 
 function addTransactionToTable(tbody, transaction) {
