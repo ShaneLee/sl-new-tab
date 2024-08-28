@@ -141,6 +141,11 @@ function addContextMenuListener() {
     }
     const category = prompt('Enter the new category:');
     todo.category = !!category ? category : 'PENDING'
+    const tagsValue = prompt('Enter the new tag(s) comma separated (reading is default):');
+
+    const tags = !!tagsValue ? tagsValue.split(',') : []
+    tags.push('reading')
+    todo.tags = tags
 
     createTodo(todo)
     selectedReading = null
