@@ -66,6 +66,9 @@ const mealPlanEndpoint = `${host}/nutrition/food/meal/plan`
 const foodItemEndpoint = `${host}/nutrition/food/item`
 const foodItemCsvEndpoint = `${host}/nutrition/food/item/csv`
 
+// Files Endpoints
+const filesEndpointFn = (category, page, size) => `${host}/files?category=${category}&page=${page}&size=${size}`
+
 function categoryParam(category) {
   return !!category ? `&category=${category}` : ''
 }

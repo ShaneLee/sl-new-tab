@@ -1536,6 +1536,12 @@ const pages = [
       shortcut: ',e'
     }),
     new Page({
+      id: 'memes-link',
+      url: `${browserExtension}://${extensionId}/template/memes.html`,
+      name: 'Memes',
+      emoji: withEmojis ? '🤣' : '',
+    }),
+    new Page({
       id: 'logs-link',
       url: `http://192.168.0.46/logs`,
       name: 'Logs',
