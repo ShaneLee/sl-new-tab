@@ -14,17 +14,25 @@ const headers = {
   'tempUserId': tempUserId
 }
 
+const noContentTypeHeaders = {
+  'tempUserId': tempUserId
+}
+
 let previousTab = null;
 
+function basename(path) {
+   return path.split('/').reverse()[0];
+}
 
 function saveFile(file, metadata) {
+  const metadataBlob = new Blob([JSON.stringify(metadata)], { type: 'application/json' });
   const formData = new FormData();
   formData.append('file', file);
-  formData.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
+  formData.append('metadata', metadataBlob);
 
   return fetch(fileUploadEndpoint, {
     method: 'POST',
-    headers: headers,
+    headers: noContentTypeHeaders,
     body: formData
   })
 }
@@ -186,15 +194,16 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 
   else if (info.menuItemId === "saveFile") {
     const imageUrl = info.srcUrl;
-    const metadata = {
-      description: 'test',
-      notes: `Source: ${info.pageUrl}`
-    };
 
     fetch(imageUrl)
       .then(response => response.blob())
       .then(blob => {
-        const file = new File([blob], info.srcUrl, { type: blob.type });
+        const file = new File([blob], basename(info.srcUrl), { type: blob.type });
+        const metadata = {
+          category: 'test',
+          fileName: `memes/${basename(file.name)}`,
+          notes: `Source: ${info.pageUrl}`
+        };
         saveFile(file, metadata);
       })
       .catch(error => {
