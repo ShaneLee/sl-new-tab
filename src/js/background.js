@@ -165,6 +165,29 @@ function subscribeToPodcast(rss) {
       })
 }
 
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === 'saveFile') {
+    chrome.storage.local.get(['fileUrl', 'bucket', 'category', 'notes'], function(data) {
+      const { fileUrl, bucket, category, notes } = data;
+      fetch(fileUrl)
+        .then(response => response.blob())
+        .then(blob => {
+          const file = new File([blob], basename(fileUrl), { type: blob.type });
+          const metadata = {
+            category: bucket,
+            fileName: `${category}/${basename(file.name)}`,
+            notes
+          };
+          saveFile(file, metadata);
+        })
+        .catch(error => {
+          console.error('Error fetching file:', error);
+        });
+    });
+  }
+});
+
+
 chrome.contextMenus.onClicked.addListener((info, tab) => {
   if (info.menuItemId === "saveToReadingList") {
     addToReadingList({
@@ -193,22 +216,14 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
   }
 
   else if (info.menuItemId === "saveFile") {
-    const imageUrl = info.srcUrl;
-
-    fetch(imageUrl)
-      .then(response => response.blob())
-      .then(blob => {
-        const file = new File([blob], basename(info.srcUrl), { type: blob.type });
-        const metadata = {
-          category: 'test',
-          fileName: `memes/${basename(file.name)}`,
-          notes: `Source: ${info.pageUrl}`
-        };
-        saveFile(file, metadata);
-      })
-      .catch(error => {
-        console.error('Error fetching image:', error);
-      });
+    chrome.storage.local.set({ fileUrl: info.srcUrl }, function() {
+          chrome.windows.create({
+            url: chrome.runtime.getURL("template/file-popup.html"),
+            type: "popup",
+            width: 800,
+            height: 800
+          });
+        });
   }
 });
 
