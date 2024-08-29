@@ -225,6 +225,24 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
           });
         });
   }
+   else if (info.menuItemId === "saveMeme") {
+    const imageUrl = info.srcUrl;
+
+        fetch(imageUrl)
+          .then(response => response.blob())
+          .then(blob => {
+            const file = new File([blob], basename(info.srcUrl), { type: blob.type });
+            const metadata = {
+              category: 'itemsofinterest',
+              fileName: `memes/${basename(file.name)}`,
+              notes: `Source: ${info.pageUrl}`
+            };
+            saveFile(file, metadata);
+          })
+          .catch(error => {
+            console.error('Error fetching image:', error);
+          });
+   }
 });
 
 chrome.commands.onCommand.addListener((command) => {
@@ -264,10 +282,15 @@ chrome.runtime.onInstalled.addListener(() => {
     contexts: ["page", "selection"]
   });
 
-  // TODO create context/popup form to get the metadata
   chrome.contextMenus.create({
     id: "saveFile",
     title: "Save",
+    contexts: ["image", "audio", "video"]
+  });
+
+  chrome.contextMenus.create({
+    id: "saveMeme",
+    title: "Save Meme",
     contexts: ["image", "audio", "video"]
   });
 });
