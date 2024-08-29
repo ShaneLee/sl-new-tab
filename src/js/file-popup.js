@@ -32,21 +32,26 @@ formInputs.forEach(el => {
   }
 });
 
-document.getElementById('saveForm').addEventListener('submit', function(event) {
+document.getElementById('saveForm').addEventListener('submit', async function(event) {
   event.preventDefault();
-  
+
   const bucket = document.getElementById('bucket').value;
   const category = document.getElementById('category').value;
   const notes = document.getElementById('notes').value;
-  const fileUrl = document.getElementById('fileUrl').value;
+  const fileUrl = document.getElementById('fileUrl').value; 
 
-  chrome.storage.local.set({ bucket, category, notes, fileUrl }, function() {
-    chrome.runtime.sendMessage({ action: 'saveFile' });
+  try {
+    await browser.storage.local.set({ bucket, category, notes, fileUrl });
+
+    await browser.runtime.sendMessage({ action: 'saveFile' });
+
     window.close();
-  });
+  } catch (error) {
+    console.error('Error during save operation:', error);
+  }
 });
 
-chrome.storage.local.get(['fileUrl'], function(data) {
+browser.storage.local.get(['fileUrl'], function(data) {
   if (data.fileUrl) {
     document.getElementById('fileUrl').value = data.fileUrl;
   }

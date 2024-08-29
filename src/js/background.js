@@ -79,21 +79,21 @@ function addToListenLater(listenLater) {
 }
 
 if (webTrackingEnabled) {
-	chrome.tabs.onActivated.addListener(activeInfo => {
-    chrome.tabs.get(activeInfo.tabId, (tab) => {
-      if (tab.url.startsWith("chrome://") || isShoppingForGiftsForWife(tab)) {
+	browser.tabs.onActivated.addListener(activeInfo => {
+    browser.tabs.get(activeInfo.tabId, (tab) => {
+      if (tab.url.startsWith("browser://") || isShoppingForGiftsForWife(tab)) {
         if (previousTab) {
           endTracking(previousTab);
         }
         return
       }
 
-      chrome.scripting.executeScript({
+      browser.scripting.executeScript({
         target: {tabId: activeInfo.tabId},
         function: getTabURL,
       }, (results) => {
-        if (chrome.runtime.lastError) {
-          console.error(chrome.runtime.lastError);
+        if (browser.runtime.lastError) {
+          console.error(browser.runtime.lastError);
           return;
         }
 
@@ -165,9 +165,9 @@ function subscribeToPodcast(rss) {
       })
 }
 
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === 'saveFile') {
-    chrome.storage.local.get(['fileUrl', 'bucket', 'category', 'notes'], function(data) {
+    browser.storage.local.get(['fileUrl', 'bucket', 'category', 'notes'], function(data) {
       const { fileUrl, bucket, category, notes } = data;
       fetch(fileUrl)
         .then(response => response.blob())
@@ -188,7 +188,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 });
 
 
-chrome.contextMenus.onClicked.addListener((info, tab) => {
+browser.contextMenus.onClicked.addListener((info, tab) => {
   if (info.menuItemId === "saveToReadingList") {
     addToReadingList({
       'url': info.pageUrl,
@@ -216,9 +216,9 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
   }
 
   else if (info.menuItemId === "saveFile") {
-    chrome.storage.local.set({ fileUrl: info.srcUrl }, function() {
-          chrome.windows.create({
-            url: chrome.runtime.getURL("template/file-popup.html"),
+    browser.storage.local.set({ fileUrl: info.srcUrl }, function() {
+          browser.windows.create({
+            url: browser.runtime.getURL("template/file-popup.html"),
             type: "popup",
             width: 800,
             height: 800
@@ -245,11 +245,11 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
    }
 });
 
-chrome.commands.onCommand.addListener((command) => {
+browser.commands.onCommand.addListener((command) => {
     if (command === "ideaBucketPopup") {
-        chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+        browser.tabs.query({active: true, currentWindow: true}, (tabs) => {
             let activeTab = tabs[0];
-            chrome.scripting.executeScript({
+            browser.scripting.executeScript({
                 target: {tabId: activeTab.id},
                 files: ["js/show-popup.js"]
             });
@@ -257,47 +257,47 @@ chrome.commands.onCommand.addListener((command) => {
     }
 });
 
-chrome.runtime.onInstalled.addListener(() => {
-  chrome.contextMenus.create({
+browser.runtime.onInstalled.addListener(() => {
+  browser.contextMenus.create({
     id: "saveToReadingList",
     title: "Save to Reading List",
     contexts: ["page", "selection"]
   });
 
-  chrome.contextMenus.create({
+  browser.contextMenus.create({
     id: "subscribeToPodcast",
     title: "Subscribe to podcast",
     contexts: ["link"]
   });
 
-  chrome.contextMenus.create({
+  browser.contextMenus.create({
     id: "addToListenLater",
     title: "Add to Podcast Listen Later",
     contexts: ["link"]
   });
 
-  chrome.contextMenus.create({
+  browser.contextMenus.create({
     id: "createNote",
     title: "Create Note",
     contexts: ["page", "selection"]
   });
 
-  chrome.contextMenus.create({
+  browser.contextMenus.create({
     id: "saveFile",
     title: "Save",
     contexts: ["image", "audio", "video"]
   });
 
-  chrome.contextMenus.create({
+  browser.contextMenus.create({
     id: "saveMeme",
     title: "Save Meme",
     contexts: ["image", "audio", "video"]
   });
 });
 
-chrome.runtime.onInstalled.addListener((details) => {
+browser.runtime.onInstalled.addListener((details) => {
     if(details.reason === 'install') {
       // OAuth2 goes here at some point
-      chrome.tabs.create({url: 'settings.html'});
+      browser.tabs.create({url: 'template/settings.html'});
     }
 });
