@@ -1619,6 +1619,13 @@ const pages = [
       shortcut: ',f'
     }),
     new Page({
+      id: 'kanban-link',
+      url: `${browserExtension}://${extensionId}/template/kanban.html`,
+      name: 'Kanban',
+      emoji: withEmojis ? '🦘' : '',
+      shortcut: ',k'
+    }),
+    new Page({
       id: 'quarter-review-link',
       url: `${browserExtension}://${extensionId}/template/review.html?type=YEAR&name="Quarter1"`,
       name: 'Quarterly Review',

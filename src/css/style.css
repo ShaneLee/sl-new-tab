@@ -844,3 +844,34 @@ div.todo-input:focus {
 .file:hover {
   transform: scale(1.05);
 }
+
+
+/** KANBAN */
+.kanban-board {
+  display: flex;
+  gap: 20px;
+}
+
+.column {
+  padding: 10px;
+  border-radius: 8px;
+  width: 400px;
+}
+
+.column h2 {
+  text-align: center;
+  margin: -10px -10px 10px;
+  padding: 10px;
+  border-radius: 8px 8px 0 0;
+}
+
+.card {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+  padding: 10px;
+  background-color: var(--dark-grey);
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
