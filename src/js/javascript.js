@@ -28,19 +28,24 @@ class CircularQueue {
 
 const TAG_COLOURS = new Map();
 
-// TODO in the future remove any colours that are set by the user for given tags
 const DEFAULT_TAG_COLOURS = new CircularQueue(['red', 'yellow', 'green', 'cyan'])
 
-TAG_COLOURS.set('programming', '#00ffff')
-TAG_COLOURS.set('reading', '#1abf1a')
-TAG_COLOURS.set('work', '#f47903')
-TAG_COLOURS.set('motorbike', '#e7b91b')
-TAG_COLOURS.set('admin', '#a78e3a')
-TAG_COLOURS.set('house', '#7ee651')
-TAG_COLOURS.set('fitness', '#ef1add')
-TAG_COLOURS.set('learning', '#7d1aef')
-
 const DEFAULT_RANK = 1000
+
+function processPreferences(prefs) {
+  const coloursByTags= new Map(Object.entries(prefs.coloursByTags));
+  coloursByTags.forEach((colour, tag) => {
+    TAG_COLOURS.set(tag, colour);
+  })
+}
+
+function getPreferences() {
+  return api(userPreferences, {
+      method: 'GET',
+      headers: headers
+  })
+  .then(res => res.json());
+}
 
 let runningTask;
 let timerInterval;
@@ -1652,6 +1657,8 @@ function targetNote() {
 }
 
 window.onload = function() {
+  getPreferences()
+   .then(processPreferences)
   addTodoListener()
   if (importantTodosEnabled) {
     targetNote()
