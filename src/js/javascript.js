@@ -39,6 +39,7 @@ function processPreferences(prefs) {
   })
 }
 
+// TODO check browser storage first
 function getPreferences() {
   return api(userPreferences, {
       method: 'GET',

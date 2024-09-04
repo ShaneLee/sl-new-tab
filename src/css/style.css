@@ -875,3 +875,28 @@ div.todo-input:focus {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
+
+/** SETTINGS */
+
+#tagColourPairs {
+    display: flex;
+    flex-direction: column;
+  }
+
+.tag-pair {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.tag-pair .tag {
+  flex: 1;
+  margin-right: 10px;
+}
+
+.tag-pair .colour {
+  height: 30px;
+  width: 30px;
+  border: none;
+  cursor: pointer;
+}
