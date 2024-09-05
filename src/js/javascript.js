@@ -1433,7 +1433,11 @@ function addTodoListener() {
     const todo = selectedTodo
     const tags = prompt('Enter the new tag(s) comma separated:');
     if (!!tags) {
+      const originalTags = todo.tags
       todo.tags = tags.split(',')
+      if (!!originalTags) {
+        todo.tags.push(...originalTags)
+      }
       update(todo)
     }
     selectedTodo = null
