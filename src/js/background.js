@@ -9,6 +9,8 @@ const podcastListenLater = `${host}/podcast/listenLater`
 const webTrackingEnabled = false
 const tempUserId = 'bd11dcc2-77f6-430f-8e87-5839d31ab0e3'
 
+const browserAPI = typeof browser !== "undefined" ? browser : chrome;
+
 const headers = {
   'Content-Type': 'application/json',
   'tempUserId': tempUserId
@@ -19,6 +21,14 @@ const noContentTypeHeaders = {
 }
 
 let previousTab = null;
+
+function getHighlightedLinks() {
+  const selection = window.getSelection();
+  const range = selection.getRangeAt(0);
+  const fragment = range.cloneContents();
+  const links = fragment.querySelectorAll('a');
+  return Array.from(links).map(link => ({ href: link.href, textContent: link.textContent }));
+}
 
 function basename(path) {
    return path.split('/').reverse()[0];
@@ -54,7 +64,7 @@ function createNote(item) {
   `${item.url}`].join('\n')], {type: "text/plain"});
   const url = URL.createObjectURL(blob);
 
-  browser.downloads.download({
+  browserAPI.downloads.download({
       url: url,
       filename: `${santiseString(item.title)}.md`,
       saveAs: true
@@ -79,21 +89,21 @@ function addToListenLater(listenLater) {
 }
 
 if (webTrackingEnabled) {
-	browser.tabs.onActivated.addListener(activeInfo => {
-    browser.tabs.get(activeInfo.tabId, (tab) => {
-      if (tab.url.startsWith("browser://") || isShoppingForGiftsForWife(tab)) {
+	browserAPI.tabs.onActivated.addListener(activeInfo => {
+    browserAPI.tabs.get(activeInfo.tabId, (tab) => {
+      if (tab.url.startsWith("browserAPI://") || isShoppingForGiftsForWife(tab)) {
         if (previousTab) {
           endTracking(previousTab);
         }
         return
       }
 
-      browser.scripting.executeScript({
+      browserAPI.scripting.executeScript({
         target: {tabId: activeInfo.tabId},
         function: getTabURL,
       }, (results) => {
-        if (browser.runtime.lastError) {
-          console.error(browser.runtime.lastError);
+        if (browserAPI.runtime.lastError) {
+          console.error(browserAPI.runtime.lastError);
           return;
         }
 
@@ -165,9 +175,9 @@ function subscribeToPodcast(rss) {
       })
 }
 
-browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
+browserAPI.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === 'saveFile') {
-    browser.storage.local.get(['fileUrl', 'bucket', 'category', 'notes'], function(data) {
+    browserAPI.storage.local.get(['fileUrl', 'bucket', 'category', 'notes'], function(data) {
       const { fileUrl, bucket, category, notes } = data;
       fetch(fileUrl)
         .then(response => response.blob())
@@ -188,7 +198,7 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
 });
 
 
-browser.contextMenus.onClicked.addListener((info, tab) => {
+browserAPI.contextMenus.onClicked.addListener((info, tab) => {
   if (info.menuItemId === "saveToReadingList") {
     addToReadingList({
       'url': info.pageUrl,
@@ -196,6 +206,23 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
       'text': info.selectionText
     })
   } 
+  else if (info.menuItemId === "saveAllLinksToReadingList") {
+    browserAPI.scripting.executeScript({
+      target: { tabId: tab.id },
+      function: getHighlightedLinks
+    }, (results) => {
+      const links = results[0].result;
+      if (links && links.length > 0) {
+        links.forEach(link => {
+          addToReadingList({
+            url: link.href,
+            title: link.textContent || tab.title,
+            text: info.selectionText
+          });
+        });
+      }
+    });
+  }
   else if (info.menuItemId === "subscribeToPodcast") {
     subscribeToPodcast({
       url: info.linkUrl,
@@ -216,9 +243,9 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
   }
 
   else if (info.menuItemId === "saveFile") {
-    browser.storage.local.set({ fileUrl: info.srcUrl }, function() {
-          browser.windows.create({
-            url: browser.runtime.getURL("template/file-popup.html"),
+    browserAPI.storage.local.set({ fileUrl: info.srcUrl }, function() {
+          browserAPI.windows.create({
+            url: browserAPI.runtime.getURL("template/file-popup.html"),
             type: "popup",
             width: 800,
             height: 800
@@ -245,11 +272,11 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
    }
 });
 
-browser.commands.onCommand.addListener((command) => {
+browserAPI.commands.onCommand.addListener((command) => {
     if (command === "ideaBucketPopup") {
-        browser.tabs.query({active: true, currentWindow: true}, (tabs) => {
+        browserAPI.tabs.query({active: true, currentWindow: true}, (tabs) => {
             let activeTab = tabs[0];
-            browser.scripting.executeScript({
+            browserAPI.scripting.executeScript({
                 target: {tabId: activeTab.id},
                 files: ["js/show-popup.js"]
             });
@@ -257,47 +284,53 @@ browser.commands.onCommand.addListener((command) => {
     }
 });
 
-browser.runtime.onInstalled.addListener(() => {
-  browser.contextMenus.create({
+browserAPI.runtime.onInstalled.addListener(() => {
+  browserAPI.contextMenus.create({
     id: "saveToReadingList",
     title: "Save to Reading List",
     contexts: ["page", "selection"]
   });
 
-  browser.contextMenus.create({
+  browserAPI.contextMenus.create({
+    id: "saveAllLinksToReadingList",
+    title: "Save All Highlighted Links to Reading List",
+    contexts: ["selection"]
+  });
+
+  browserAPI.contextMenus.create({
     id: "subscribeToPodcast",
     title: "Subscribe to podcast",
     contexts: ["link"]
   });
 
-  browser.contextMenus.create({
+  browserAPI.contextMenus.create({
     id: "addToListenLater",
     title: "Add to Podcast Listen Later",
     contexts: ["link"]
   });
 
-  browser.contextMenus.create({
+  browserAPI.contextMenus.create({
     id: "createNote",
     title: "Create Note",
     contexts: ["page", "selection"]
   });
 
-  browser.contextMenus.create({
+  browserAPI.contextMenus.create({
     id: "saveFile",
     title: "Save",
     contexts: ["image", "audio", "video"]
   });
 
-  browser.contextMenus.create({
+  browserAPI.contextMenus.create({
     id: "saveMeme",
     title: "Save Meme",
     contexts: ["image", "audio", "video"]
   });
 });
 
-browser.runtime.onInstalled.addListener((details) => {
+browserAPI.runtime.onInstalled.addListener((details) => {
     if(details.reason === 'install') {
       // OAuth2 goes here at some point
-      browser.tabs.create({url: 'template/settings.html'});
+      browserAPI.tabs.create({url: 'template/settings.html'});
     }
 });
