@@ -169,6 +169,29 @@ ul {
     margin: 0;
 }
 
+/* .todos-header-container.tags-container { */
+/*   display: flex; */
+/*   gap: 5px; */
+/*   margin-top: 10px; /1* Adjust the margin as needed *1/ */
+/* } */
+
+.tag-pill {
+  display: inline-flex;
+  align-items: center;
+  background-color: #f0c674; /* Default tag colour */
+  padding: 5px 10px;
+  border-radius: 15px;
+  font-size: 14px;
+  color: white;
+}
+
+.remove-tag {
+  margin-left: 8px;
+  cursor: pointer;
+  color: white;
+  font-weight: bold;
+}
+
 .todos li {
   padding: 10px 0px;
   border-bottom: 1px solid var(--light-grey);
