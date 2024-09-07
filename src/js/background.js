@@ -209,7 +209,7 @@ browserAPI.contextMenus.onClicked.addListener((info, tab) => {
   else if (info.menuItemId === "saveAllLinksToReadingList") {
     browserAPI.scripting.executeScript({
       target: { tabId: tab.id },
-      function: getHighlightedLinks
+      func: getHighlightedLinks
     }, (results) => {
       const links = results[0].result;
       if (links && links.length > 0) {
