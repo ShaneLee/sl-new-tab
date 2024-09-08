@@ -1,4 +1,5 @@
 IMPORTANT_TODO_DISPLAY_COUNT=3
+TAGS_FILTER_LIMIT=3
 quotesEnabled=false
 timerEnabled=true
 eventsEnabled=true
@@ -13,6 +14,8 @@ const withEmojis=true
 
 const CATEGORIES_SET = new Set();
 const LAST = new Array();
+
+const TAG_FILTERS = new Set();
 
 class CircularQueue {
   constructor(elements) {
@@ -725,6 +728,9 @@ function pendingTodos() {
 
 }
 
+function setToCsv(val) {
+  return Array.from(val).join(',')
+}
 
 function todos() {
   pendingTodos()
@@ -732,7 +738,8 @@ function todos() {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  const endpoint = !!category && category !== 'all' ? `${todosEndpoint}?category=${category}` : todosEndpoint
+  let endpoint = !!category && category !== 'all' ? `${todosEndpoint}?category=${category}` : todosEndpoint
+  endpoint = TAG_FILTERS.size === 0 ? endpoint : `${endpoint}&tags=${setToCsv(TAG_FILTERS)}`
   api(endpoint, {
     method: 'GET', 
     headers: headers
@@ -1219,6 +1226,34 @@ function hideContextMenu() {
   }
 }
 
+function createTodoTagFilterElement(tagsContainer, addTodoTagFilterAction) {
+    const tagPill = document.createElement('div')
+    // TODO custom prompt which has the existing tags
+    const tag = prompt('Enter the new tag to filter:');
+    TAG_FILTERS.add(tag)
+    const colour = getTagColour(tag)
+    tagPill.className = 'tag-pill';
+    tagPill.style.backgroundColor = colour
+    tagPill.innerHTML = tag
+    const removeTagElement = document.createElement('span')
+    removeTagElement.classList.add('remove-tag');
+    removeTagElement.innerHTML = 'x'
+    removeTagElement.addEventListener('click', function() {
+      addTodoTagFilterAction.classList.remove('hidden');
+      TAG_FILTERS.delete(tag)
+      refreshTodos()
+      removeTagElement.parentElement.remove();
+      if (TAG_FILTERS.size === 0) {
+        tagsContainer.classList.add('hidden')
+      }
+    })
+
+
+    tagPill.appendChild(removeTagElement)
+
+    return tagPill
+}
+
 function addTodoListener() {
   document.getElementById('todo-input').addEventListener('input', function() {
       if (this.innerHTML === '<br>') {
@@ -1247,6 +1282,7 @@ function addTodoListener() {
   const changeCategoryAction = document.getElementById('changeCategoryAction');
   const thisWeekcategoryAction = document.getElementById('thisWeekCategoryAction');
   const changeAllCategoryAction = document.getElementById('changeAllCategoryAction');
+  const addTodoTagFilterAction = document.getElementById('addTagTodoFilterAction');
   const moveAllNextAction = document.getElementById('moveAllNextAction');
   const addLinkedCountAction = document.getElementById('addLinkedCountAction');
   const editDueDateAction = document.getElementById('editDueDateAction');
@@ -1261,6 +1297,19 @@ function addTodoListener() {
     hideContextMenu()
     showContextMenu(event)
   });
+
+  addTodoTagFilterAction.addEventListener('click', function() {
+    const tagsContainer = document.getElementById('tags-container')
+    tagsContainer.classList.remove('hidden')
+    const tagFilter = createTodoTagFilterElement(tagsContainer, addTodoTagFilterAction)
+    tagsContainer.appendChild(tagFilter)
+
+    if (tagsContainer.childElementCount === TAGS_FILTER_LIMIT) {
+      addTodoTagFilterAction.classList.add('hidden');
+    }
+
+    refreshTodos()
+  })
 
   removeDueDateAction.addEventListener('click', function() { 
     const todo = selectedTodo

@@ -180,15 +180,15 @@ ul {
   align-items: center;
   background-color: #f0c674; /* Default tag colour */
   padding: 5px 10px;
+  margin: 2px;
   border-radius: 15px;
   font-size: 14px;
-  color: white;
+  color: #303030
 }
 
 .remove-tag {
   margin-left: 8px;
   cursor: pointer;
-  color: white;
   font-weight: bold;
 }
 
