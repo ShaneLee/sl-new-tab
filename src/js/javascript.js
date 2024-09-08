@@ -1282,6 +1282,7 @@ function addTodoListener() {
   const changeCategoryAction = document.getElementById('changeCategoryAction');
   const thisWeekcategoryAction = document.getElementById('thisWeekCategoryAction');
   const changeAllCategoryAction = document.getElementById('changeAllCategoryAction');
+  const openSettingsAction = document.getElementById('openSettingsAction');
   const addTodoTagFilterAction = document.getElementById('addTagTodoFilterAction');
   const moveAllNextAction = document.getElementById('moveAllNextAction');
   const addLinkedCountAction = document.getElementById('addLinkedCountAction');
@@ -1296,6 +1297,10 @@ function addTodoListener() {
   document.addEventListener('contextmenu', function(event) {
     hideContextMenu()
     showContextMenu(event)
+  });
+
+  openSettingsAction.addEventListener('click', function() {
+      window.location.href =  `${browserExtension}://${extensionId}/template/settings.html`
   });
 
   addTodoTagFilterAction.addEventListener('click', function() {
