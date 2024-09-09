@@ -42,13 +42,22 @@ function processPreferences(prefs) {
   })
 }
 
-// TODO check browser storage first
 function getPreferences() {
-  return api(userPreferences, {
-      method: 'GET',
-      headers: headers
-  })
-  .then(res => res.json());
+  const storedPreferences = localStorage.getItem('userPreferences');
+  
+  if (storedPreferences) {
+    return Promise.resolve(JSON.parse(storedPreferences));
+  } else {
+    return api(userPreferences, {
+        method: 'GET',
+        headers: headers
+    })
+    .then(res => res.json())
+    .then(res => {
+      localStorage.setItem('userPreferences', JSON.stringify(res));
+      return res;
+    });
+  }
 }
 
 let runningTask;

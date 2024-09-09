@@ -23,6 +23,7 @@ function getPreferences() {
 }
 
 function saveSettings() {
+  localStorage.removeItem('userPreferences');
   const name = document.getElementById("name").value;
   chrome.storage.local.set({ name: name }, function () {});
 
