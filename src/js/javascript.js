@@ -477,7 +477,7 @@ function deathCountdown() {
 }
 
 function importantTodos() {
-  return api(importantEndpoint, {
+  return api(importantEndpointFn(IMPORTANT_TODO_DISPLAY_COUNT), {
       method: 'GET',
       headers: headers,
   }).then(response => response.json());
