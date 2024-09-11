@@ -13,6 +13,7 @@ const headers = {
 
 // Endpoints
 const todosEndpoint = `${host}/todos`
+const tagsEndpoint = `${host}/todos/tags`
 const importantEndpointFn = (limit) => !limit ? `${todosEndpoint}/important` : `${todosEndpoint}/important?limit=${limit}`
 const rankEndpoint = `${host}/todos/rank`
 const deleteTodosEndpointFn = (thisInstance) => `${host}/todos?thisInstance=${thisInstance}`

@@ -15,6 +15,7 @@ const withEmojis=true
 const CATEGORIES_SET = new Set();
 const LAST = new Array();
 
+const TAGS = new Set();
 const TAG_FILTERS = new Set();
 
 class CircularQueue {
@@ -58,6 +59,27 @@ function getPreferences() {
       return res;
     });
   }
+}
+
+function getUserTags() {
+  if (!!TAGS) {
+    Promise.resolve(TAGS)
+  }
+  return api(tagsEndpoint, {
+        method: 'GET',
+        headers: headers
+    })
+    .then(res => res.json())
+    .then(tags => {
+      if (!!tags) {
+        tags.forEach(tag => {
+          if (!!tag) {
+            TAGS.add(tag)
+          }
+        })
+        return tags
+      }
+  })
 }
 
 let runningTask;
@@ -1235,32 +1257,89 @@ function hideContextMenu() {
   }
 }
 
-function createTodoTagFilterElement(tagsContainer, addTodoTagFilterAction) {
-    const tagPill = document.createElement('div')
-    // TODO custom prompt which has the existing tags
-    const tag = prompt('Enter the new tag to filter:');
-    TAG_FILTERS.add(tag)
-    const colour = getTagColour(tag)
-    tagPill.className = 'tag-pill';
-    tagPill.style.backgroundColor = colour
-    tagPill.innerHTML = tag
-    const removeTagElement = document.createElement('span')
-    removeTagElement.classList.add('remove-tag');
-    removeTagElement.innerHTML = 'x'
-    removeTagElement.addEventListener('click', function() {
-      addTodoTagFilterAction.classList.remove('hidden');
-      TAG_FILTERS.delete(tag)
-      refreshTodos()
-      removeTagElement.parentElement.remove();
-      if (TAG_FILTERS.size === 0) {
-        tagsContainer.classList.add('hidden')
-      }
+function createTagFilterForm(tags, addTodoTagFilterAction, tagPillFn, tagsContainer) {
+  let form = document.getElementById('tag-filter-popup');
+  if (form) {
+    return form;
+  }
+
+  function closeForm() {
+    let form = document.getElementById('tag-filter-popup');
+    if (form) {
+      form.style.display = 'none';
+    }
+  }
+
+  form = document.createElement('div');
+  form.id = 'tag-filter-popup';
+  form.classList.add('default-form');
+
+  const closeButton = document.createElement('button');
+  closeButton.type = "button"
+  closeButton.id = "close-tag-filter-form-button"
+  closeButton.innerHTML = "Close"
+  closeButton.addEventListener('click', closeForm);
+
+  const formHTML = `
+    <form>
+      <h4>Filter by Tag</h4>
+      <select id="tags-popup-input" name="tags">
+        ${tags.map(tag => `<option value="${tag}">${tag}</option>`).join('')}
+      </select>
+      <button type="submit">Submit</Button>
+    </form>
+  `;
+  form.innerHTML = formHTML;
+  form.appendChild(closeButton)
+  form.querySelector('form').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const tagElement = document.getElementById('tags-popup-input');
+    const tag = tagElement.value;
+
+    TAG_FILTERS.add(tag);
+    const tagPill = createTagPill(tag, addTodoTagFilterAction, tagsContainer);
+    tagPillFn(tagPill)
+    refreshTodos()
+    closeForm()
+  });
+
+  return form
+}
+
+function createTagPill(tag, addTodoTagFilterAction, tagsContainer) {
+  const tagPill = document.createElement('div')
+  const colour = getTagColour(tag)
+  tagPill.className = 'tag-pill';
+  tagPill.style.backgroundColor = colour
+  tagPill.innerHTML = tag
+  const removeTagElement = document.createElement('span')
+  removeTagElement.classList.add('remove-tag');
+  removeTagElement.innerHTML = 'x'
+  removeTagElement.addEventListener('click', function() {
+    addTodoTagFilterAction.classList.remove('hidden');
+    TAG_FILTERS.delete(tag)
+    refreshTodos()
+    removeTagElement.parentElement.remove();
+    if (TAG_FILTERS.size === 0) {
+      tagsContainer.classList.add('hidden')
+    }
+  })
+  tagPill.appendChild(removeTagElement)
+  return tagPill
+}
+
+function createTodoTagFilterElement(tagsContainer, addTodoTagFilterAction, tagPillFn) {
+  getUserTags()
+    .then(tags => {
+      const tagForm = createTagFilterForm(
+        tags,
+        addTodoTagFilterAction,
+        tagPillFn,
+        tagsContainer
+      )
+      showPopupForm(tagForm)
     })
-
-
-    tagPill.appendChild(removeTagElement)
-
-    return tagPill
 }
 
 function addTodoListener() {
@@ -1315,8 +1394,11 @@ function addTodoListener() {
   addTodoTagFilterAction.addEventListener('click', function() {
     const tagsContainer = document.getElementById('tags-container')
     tagsContainer.classList.remove('hidden')
-    const tagFilter = createTodoTagFilterElement(tagsContainer, addTodoTagFilterAction)
-    tagsContainer.appendChild(tagFilter)
+    createTodoTagFilterElement(
+      tagsContainer,
+      addTodoTagFilterAction,
+      tagFilter => tagsContainer.appendChild(tagFilter)
+    )
 
     if (tagsContainer.childElementCount === TAGS_FILTER_LIMIT) {
       addTodoTagFilterAction.classList.add('hidden');
