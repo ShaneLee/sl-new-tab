@@ -73,10 +73,10 @@ function displayFiles(files) {
   const filesDiv = document.getElementById("files");
   filesDiv.innerHTML = "";
 
-  files.forEach(file => {
+  files
+    .map(file => file.replace('http:','https:'))
+    .forEach(file => {
     const fileDiv = document.createElement("div");
-    // TODO file
-    console.log(file)
     fileDiv.classList.add("file");
     const imgElement = document.createElement("img");
     imgElement.src = file
