@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="../css/style.css">
+    <script src="../js/environment.js" charset="UTF-8"></script>
+    <script src="../js/version-catalogue.js" charset="UTF-8"></script>
+    <title>Version Catalogue</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 80%;
+            margin: 20px auto;
+        }
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+        th {
+        }
+    </style>
+</head>
+<body>
+    <h1>Version Catalogue 🗂️</h1>
+    <div id="feedback" class="feedback hidden"></div>
+    <section>
+      <form id="versionCatalogueForm" class="default-form">
+        <input type="text" id="name" name="name" placeholder="Name" required><br>
+        <input type ="text" id="packageName" name="packageName" placeholder="Package Name" required/>
+        <input type ="text" id="type" name="type" placeholder="Type: e.g. maven" required/>
+        <button type="submit">Submit</button>
+      </form>
+    </section>
+    <div id="versionCatalogueContextMenu" class="context-menu">
+      <div class="context-menu-item" id="editAction">Edit</div>
+      <div class="context-menu-item" id="deleteAction">Delete</div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Package Name</th>
+                <th>Version</th>
+                <th>Release Date</th>
+            </tr>
+        </thead>
+        <tbody id="version-catalogue-table">
+        </tbody>
+    </table>
+</body>
+</html>

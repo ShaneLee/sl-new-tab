@@ -60,6 +60,8 @@ const podcastEpisodesEndpointFn = (podcastId, page, size) => `${host}/podcast/ep
 const podcastAllSubsribedEpisodesEndpointFn = (page, size, sort) => `${host}/podcast/all?page=${page}&size=${size}&sort=${sort}`
 const podcastAllSubsribedEndpointFn = (page, size) => `${host}/podcast/subscribed?page=${page}&size=${size}&sort=createdAtUtc,desc`
 
+const versionCatalogueEndpoint = `${host}/version-catalogue`
+
 // Nutrition Endpoints
 const mealEndpoint = `${host}/nutrition/food/meal`
 const allMealsEndpoint = `${host}/nutrition/food/meal/all`

@@ -1781,6 +1781,13 @@ const pages = [
       shortcut: ',k'
     }),
     new Page({
+      id: 'version-catalogue-link',
+      url: `${browserExtension}://${extensionId}/template/version-catalogue.html`,
+      name: 'Version Catalogue',
+      emoji: withEmojis ? '🗂️' : '',
+      shortcut: ',k'
+    }),
+    new Page({
       id: 'quarter-review-link',
       url: `${browserExtension}://${extensionId}/template/review.html?type=YEAR&name="Quarter1"`,
       name: 'Quarterly Review',
