@@ -598,6 +598,14 @@ function filterAndSlice(array, count, week) {
   return result;
 }
 
+function deleteCategory(category) {
+  return api(categoriesEndpoint, {
+      method: 'DELETE',
+      headers: headers,
+      body: JSON.stringify({ 'category': category })
+      });
+}
+
 function categories() {
   const categories = document.getElementById('category-input');
   categories.onchange = refreshTodos
@@ -1370,6 +1378,7 @@ function addTodoListener() {
   const changeCategoryAction = document.getElementById('changeCategoryAction');
   const thisWeekcategoryAction = document.getElementById('thisWeekCategoryAction');
   const changeAllCategoryAction = document.getElementById('changeAllCategoryAction');
+  const deleteCurrentCategoryAction = document.getElementById('deleteCurrentCategoryAction');
   const openSettingsAction = document.getElementById('openSettingsAction');
   const addTodoTagFilterAction = document.getElementById('addTagTodoFilterAction');
   const moveAllNextAction = document.getElementById('moveAllNextAction');
@@ -1416,6 +1425,25 @@ function addTodoListener() {
     }
     selectedTodo = null;
     hideContextMenu();
+  })
+
+  deleteCurrentCategoryAction.addEventListener('click', function() {
+    const categories = document.getElementById('category-input');
+    const category = categories.value;
+
+    if (!!category && confirm(`Are you sure you want to delete the category "${category}"?`)) {
+      deleteCategory(category)
+        .then(res => {
+            // Go back to the the default category
+            const selectedOption = categories.options[categories.selectedIndex];
+
+            categories.removeChild(selectedOption);
+
+            if (categories.options.length > 0) {
+                categories.selectedIndex = 0;
+            }
+        })
+    }
   })
 
   markImportantAction.addEventListener('click', function() { 
