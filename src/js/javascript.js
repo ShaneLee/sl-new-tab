@@ -697,12 +697,17 @@ function createTodo(todo, todoElement, linkedTodoId) {
       })
     }
   }
+  const tags = parseTags(todo)
+  if (!!tags) {
+    todo = replaceTags(todo)
+  }
 
   const formData = JSON.stringify({
     'todo': todo,
     'important': important,
     'linkedCountTodoId': linkedTodoId,
-    'category': category === 'all' ? null : category
+    'category': category === 'all' ? null : category,
+    'tags': tags
   })
   return api(todosEndpoint, {
       method: 'POST',
@@ -1153,12 +1158,43 @@ function createGrid(width, height, numToColor) {
   }
 }
 
+function addTags(todo, tags) {
+  if (!!tags) {
+    const originalTags = todo.tags
+    todo.tags = tags.split(',')
+    if (!!originalTags) {
+      todo.tags.push(...originalTags)
+    }
+  }
+  return todo
+}
+
+function matchTags(str) {
+  const regex = /(?<!\\)tags:([^\s]*)/;
+  const match = str.match(regex);
+  return match ? match[1] : null;
+}
+
+function replaceTags(todoStr) {
+  const tagsPattern = /(?<!\\)tags:([^\s]*)/
+  return todoStr.replace(tagsPattern, '');
+}
+
+function parseTags(csvString) {
+  const tags = matchTags(csvString);
+  if (tags) {
+    return tags.split(',');
+  }
+  return [];
+}
+
 function parseFrequencyString(val) {
   const localDatePattern = /\b\d{4}-\d{2}-\d{2}\b/g;
   const everyPattern = /every (\d+(?:st|nd|rd|th)?)?\s?(days?|weeks?|months?|quarters?|years?|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)?/i;
   const dayOnlyPattern = /(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|today|tomorrow)\b/i;
   const dayTimePattern = /\b(?:@|at)\s*(\d{1,2}[ap]m)/i;
   const categoryPattern = /@([^@]+)@/g;
+  const tagsPattern = /(?<!\\)tags:([^\s]*)/
 
   // Replaces matched patterns with highlighted version
   val = val.replace(everyPattern, '<span style="background-color: yellow;">$&</span>');
@@ -1166,6 +1202,7 @@ function parseFrequencyString(val) {
   val = val.replace(dayTimePattern, '<span style="background-color: yellow;">$&</span>');
   val = val.replace(categoryPattern, '<span style="background-color: yellow;">$&</span>');
   val = val.replace(localDatePattern, '<span style="background-color: yellow;">$&</span>');
+  val = val.replace(tagsPattern, '<span style="background-color: yellow;">$&</span>');
   
   return val;
 }
@@ -1616,14 +1653,9 @@ function addTodoListener() {
   });
 
   addTagAction.addEventListener('click', function() {
-    const todo = selectedTodo
     const tags = prompt('Enter the new tag(s) comma separated:');
+    const todo = addTags(selectedTodo, tags)
     if (!!tags) {
-      const originalTags = todo.tags
-      todo.tags = tags.split(',')
-      if (!!originalTags) {
-        todo.tags.push(...originalTags)
-      }
       update(todo)
     }
     selectedTodo = null
