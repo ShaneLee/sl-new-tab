@@ -688,7 +688,7 @@ function createTodo(todo, todoElement, linkedTodoId) {
     const split = todo.split('@')
     categoryChanged = split[1] !== category
     category = split[1]
-    todo = split[2]
+    todo = split[2]?.trim()
     if (!CATEGORIES_SET.has(category)) {
       api(categoriesEndpoint, {
           method: 'POST',
