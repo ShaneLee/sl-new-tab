@@ -1390,6 +1390,7 @@ function addTodoListener() {
   const openLinkAction = document.getElementById('openLinkAction');
   const markImportantAction = document.getElementById('markImportantAction');
   const addTagAction = document.getElementById('addTagAction');
+  const addNotesAction = document.getElementById('addNotesAction');
 
   document.addEventListener('contextmenu', function(event) {
     hideContextMenu()
@@ -1596,6 +1597,18 @@ function addTodoListener() {
     const category = prompt('Enter the new category:');
     if (!!category) {
       todo.category = category
+      update(todo)
+    }
+    selectedTodo = null
+    hideContextMenu();
+  });
+
+  addNotesAction.addEventListener('click', function() {
+    const todo = selectedTodo
+    // TODO ignores existing notes
+    const notes = prompt('Enter the notes:');
+    if (!!notes) {
+      todo.notes = notes
       update(todo)
     }
     selectedTodo = null

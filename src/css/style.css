@@ -104,12 +104,16 @@ ul {
 /* FEEDBACK */
 
 .feedback {
-  margin: 5px auto;
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  margin: 0;
   width: fit-content;
   font-size: larger;
   color: white;
   padding: 8px 30px;
   border-radius: 7px;
+  z-index: 1000;
 }
 
 .success {
