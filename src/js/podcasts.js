@@ -1,61 +1,59 @@
-const userId = tempUserId;
-let page = 0;
-let podcastPage = 0;
-let contextMenu;
-let selectedEpisode;
-let selectedPodcast;
+const userId = tempUserId
+let page = 0
+let podcastPage = 0
+let contextMenu
+let selectedEpisode
+let selectedPodcast
 
 function addFindEpisodesContextListener() {
   const podcastId = selectedPodcast.id
-  const currentUrl = new URL(window.location.href);
-  currentUrl.searchParams.set('podcastId', podcastId);
-  window.location.href = currentUrl.toString();
+  const currentUrl = new URL(window.location.href)
+  currentUrl.searchParams.set('podcastId', podcastId)
+  window.location.href = currentUrl.toString()
 }
 
 function gotoListenLaterContextListener() {
-  const currentUrl = new URL(window.location.href);
-  currentUrl.searchParams.set('listenLater', true);
-  window.location.href = currentUrl.toString();
+  const currentUrl = new URL(window.location.href)
+  currentUrl.searchParams.set('listenLater', true)
+  window.location.href = currentUrl.toString()
 }
 
 function unsubscribe() {
   const podcastId = selectedPodcast.id
   return api(podcastSubscribeEndpoint, {
-      method: 'DELETE',
-      headers: headers,
-      body: JSON.stringify({'id': podcastId})
-      })
+    method: 'DELETE',
+    headers: headers,
+    body: JSON.stringify({ id: podcastId }),
+  })
 }
 
 function addContextMenuListener() {
+  contextMenu = document.getElementById('podcastEpisodeContextMenu')
+  const trackAction = document.getElementById('trackAction')
 
-  contextMenu = document.getElementById('podcastEpisodeContextMenu');
-  const trackAction = document.getElementById('trackAction');
-
-  trackAction.addEventListener('click', function() {
+  trackAction.addEventListener('click', function () {
     markAsListened(selectedEpisode.id)
     selectedEpisode = null
-    hideContextMenu();
-  });
+    hideContextMenu()
+  })
 
-  const notInterestedAction = document.getElementById('notInterestedAction');
+  const notInterestedAction = document.getElementById('notInterestedAction')
 
-  notInterestedAction.addEventListener('click', function() {
+  notInterestedAction.addEventListener('click', function () {
     markAsNotInterested(selectedEpisode.id)
     selectedEpisode = null
-    hideContextMenu();
-  });
+    hideContextMenu()
+  })
 
-  const listenLaterAction = document.getElementById('addToListenLaterAction');
+  const listenLaterAction = document.getElementById('addToListenLaterAction')
 
-  listenLaterAction.addEventListener('click', function() {
+  listenLaterAction.addEventListener('click', function () {
     addToListenLater(selectedEpisode.id)
     selectedEpisode = null
-    hideContextMenu();
-  });
+    hideContextMenu()
+  })
 
-
-  contextMenu = document.getElementById('podcastEpisodeContextMenu');
+  contextMenu = document.getElementById('podcastEpisodeContextMenu')
 
   const unsubscribeAction = document.getElementById('unsubscribeAction')
 
@@ -70,208 +68,208 @@ function addContextMenuListener() {
   goToListenLaterAction.addEventListener('click', gotoListenLaterContextListener)
 
   // Event listener to hide context menu on window click
-  window.addEventListener('click', function() {
-    hideContextMenu();
-  });
+  window.addEventListener('click', function () {
+    hideContextMenu()
+  })
 }
 
 function addPodcastFormListener() {
   document.getElementById('podcastForm').addEventListener('submit', function (event) {
-    event.preventDefault();
+    event.preventDefault()
 
-    const formData = new FormData(this);
-    const jsonObject = {};
-    formData.forEach(function(value, key){
-      jsonObject[key] = value;
-    });
+    const formData = new FormData(this)
+    const jsonObject = {}
+    formData.forEach(function (value, key) {
+      jsonObject[key] = value
+    })
 
-    subscribe(jsonObject.url)
-      .then(response => response.status === 200 || response.status === 201 ? response?.json() : null)
-
-  });
+    subscribe(jsonObject.url).then(response =>
+      response.status === 200 || response.status === 201 ? response?.json() : null,
+    )
+  })
 }
 
 function markAsListened(episodeId) {
   return api(podcastTrack, {
-      method: 'PUT',
-      headers: headers,
-      body: JSON.stringify({'episodeId':episodeId})
-      })
+    method: 'PUT',
+    headers: headers,
+    body: JSON.stringify({ episodeId: episodeId }),
+  })
 }
 
 function markAsNotInterested(episodeId) {
   return api(podcastNotInterested, {
-      method: 'PUT',
-      headers: headers,
-      body: JSON.stringify({'episodeId':episodeId})
-      })
+    method: 'PUT',
+    headers: headers,
+    body: JSON.stringify({ episodeId: episodeId }),
+  })
 }
 
 function addToListenLater(episodeId) {
   return api(podcastListenLater, {
-      method: 'POST',
-      headers: headers,
-      body: JSON.stringify({'episodeId':episodeId})
-      })
+    method: 'POST',
+    headers: headers,
+    body: JSON.stringify({ episodeId: episodeId }),
+  })
 }
 
 function subscribe(url) {
   return api(podcastSubscribeEndpoint, {
-      method: 'POST',
-      headers: headers,
-      body: JSON.stringify({'url': url})
-      })
+    method: 'POST',
+    headers: headers,
+    body: JSON.stringify({ url: url }),
+  })
 }
 
-
 function addEventListeners() {
-  document.getElementById("prevPage").addEventListener("click", () => {
-      if (page > 0) {
-          page--;
-          fetchPodcastEpisodes();
-      }
-  });
+  document.getElementById('prevPage').addEventListener('click', () => {
+    if (page > 0) {
+      page--
+      fetchPodcastEpisodes()
+    }
+  })
 
-  document.getElementById("nextPage").addEventListener("click", () => {
-      page++;
-      fetchPodcastEpisodes();
-  });
-
+  document.getElementById('nextPage').addEventListener('click', () => {
+    page++
+    fetchPodcastEpisodes()
+  })
 }
 
 function fetchSubscribedPodcasts() {
-  const size = 50;
+  const size = 50
 
   api(podcastAllSubsribedEndpointFn(page, size), {
-      method: 'GET',
-      headers: headers
-      })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            displayPodcasts(data.content);
-            //updatePodcastPaginationButtons(data);
-        })
-        .catch(error => {
-            console.error("Error fetching podcast episodes:", error);
-        });
+    method: 'GET',
+    headers: headers,
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+      return response.json()
+    })
+    .then(data => {
+      displayPodcasts(data.content)
+      //updatePodcastPaginationButtons(data);
+    })
+    .catch(error => {
+      console.error('Error fetching podcast episodes:', error)
+    })
 }
 
 function fetchPodcastListenLater() {
-  const size = 50;
+  const size = 50
 
   api(podcastListenLaterFn(page, size), {
-      method: 'GET',
-      headers: headers
+    method: 'GET',
+    headers: headers,
   })
-  .then(response => {
-    if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    return response.json();
-  })
-  .then(data => {
-      displayEpisodes(data.content);
-      updatePaginationButtons(data);
-  })
-  .catch(error => {
-      console.error("Error fetching podcast listen later:", error);
-  });
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+      return response.json()
+    })
+    .then(data => {
+      displayEpisodes(data.content)
+      updatePaginationButtons(data)
+    })
+    .catch(error => {
+      console.error('Error fetching podcast listen later:', error)
+    })
 }
 
 function fetchPodcastEpisodesByPodcastId(podcastId) {
-  const size = 50;
+  const size = 50
 
   api(podcastEpisodesEndpointFn(podcastId, page, size), {
-      method: 'GET',
-      headers: headers
+    method: 'GET',
+    headers: headers,
   })
-  .then(response => {
-    if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    return response.json();
-  })
-  .then(data => {
-      displayEpisodes(data.content);
-      updatePaginationButtons(data);
-  })
-  .catch(error => {
-      console.error("Error fetching podcast episodes by podcastId:", error);
-  });
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+      return response.json()
+    })
+    .then(data => {
+      displayEpisodes(data.content)
+      updatePaginationButtons(data)
+    })
+    .catch(error => {
+      console.error('Error fetching podcast episodes by podcastId:', error)
+    })
 }
 
 function fetchPodcastEpisodes() {
-  const size = 50;
-  const sort = "publishedDate,desc";
+  const size = 50
+  const sort = 'publishedDate,desc'
 
   api(podcastNewEpisodesEndpointFn(page, size, sort), {
-  // api(podcastAllSubsribedEpisodesEndpointFn(page, size, sort), {
-      method: 'GET',
-      headers: headers
-      })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            displayEpisodes(data.content);
-            updatePaginationButtons(data);
-        })
-        .catch(error => {
-            console.error("Error fetching podcast episodes:", error);
-        });
+    // api(podcastAllSubsribedEpisodesEndpointFn(page, size, sort), {
+    method: 'GET',
+    headers: headers,
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+      return response.json()
+    })
+    .then(data => {
+      displayEpisodes(data.content)
+      updatePaginationButtons(data)
+    })
+    .catch(error => {
+      console.error('Error fetching podcast episodes:', error)
+    })
 }
 
 function displayPodcasts(podcasts) {
-  const podcastsTable = document.getElementById("podcastsTable");
+  const podcastsTable = document.getElementById('podcastsTable')
   podcasts.forEach(podcast => {
     addPodcastToTable(podcastsTable, podcast)
   })
 }
 
 function addPodcastToTable(tbody, podcast) {
-  const row = document.createElement('tr');
+  const row = document.createElement('tr')
 
-  const imgCell = document.createElement('td');
+  const imgCell = document.createElement('td')
   imgCell.innerHtml = `<img src="${podcast.coverUrl}" alt="Cover Image" />`
-  row.appendChild(imgCell);
-      
+  row.appendChild(imgCell)
 
-  const titleCell = document.createElement('td');
-  titleCell.textContent = podcast.podcastTitle;
-  row.appendChild(titleCell);
+  const titleCell = document.createElement('td')
+  titleCell.textContent = podcast.podcastTitle
+  row.appendChild(titleCell)
 
-  const subcribedAtCell = document.createElement('td');
-  subcribedAtCell.textContent = new Date(podcast.createdAtUtc);
-  row.appendChild(subcribedAtCell);
+  const subcribedAtCell = document.createElement('td')
+  subcribedAtCell.textContent = new Date(podcast.createdAtUtc)
+  row.appendChild(subcribedAtCell)
 
-  row.addEventListener('contextmenu', function(event) {
+  row.addEventListener('contextmenu', function (event) {
     if (!!contextMenu) {
       hideContextMenu()
     }
-    showContextMenu(event,
+    showContextMenu(
+      event,
       podcast,
-      (val) => { selectedPodcast = val },
-      'podcastContextMenu');
-  });
+      val => {
+        selectedPodcast = val
+      },
+      'podcastContextMenu',
+    )
+  })
 
-  tbody.appendChild(row);
-
+  tbody.appendChild(row)
 }
 function displayEpisodes(episodes) {
-  const episodesDiv = document.getElementById("episodes");
-  episodesDiv.innerHTML = "";
+  const episodesDiv = document.getElementById('episodes')
+  episodesDiv.innerHTML = ''
 
   episodes.forEach(episode => {
-    const episodeDiv = document.createElement("div");
-    episodeDiv.classList.add("episode");
+    const episodeDiv = document.createElement('div')
+    episodeDiv.classList.add('episode')
     episodeDiv.innerHTML = `
       <img src="${episode.coverUrl}" alt="Cover Image" />
       <h3>${episode.episodeTitle}</h3>
@@ -280,94 +278,96 @@ function displayEpisodes(episodes) {
           <source src="${episode.url}" type="audio/mpeg">
           Your browser does not support the audio element.
       </audio>
-    `;
+    `
 
-    const audioElement = episodeDiv.querySelector('audio');
+    const audioElement = episodeDiv.querySelector('audio')
 
-    audioElement.addEventListener('ended', function() {
+    audioElement.addEventListener('ended', function () {
       markAsListened(episode.id)
-    });
+    })
 
-    episodeDiv.addEventListener('contextmenu', function(event) {
+    episodeDiv.addEventListener('contextmenu', function (event) {
       if (!!contextMenu) {
         hideContextMenu()
       }
-      showContextMenu(event,
+      showContextMenu(
+        event,
         episode,
-        (val) => { selectedEpisode = val },
-        'podcastEpisodeContextMenu');
-    });
-      episodesDiv.appendChild(episodeDiv);
-  });
+        val => {
+          selectedEpisode = val
+        },
+        'podcastEpisodeContextMenu',
+      )
+    })
+    episodesDiv.appendChild(episodeDiv)
+  })
 }
 
 function showContextMenu(event, val, setterFn, contextMenuId) {
   // Check if the right-click occurred outside of an 'a' tag
   if (event.target.tagName.toLowerCase() === 'a') {
-    return;
+    return
   }
-  event.preventDefault();
+  event.preventDefault()
   setterFn(val)
-  contextMenu = document.getElementById(contextMenuId);
+  contextMenu = document.getElementById(contextMenuId)
 
   // Ensure the context menu is visible before retrieving dimensions
-  contextMenu.style.display = 'block';
-  
-  const contextMenuWidth = contextMenu.offsetWidth;
-  const contextMenuHeight = contextMenu.offsetHeight;
-  const viewportWidth = window.innerWidth;
-  const viewportHeight = window.innerHeight;
-  
-  let left = event.clientX;
-  let top = event.clientY;
-  
+  contextMenu.style.display = 'block'
+
+  const contextMenuWidth = contextMenu.offsetWidth
+  const contextMenuHeight = contextMenu.offsetHeight
+  const viewportWidth = window.innerWidth
+  const viewportHeight = window.innerHeight
+
+  let left = event.clientX
+  let top = event.clientY
+
   // Adjust left position if the context menu goes off the right edge
   if (left + contextMenuWidth > viewportWidth) {
-    left = viewportWidth - contextMenuWidth;
+    left = viewportWidth - contextMenuWidth
   }
-  
+
   // Adjust top position if the context menu goes off the bottom edge
   if (top + contextMenuHeight > viewportHeight) {
-    top = viewportHeight - contextMenuHeight;
+    top = viewportHeight - contextMenuHeight
   }
-  
+
   // Ensure the top position is never negative
-  top = Math.max(top, 0);
-  
-  contextMenu.style.left = `${left}px`;
-  contextMenu.style.top = `${top}px`;
-  
-  event.stopPropagation();
+  top = Math.max(top, 0)
+
+  contextMenu.style.left = `${left}px`
+  contextMenu.style.top = `${top}px`
+
+  event.stopPropagation()
 }
 
 function hideContextMenu() {
   if (!!contextMenu) {
-    contextMenu.style.display = 'none';
+    contextMenu.style.display = 'none'
     contextMenu = null
   }
 }
 
 function updatePaginationButtons(data) {
-  document.getElementById("prevPage").disabled = data.first;
-  document.getElementById("nextPage").disabled = data.last;
+  document.getElementById('prevPage').disabled = data.first
+  document.getElementById('nextPage').disabled = data.last
 }
 
 function getUrlParameter(name) {
-  name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
-  const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
-  const results = regex.exec(location.search);
-  return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+  name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]')
+  const regex = new RegExp('[\\?&]' + name + '=([^&#]*)')
+  const results = regex.exec(location.search)
+  return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '))
 }
 
 window.onload = () => {
   const podcastId = getUrlParameter('podcastId')
   if (podcastId) {
     fetchPodcastEpisodesByPodcastId(podcastId)
-  }
-  else if (getUrlParameter('listenLater')) {
+  } else if (getUrlParameter('listenLater')) {
     fetchPodcastListenLater()
-  }
-  else {
+  } else {
     fetchPodcastEpisodes()
     fetchSubscribedPodcasts()
   }

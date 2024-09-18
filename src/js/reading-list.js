@@ -1,96 +1,91 @@
-let contextMenu;
-let selectedReading;
-let currentPage = 0;
-let pageSize = 50;
+let contextMenu
+let selectedReading
+let currentPage = 0
+let pageSize = 50
 
 function getReadingList(page, size) {
   fetch(readingListEndpointFn(page, size), {
-      method: 'GET',
-      headers: headers
-      })
-  .then(response => response.status === 200 ? response?.json() : null)
-  .then(val => {
-    if (!!val) {
-      currentPage++
-      if (val.last) {
-        disableLoadMoreButton()
-
-
+    method: 'GET',
+    headers: headers,
+  })
+    .then(response => (response.status === 200 ? response?.json() : null))
+    .then(val => {
+      if (!!val) {
+        currentPage++
+        if (val.last) {
+          disableLoadMoreButton()
+        }
+        populateTable(val.content, page === 0)
       }
-      populateTable(val.content, page === 0);
-    }
-  });
+    })
 }
 
 function updateReadStatus(val, read) {
   fetch(readingListEndpointReadFn(val.id, read), {
-      method: 'PATCH',
-      headers: headers
-      })
+    method: 'PATCH',
+    headers: headers,
+  })
 }
 
-
 function populateTable(vals, shouldClear) {
-  const tbody = document.getElementById('reading-list-table');
+  const tbody = document.getElementById('reading-list-table')
 
   if (shouldClear) {
-    tbody.innerHTML = '';
+    tbody.innerHTML = ''
   }
 
-
   vals.forEach(val => {
-      const row = document.createElement('tr');
+    const row = document.createElement('tr')
 
-      const valCell = document.createElement('td');
-      valCell.textContent = val.title;
-      row.appendChild(valCell);
+    const valCell = document.createElement('td')
+    valCell.textContent = val.title
+    row.appendChild(valCell)
 
-      const categoryCell = document.createElement('td');
-      const link = document.createElement('a');
-      link.href = val.url;
-      link.textContent = val.url;
-      categoryCell.appendChild(link);
-      row.appendChild(categoryCell);
+    const categoryCell = document.createElement('td')
+    const link = document.createElement('a')
+    link.href = val.url
+    link.textContent = val.url
+    categoryCell.appendChild(link)
+    row.appendChild(categoryCell)
 
-      const notesCell = document.createElement('td');
-      const checked = document.createElement('input');
-      checked.type = 'checkbox'
-      checked.checked = val.read;
+    const notesCell = document.createElement('td')
+    const checked = document.createElement('input')
+    checked.type = 'checkbox'
+    checked.checked = val.read
 
-      checked.addEventListener('change', function() {
-          updateReadStatus(val, this.checked);
-      });
-      notesCell.appendChild(checked)
-      row.appendChild(notesCell);
+    checked.addEventListener('change', function () {
+      updateReadStatus(val, this.checked)
+    })
+    notesCell.appendChild(checked)
+    row.appendChild(notesCell)
 
-      const createdAt = document.createElement('td');
-      createdAt.textContent = new Date(val.createdAtUtc)
-      row.appendChild(createdAt);
+    const createdAt = document.createElement('td')
+    createdAt.textContent = new Date(val.createdAtUtc)
+    row.appendChild(createdAt)
 
-      row.addEventListener('contextmenu', function(event) {
-        if (!!contextMenu) {
-          hideContextMenu()
-        }
-        showContextMenu(event, val);
-      });
+    row.addEventListener('contextmenu', function (event) {
+      if (!!contextMenu) {
+        hideContextMenu()
+      }
+      showContextMenu(event, val)
+    })
 
-      tbody.appendChild(row);
-  });
-
+    tbody.appendChild(row)
+  })
 }
 
 function createTodo(todo) {
   return api(todosEndpoint, {
-      method: 'POST',
-      headers: headers,
-      body: JSON.stringify(todo)
+    method: 'POST',
+    headers: headers,
+    body: JSON.stringify(todo),
   })
 }
 
 function deleteReadingListItem(item) {
   return api(readingListEndpointDeleteFn(item.id), {
-      method: 'DELETE',
-      headers: headers
+    method: 'DELETE',
+    headers: headers,
   })
 }
 
@@ -101,47 +96,40 @@ function santiseString(val) {
     .replace(/\s+/g, '-')
 }
 
-
-
 function createNote(item) {
-  const blob = new Blob([[
-  `---`,
-  `tags:`,
-  `  -`,
-  `---`,
-  '',
-  `${item.url}`].join('\n')], {type: "text/plain"});
-  const url = URL.createObjectURL(blob);
+  const blob = new Blob([[`---`, `tags:`, `  -`, `---`, '', `${item.url}`].join('\n')], {
+    type: 'text/plain',
+  })
+  const url = URL.createObjectURL(blob)
 
   browser.downloads.download({
-      url: url,
-      filename: `${santiseString(item.title)}.md`,
-      saveAs: true
-  });
+    url: url,
+    filename: `${santiseString(item.title)}.md`,
+    saveAs: true,
+  })
 }
 
 function addContextMenuListener() {
+  contextMenu = document.getElementById('readingContextMenu')
+  const deleteAction = document.getElementById('deleteAction')
+  const createTodoAction = document.getElementById('createTodoAction')
+  const createNoteAction = document.getElementById('createNoteAction')
 
-  contextMenu = document.getElementById('readingContextMenu');
-  const deleteAction = document.getElementById('deleteAction');
-  const createTodoAction = document.getElementById('createTodoAction');
-  const createNoteAction = document.getElementById('createNoteAction');
-
-  deleteAction.addEventListener('click', function() {
+  deleteAction.addEventListener('click', function () {
     deleteReadingListItem(selectedReading)
     selectedReading = null
-    hideContextMenu();
-  });
+    hideContextMenu()
+  })
 
-  createTodoAction.addEventListener('click', function() {
+  createTodoAction.addEventListener('click', function () {
     const reading = selectedReading
-    const todo = { 
+    const todo = {
       readingListId: reading.id,
-      todo: `${reading.title} ${reading.url}`
+      todo: `${reading.title} ${reading.url}`,
     }
-    const category = prompt('Enter the new category:');
+    const category = prompt('Enter the new category:')
     todo.category = !!category ? category : 'PENDING'
-    const tagsValue = prompt('Enter the new tag(s) comma separated (reading is default):');
+    const tagsValue = prompt('Enter the new tag(s) comma separated (reading is default):')
 
     const tags = !!tagsValue ? tagsValue.split(',') : []
     tags.push('reading')
@@ -149,84 +137,83 @@ function addContextMenuListener() {
 
     createTodo(todo)
     selectedReading = null
-    hideContextMenu();
-  });
+    hideContextMenu()
+  })
 
-  createNoteAction.addEventListener('click', function() {
+  createNoteAction.addEventListener('click', function () {
     createNote(selectedReading)
     selectedReading = null
-    hideContextMenu();
-  });
+    hideContextMenu()
+  })
 
   // Event listener to hide context menu on window click
-  window.addEventListener('click', function() {
-    hideContextMenu();
-  });
+  window.addEventListener('click', function () {
+    hideContextMenu()
+  })
 }
 
 function showContextMenu(event, reading) {
   // Check if the right-click occurred outside of an 'a' tag
   if (event.target.tagName.toLowerCase() === 'a') {
-    return;
+    return
   }
-  event.preventDefault();
-  selectedReading = reading;
-  const contextMenuId = 'readingContextMenu';
-  contextMenu = document.getElementById(contextMenuId);
+  event.preventDefault()
+  selectedReading = reading
+  const contextMenuId = 'readingContextMenu'
+  contextMenu = document.getElementById(contextMenuId)
 
   // Ensure the context menu is visible before retrieving dimensions
-  contextMenu.style.display = 'block';
-  
-  const contextMenuWidth = contextMenu.offsetWidth;
-  const contextMenuHeight = contextMenu.offsetHeight;
-  const viewportWidth = window.innerWidth;
-  const viewportHeight = window.innerHeight;
-  
-  let left = event.clientX;
-  let top = event.clientY;
-  
+  contextMenu.style.display = 'block'
+
+  const contextMenuWidth = contextMenu.offsetWidth
+  const contextMenuHeight = contextMenu.offsetHeight
+  const viewportWidth = window.innerWidth
+  const viewportHeight = window.innerHeight
+
+  let left = event.clientX
+  let top = event.clientY
+
   // Adjust left position if the context menu goes off the right edge
   if (left + contextMenuWidth > viewportWidth) {
-    left = viewportWidth - contextMenuWidth;
+    left = viewportWidth - contextMenuWidth
   }
-  
+
   // Adjust top position if the context menu goes off the bottom edge
   if (top + contextMenuHeight > viewportHeight) {
-    top = viewportHeight - contextMenuHeight;
+    top = viewportHeight - contextMenuHeight
   }
-  
+
   // Ensure the top position is never negative
-  top = Math.max(top, 0);
-  
-  contextMenu.style.left = `${left}px`;
-  contextMenu.style.top = `${top}px`;
-  
-  event.stopPropagation();
+  top = Math.max(top, 0)
+
+  contextMenu.style.left = `${left}px`
+  contextMenu.style.top = `${top}px`
+
+  event.stopPropagation()
 }
 
 function hideContextMenu() {
   if (!!contextMenu) {
-    contextMenu.style.display = 'none';
+    contextMenu.style.display = 'none'
     contextMenu = null
   }
 }
 
 function setupLoadMoreButton() {
-  const loadMoreButton = document.getElementById('load-more-button');
-  loadMoreButton.addEventListener('click', function() {
-    getReadingList(currentPage + 1, pageSize);
-  });
+  const loadMoreButton = document.getElementById('load-more-button')
+  loadMoreButton.addEventListener('click', function () {
+    getReadingList(currentPage + 1, pageSize)
+  })
 }
 
 function disableLoadMoreButton() {
-  const loadMoreButton = document.getElementById('load-more-button');
-  loadMoreButton.disabled = true;
+  const loadMoreButton = document.getElementById('load-more-button')
+  loadMoreButton.disabled = true
 }
 
-
-window.addEventListener("load", function() {
-  getReadingList(0, pageSize);
-  setupLoadMoreButton();
-  addContextMenuListener();
-});
+window.addEventListener('load', function () {
+  getReadingList(0, pageSize)
+  setupLoadMoreButton()
+  addContextMenuListener()
+})
 window.onload = addContextMenuListener

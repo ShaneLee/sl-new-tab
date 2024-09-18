@@ -1,11 +1,11 @@
-const userId = tempUserId;
-let page = 0;
-let contextMenu;
-let selectedFile;
+const userId = tempUserId
+let page = 0
+let contextMenu
+let selectedFile
 
 function deleteFile() {
   const fileId = selectedFile.id
-  console.error("Not implemented boyo")
+  console.error('Not implemented boyo')
   // return api(podcastSubscribeEndpoint, {
   //     method: 'DELETE',
   //     headers: headers,
@@ -14,136 +14,138 @@ function deleteFile() {
 }
 
 function addContextMenuListener() {
+  contextMenu = document.getElementById('fileContextMenu')
+  const deleteAction = document.getElementById('deleteAction')
 
-  contextMenu = document.getElementById('fileContextMenu');
-  const deleteAction = document.getElementById('deleteAction');
-
-  deleteAction.addEventListener('click', function() {
-    delete(selectedEpisode.id)
+  deleteAction.addEventListener('click', function () {
+    delete selectedEpisode.id
     selectedEpisode = null
-    hideContextMenu();
-  });
+    hideContextMenu()
+  })
 
   // Event listener to hide context menu on window click
-  window.addEventListener('click', function() {
-    hideContextMenu();
-  });
+  window.addEventListener('click', function () {
+    hideContextMenu()
+  })
 }
 
 function addEventListeners() {
-  document.getElementById("prevPage").addEventListener("click", () => {
-      if (page > 0) {
-          page--;
-          fetchFiles();
-      }
-  });
+  document.getElementById('prevPage').addEventListener('click', () => {
+    if (page > 0) {
+      page--
+      fetchFiles()
+    }
+  })
 
-  document.getElementById("nextPage").addEventListener("click", () => {
-      page++;
-      fetchFiles();
-  });
-
+  document.getElementById('nextPage').addEventListener('click', () => {
+    page++
+    fetchFiles()
+  })
 }
 
 function fetchFiles() {
-  const size = 50;
+  const size = 50
 
   // TODO items of interest is the bucket, but need tags
   // before we can get memes specifically
-  api(filesEndpointFn("itemsofinterest", page, size), {
-      method: 'GET',
-      headers: headers
-      })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            displayFiles(data.content);
-            updatePaginationButtons(data);
-        })
-        .catch(error => {
-            console.error("Error fetching files:", error);
-        });
+  api(filesEndpointFn('itemsofinterest', page, size), {
+    method: 'GET',
+    headers: headers,
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+      return response.json()
+    })
+    .then(data => {
+      displayFiles(data.content)
+      updatePaginationButtons(data)
+    })
+    .catch(error => {
+      console.error('Error fetching files:', error)
+    })
 }
 
 function displayFiles(files) {
-  const filesDiv = document.getElementById("files");
-  filesDiv.innerHTML = "";
+  const filesDiv = document.getElementById('files')
+  filesDiv.innerHTML = ''
 
   files
-    .map(file => file.replace('http:','https:'))
+    .map(file => file.replace('http:', 'https:'))
     .forEach(file => {
-    const fileDiv = document.createElement("div");
-    fileDiv.classList.add("file");
-    const imgElement = document.createElement("img");
-    imgElement.src = file
-    fileDiv.appendChild(imgElement)
+      const fileDiv = document.createElement('div')
+      fileDiv.classList.add('file')
+      const imgElement = document.createElement('img')
+      imgElement.src = file
+      fileDiv.appendChild(imgElement)
 
-    fileDiv.addEventListener('contextmenu', function(event) {
-      if (!!contextMenu) {
-        hideContextMenu()
-      }
-      showContextMenu(event,
-        file,
-        (val) => { selectedFile = val },
-        'fileContextMenu');
-    });
-      filesDiv.appendChild(fileDiv);
-  });
+      fileDiv.addEventListener('contextmenu', function (event) {
+        if (!!contextMenu) {
+          hideContextMenu()
+        }
+        showContextMenu(
+          event,
+          file,
+          val => {
+            selectedFile = val
+          },
+          'fileContextMenu',
+        )
+      })
+      filesDiv.appendChild(fileDiv)
+    })
 }
 
 function showContextMenu(event, val, setterFn, contextMenuId) {
   // Check if the right-click occurred outside of an 'a' tag
   if (event.target.tagName.toLowerCase() === 'a') {
-    return;
+    return
   }
-  event.preventDefault();
+  event.preventDefault()
   setterFn(val)
-  contextMenu = document.getElementById(contextMenuId);
+  contextMenu = document.getElementById(contextMenuId)
 
   // Ensure the context menu is visible before retrieving dimensions
-  contextMenu.style.display = 'block';
-  
-  const contextMenuWidth = contextMenu.offsetWidth;
-  const contextMenuHeight = contextMenu.offsetHeight;
-  const viewportWidth = window.innerWidth;
-  const viewportHeight = window.innerHeight;
-  
-  let left = event.clientX;
-  let top = event.clientY;
-  
+  contextMenu.style.display = 'block'
+
+  const contextMenuWidth = contextMenu.offsetWidth
+  const contextMenuHeight = contextMenu.offsetHeight
+  const viewportWidth = window.innerWidth
+  const viewportHeight = window.innerHeight
+
+  let left = event.clientX
+  let top = event.clientY
+
   // Adjust left position if the context menu goes off the right edge
   if (left + contextMenuWidth > viewportWidth) {
-    left = viewportWidth - contextMenuWidth;
+    left = viewportWidth - contextMenuWidth
   }
-  
+
   // Adjust top position if the context menu goes off the bottom edge
   if (top + contextMenuHeight > viewportHeight) {
-    top = viewportHeight - contextMenuHeight;
+    top = viewportHeight - contextMenuHeight
   }
-  
+
   // Ensure the top position is never negative
-  top = Math.max(top, 0);
-  
-  contextMenu.style.left = `${left}px`;
-  contextMenu.style.top = `${top}px`;
-  
-  event.stopPropagation();
+  top = Math.max(top, 0)
+
+  contextMenu.style.left = `${left}px`
+  contextMenu.style.top = `${top}px`
+
+  event.stopPropagation()
 }
 
 function hideContextMenu() {
   if (!!contextMenu) {
-    contextMenu.style.display = 'none';
+    contextMenu.style.display = 'none'
     contextMenu = null
   }
 }
 
 function updatePaginationButtons(data) {
-  document.getElementById("prevPage").disabled = data.first;
-  document.getElementById("nextPage").disabled = data.last;
+  document.getElementById('prevPage').disabled = data.first
+  document.getElementById('nextPage').disabled = data.last
 }
 
 window.onload = () => {

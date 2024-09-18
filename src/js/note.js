@@ -1,14 +1,14 @@
 function loadNote() {
   fetch(notesEndpoint, {
-      method: 'GET',
-      headers: headers
-      })
-  .then(response => response.status === 200 ? response?.json() : null)
-  .then(val => {
-    if (!!val) {
-      populateNote(val)
-    }
-  });
+    method: 'GET',
+    headers: headers,
+  })
+    .then(response => (response.status === 200 ? response?.json() : null))
+    .then(val => {
+      if (!!val) {
+        populateNote(val)
+      }
+    })
 }
 
 function populateNote(note) {
@@ -16,4 +16,4 @@ function populateNote(note) {
   editor.value = note.note
 }
 
-window.addEventListener("load", loadNote);
+window.addEventListener('load', loadNote)
