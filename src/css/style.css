@@ -852,7 +852,7 @@ div.todo-input:focus {
   transition: transform 0.2s ease-in-out;
 }
 
-.file img {
+.file img,video { 
   width: 100%;
   height: auto;
   border-radius: 8px;

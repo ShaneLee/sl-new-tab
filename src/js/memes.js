@@ -76,9 +76,18 @@ function displayFiles(files) {
     .forEach(file => {
       const fileDiv = document.createElement('div')
       fileDiv.classList.add('file')
-      const imgElement = document.createElement('img')
-      imgElement.src = file
-      fileDiv.appendChild(imgElement)
+      if (file.includes('.mp4')) {
+        const videoElement = document.createElement('video')
+        videoElement.controls = true
+        const source = document.createElement('source')
+        source.src = file
+        videoElement.appendChild(source)
+        fileDiv.appendChild(videoElement)
+      } else {
+        const imgElement = document.createElement('img')
+        imgElement.src = file
+        fileDiv.appendChild(imgElement)
+      }
 
       fileDiv.addEventListener('contextmenu', function (event) {
         if (!!contextMenu) {
