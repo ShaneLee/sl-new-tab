@@ -218,6 +218,18 @@ solarisedTheme.set('--light-grey', '#839496')
 solarisedTheme.set('--very-dark', '#002b36')
 solarisedTheme.set('--medium-grey', '#38556d')
 
+const themes = new Map()
+
+themes.set('defaultTheme', defaultTheme)
+themes.set('darkerTheme', darkerTheme)
+themes.set('solarisedTheme', solarisedTheme)
+
+const theme = themes.get(localStorage.getItem('theme'))
+
+if (!!theme) {
+  setTheme(theme)
+}
+
 function setTheme(theme) {
   const root = document.documentElement
   theme.forEach((value, key) => root.style.setProperty(key, value))
