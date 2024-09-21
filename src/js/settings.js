@@ -1,4 +1,9 @@
 window.onload = function () {
+  const token = getUrlParameter('token')
+
+  if (!!token) {
+    localStorage.setItem('token', token)
+  }
   document.getElementById('settingsForm').addEventListener('submit', function (e) {
     e.preventDefault()
     saveSettings()
@@ -21,10 +26,7 @@ function getPreferences() {
 function saveSettings() {
   localStorage.removeItem('userPreferences')
   const name = document.getElementById('name').value
-  chrome.storage.local.set({ name: name }, function () {})
-
   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
-  chrome.storage.local.set({ timezone: timezone }, function () {})
 
   const coloursByTags = {}
 

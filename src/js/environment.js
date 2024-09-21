@@ -6,9 +6,15 @@ const isChrome = /Chrome/.test(navigator.userAgent)
 const browserExtension = isChrome ? 'chrome-extension' : 'moz-extension'
 const extensionId = isChrome ? chrome.runtime.id : 'afadb1cf-b426-431a-a9f7-47adf0ceff91'
 
+function redirectToLogin() {
+  localStorage.removeItem('token')
+}
+
 const headers = {
   'Content-Type': 'application/json',
   tempUserId: tempUserId,
+  // TODO uncomment when we have everything authenicated
+  // 'Authorization': `Bearer ${localStorage.getItem('token')}`,
 }
 
 // Endpoints
@@ -28,7 +34,8 @@ const eventsEndpointFn = (start, end) => `${host}/event?start=${start}&endInclus
 const eventEndpoint = `${host}/event`
 const transactionToDeductEndpoint = `${host}/transaction/to-deduct`
 const transactionToDeductEndpointFn = end => `${host}/transaction/to-deduct?endInclusive=${end}`
-const loginEndpoint = `${host}/user/login`
+const loginEndpoint = `${host}/v1/login`
+const registerEndpoint = `${host}/v1/register`
 const spendCategoriesEndpoint = `${host}/spend-category`
 const wellEndpoint = type => `${host}/well?rangeType=${type}`
 
@@ -86,6 +93,23 @@ function categoryParam(category) {
 
 const userPreferences = `${host}/preferences`
 
+function getUrlParameter(name) {
+  name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]')
+  const regex = new RegExp('[\\?&]' + name + '=([^&#]*)')
+  const results = regex.exec(location.search)
+  return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '))
+}
+
+function parseWWWAuthenticateHeader(header) {
+  const parts = header.split(',').map(part => part.trim())
+  for (const part of parts) {
+    if (part.startsWith('error=')) {
+      return part.split('=')[1].replace(/"/g, '')
+    }
+  }
+  return null
+}
+
 function api(endpoint, obj, rethrow) {
   if (rethrow) {
     return fetch(endpoint, obj).then(val => withFeedback(val, obj))
@@ -98,6 +122,16 @@ function api(endpoint, obj, rethrow) {
 function withFeedback(response, obj) {
   try {
     const feedback = document.getElementById('feedback')
+    if (response.status === 401) {
+      const wwwAuthenticateHeader = response.headers.get('WWW-Authenticate')
+      if (wwwAuthenticateHeader) {
+        const message = parseWWWAuthenticateHeader(wwwAuthenticateHeader)
+        if (message === 'Token has expired') {
+          redirectToLogin()
+        }
+      }
+    }
+
     if (!feedback || obj.method === 'GET' || obj.noFeedback === true) {
       return response
     }

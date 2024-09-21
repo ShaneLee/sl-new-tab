@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
     <title id="title">Login</title>
@@ -7,13 +7,17 @@
     <script src="../js/environment.js" charset="UTF-8"></script>
     <script src="../js/login.js" charset="UTF-8"></script>
     <script src="../js/jquery-3.5.0.min.js" charset="utf-8"></script>
-    <link rel="stylesheet" type="text/css" href="../css/style.css">
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
   </head>
   <body>
-    <form id="loginForm" class="default-form">
-      <input name="name" id="name" placeholder="What Should I Call You?"></input>
-      <input name="email" id="email" placeholder="Email"></input>
-      <button id="saveButton" type="submit">Login/Register</button>
-    </form>
+    <div id="feedback"></div>
+    <section>
+      <form id="loginForm" class="default-form">
+        <input name="name" id="name" placeholder="What Should I Call You?" />
+        <input name="email" id="email" placeholder="Email" />
+        <button id="loginButton" type="submit">Login</button>
+        <button id="registerButton" type="submit">Register</button>
+      </form>
+    </section>
   </body>
 </html>
