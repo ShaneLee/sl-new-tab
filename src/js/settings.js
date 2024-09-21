@@ -3,6 +3,7 @@ window.onload = function () {
 
   if (!!token) {
     localStorage.setItem('token', token)
+    headers.Authorization = `Bearer ${token}`
   }
   document.getElementById('settingsForm').addEventListener('submit', function (e) {
     e.preventDefault()

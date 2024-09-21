@@ -8,13 +8,12 @@ const extensionId = isChrome ? chrome.runtime.id : 'afadb1cf-b426-431a-a9f7-47ad
 
 function redirectToLogin() {
   localStorage.removeItem('token')
+  delete headers.Authorization
 }
 
 const headers = {
   'Content-Type': 'application/json',
   tempUserId: tempUserId,
-  // TODO uncomment when we have everything authenicated
-  // 'Authorization': `Bearer ${localStorage.getItem('token')}`,
 }
 
 // Endpoints
