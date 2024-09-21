@@ -14,6 +14,7 @@ function redirectToLogin() {
 const headers = {
   'Content-Type': 'application/json',
   tempUserId: tempUserId,
+  Authorization: `Bearer ${localStorage.getItem('token')}`,
 }
 
 // Endpoints
