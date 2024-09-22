@@ -1,4 +1,3 @@
-const userId = tempUserId
 let page = 0
 let contextMenu
 let selectedFile
