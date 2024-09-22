@@ -1,20 +1,31 @@
 host = 'http://localhost:8080'
 host = 'http://192.168.0.46:8080'
-const tempUserId = 'bd11dcc2-77f6-430f-8e87-5839d31ab0e3'
 
 const isChrome = /Chrome/.test(navigator.userAgent)
 const browserExtension = isChrome ? 'chrome-extension' : 'moz-extension'
 const extensionId = isChrome ? chrome.runtime.id : 'afadb1cf-b426-431a-a9f7-47adf0ceff91'
 
-function redirectToLogin() {
-  localStorage.removeItem('token')
-  delete headers.Authorization
-}
-
 const headers = {
   'Content-Type': 'application/json',
-  tempUserId: tempUserId,
   Authorization: `Bearer ${localStorage.getItem('token')}`,
+}
+
+function redirectToLogin() {
+  if (
+    window.location.href.includes('login.html') ||
+    window.location.href.includes('settings.html')
+  ) {
+    return
+  }
+  localStorage.removeItem('token')
+  delete headers.Authorization
+  const redirectUrl = `${browserExtension}://${extensionId}/template/login.html`
+  window.location.href = redirectUrl
+}
+
+const token = localStorage.getItem('token')
+if (!token) {
+  redirectToLogin()
 }
 
 // Endpoints
