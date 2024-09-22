@@ -535,12 +535,12 @@ function updateRanks(todos) {
   })
 }
 
-function complete(todo) {
+function complete(todo, dontRefresh) {
   api(completeEndpoint, {
     method: 'PATCH',
     headers: headers,
     body: JSON.stringify(todo),
-  }).then(_ => refreshTodos())
+  }).then(_ => (!!dontRefresh ? null : refreshTodos()))
 }
 
 function deleteTodo(todo, thisInstance, alternateSuccessMessage) {
@@ -813,10 +813,6 @@ function todoCountString(todo) {
 let selectedTodo = null
 function addTodo(uL, todo) {
   TODOS_SET.add(todo)
-  const xhr = new XMLHttpRequest()
-  xhr.open('PATCH', completeEndpoint, false)
-  xhr.setRequestHeader('Content-Type', 'application/json')
-  xhr.setRequestHeader('tempUserId', tempUserId)
 
   const listItem = document.createElement('li')
 
@@ -983,7 +979,7 @@ function addTodo(uL, todo) {
             ) {
               // Continue with the normal click function
               LAST.push(todo)
-              xhr.send(JSON.stringify(todo))
+              complete(todo, true)
               listItem.style = 'display: none;'
               playAudio()
             }
@@ -1001,7 +997,7 @@ function addTodo(uL, todo) {
     }
 
     LAST.push(todo)
-    xhr.send(JSON.stringify(todo))
+    complete(todo, true)
     listItem.style = 'display: none;'
     playAudio()
     return false
