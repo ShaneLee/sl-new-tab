@@ -761,6 +761,12 @@ function pendingTodos() {
     } else {
       pendingElement.classList.add('hidden')
     }
+
+    pendingElement.addEventListener('click', () => {
+      const selectElement = document.getElementById('category-input')
+      selectElement.value = 'PENDING'
+      refreshTodos()
+    })
   })
 }
 
