@@ -1,4 +1,3 @@
-const userId = tempUserId
 let page = 0
 let podcastPage = 0
 let contextMenu

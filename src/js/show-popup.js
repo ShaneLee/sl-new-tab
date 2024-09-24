@@ -2,10 +2,9 @@ function variables() {
   host = 'http://localhost:8080'
   host = 'http://192.168.0.46:8080'
   const bucketEndpoint = `${host}/bucket`
-  const tempUserId = 'bd11dcc2-77f6-430f-8e87-5839d31ab0e3'
   const headers = {
     'Content-Type': 'application/json',
-    tempUserId: tempUserId,
+    Authorization: `Bearer ${localStorage.getItem('token')}`,
   }
   return {
     host: host,

@@ -87,6 +87,8 @@ const podcastAllSubsribedEndpointFn = (page, size) =>
 
 const versionCatalogueEndpoint = `${host}/version-catalogue`
 
+const manualTimeTrackingEndpoint = `${host}/tracking/manual`
+
 // Nutrition Endpoints
 const mealEndpoint = `${host}/nutrition/food/meal`
 const allMealsEndpoint = `${host}/nutrition/food/meal/all`
