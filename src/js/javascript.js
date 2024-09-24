@@ -4,6 +4,7 @@ quotesEnabled = false
 timerEnabled = true
 eventsEnabled = true
 showTags = true
+persistTagFilters = true
 spendTrackingEnabled = true
 importantTodosEnabled = true
 // Should we include this week's todos in the main note?
@@ -16,7 +17,7 @@ const CATEGORIES_SET = new Set()
 const LAST = new Array()
 
 const TAGS = new Set()
-const TAG_FILTERS = new Set()
+let TAG_FILTERS = new Set()
 
 class CircularQueue {
   constructor(elements) {
@@ -1336,6 +1337,8 @@ function createTagFilterForm(tags, addTodoTagFilterAction, tagPillFn, tagsContai
     const tag = tagElement.value
 
     TAG_FILTERS.add(tag)
+    updateTagFilters()
+
     const tagPill = createTagPill(tag, addTodoTagFilterAction, tagsContainer)
     tagPillFn(tagPill)
     refreshTodos()
@@ -1343,6 +1346,32 @@ function createTagFilterForm(tags, addTodoTagFilterAction, tagPillFn, tagsContai
   })
 
   return form
+}
+
+function showTagFilter(tag) {
+  const tagElement = document.getElementById('tags-popup-input')
+  const tagsContainer = document.getElementById('tags-container')
+  const tagPill = createTagPill(tag, null, tagsContainer)
+  tagsContainer.appendChild(tagPill)
+  tagsContainer.classList.remove('hidden')
+}
+
+function loadTagFilters() {
+  if (!persistTagFilters) {
+    return
+  }
+  const tagFilters = localStorage.getItem('tag_filters')
+  TAG_FILTERS = tagFilters ? new Set(JSON.parse(tagFilters)) : TAG_FILTERS
+  TAG_FILTERS.forEach(showTagFilter)
+}
+
+function updateTagFilters() {
+  if (!persistTagFilters) {
+    return
+  }
+  const tagFilters = localStorage.getItem('tag_filters')
+  const tagSet = tagFilters ? new Set(JSON.parse(tagFilters)) : TAG_FILTERS
+  localStorage.setItem('tag_filters', JSON.stringify([...tagSet]))
 }
 
 function createTagPill(tag, addTodoTagFilterAction, tagsContainer) {
@@ -1357,6 +1386,7 @@ function createTagPill(tag, addTodoTagFilterAction, tagsContainer) {
   removeTagElement.addEventListener('click', function () {
     addTodoTagFilterAction.classList.remove('hidden')
     TAG_FILTERS.delete(tag)
+    updateTagFilters()
     refreshTodos()
     removeTagElement.parentElement.remove()
     if (TAG_FILTERS.size === 0) {
@@ -1880,7 +1910,7 @@ function targetNote() {
 }
 
 window.onload = function () {
-  getPreferences().then(processPreferences)
+  getPreferences().then(processPreferences).then(loadTagFilters)
   addTodoListener()
   if (importantTodosEnabled) {
     targetNote()
