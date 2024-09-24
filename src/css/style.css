@@ -873,6 +873,23 @@ video {
   transform: scale(1.05);
 }
 
+.filemodal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+.filemodal img,
+.filemodal video {
+  max-width: 90%;
+  max-height: 90%;
+}
+
 /** KANBAN */
 .kanban-board {
   display: flex;

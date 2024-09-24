@@ -2,6 +2,9 @@ let page = 0
 let contextMenu
 let selectedFile
 
+let currentMediaIndex = 0
+let mediaFiles = []
+
 function deleteFile() {
   const fileId = selectedFile.id
   console.error('Not implemented boyo')
@@ -70,39 +73,112 @@ function displayFiles(files) {
   const filesDiv = document.getElementById('files')
   filesDiv.innerHTML = ''
 
-  files
-    .map(file => file.replace('http:', 'https:'))
-    .forEach(file => {
-      const fileDiv = document.createElement('div')
-      fileDiv.classList.add('file')
-      if (file.includes('.mp4')) {
-        const videoElement = document.createElement('video')
-        videoElement.controls = true
-        const source = document.createElement('source')
-        source.src = file
-        videoElement.appendChild(source)
-        fileDiv.appendChild(videoElement)
-      } else {
-        const imgElement = document.createElement('img')
-        imgElement.src = file
-        fileDiv.appendChild(imgElement)
-      }
+  mediaFiles = files.map(file => file.replace('http:', 'https:'))
 
-      fileDiv.addEventListener('contextmenu', function (event) {
-        if (!!contextMenu) {
-          hideContextMenu()
-        }
-        showContextMenu(
-          event,
-          file,
-          val => {
-            selectedFile = val
-          },
-          'fileContextMenu',
-        )
+  mediaFiles.forEach((file, index) => {
+    const fileDiv = document.createElement('div')
+    fileDiv.classList.add('file')
+
+    if (file.includes('.mp4')) {
+      const videoElement = document.createElement('video')
+      videoElement.controls = true
+      videoElement.src = file
+      fileDiv.appendChild(videoElement)
+
+      videoElement.addEventListener('click', event => {
+        event.preventDefault()
+        event.stopPropagation() // Prevent video from playing
+        openModal(index, 'video')
       })
-      filesDiv.appendChild(fileDiv)
+    } else {
+      const imgElement = document.createElement('img')
+      imgElement.src = file
+      fileDiv.appendChild(imgElement)
+
+      // Click to enlarge image
+      imgElement.addEventListener('click', () => {
+        openModal(index, 'image')
+      })
+    }
+
+    fileDiv.addEventListener('contextmenu', function (event) {
+      event.preventDefault()
+      if (!!contextMenu) {
+        hideContextMenu()
+      }
+      showContextMenu(
+        event,
+        file,
+        val => {
+          selectedFile = val
+        },
+        'fileContextMenu',
+      )
     })
+
+    filesDiv.appendChild(fileDiv)
+  })
+}
+
+function openModal(index, type) {
+  currentMediaIndex = index
+  const modal = document.getElementById('mediaModal')
+  const modalImage = document.getElementById('modalImage')
+  const modalVideo = document.getElementById('modalVideo')
+
+  modalVideo.innerHTML = ''
+
+  // Display the correct media type
+  if (type === 'image') {
+    modalImage.src = mediaFiles[currentMediaIndex]
+    modalImage.style.display = 'block'
+    modalVideo.style.display = 'none'
+  } else if (type === 'video') {
+    const sourceElement = document.createElement('source')
+    sourceElement.src = mediaFiles[currentMediaIndex]
+    sourceElement.type = 'video/mp4' // Explicitly set MIME type
+    modalVideo.appendChild(sourceElement)
+    modalVideo.load() // Load the video source dynamically
+
+    modalVideo.style.display = 'block'
+    modalImage.style.display = 'none'
+  }
+
+  modal.style.display = 'flex'
+  document.addEventListener('keydown', handleKeyNavigation)
+}
+
+function closeModal() {
+  const modal = document.getElementById('mediaModal')
+  modal.style.display = 'none'
+  document.removeEventListener('keydown', handleKeyNavigation)
+}
+
+function handleKeyNavigation(event) {
+  if (event.key === 'ArrowRight') {
+    currentMediaIndex = (currentMediaIndex + 1) % mediaFiles.length
+  } else if (event.key === 'ArrowLeft') {
+    currentMediaIndex = (currentMediaIndex - 1 + mediaFiles.length) % mediaFiles.length
+  } else if (event.key === 'Escape') {
+    closeModal()
+    return
+  }
+
+  const isVideo = mediaFiles[currentMediaIndex].includes('.mp4')
+  const type = isVideo ? 'video' : 'image'
+  openModal(currentMediaIndex, type)
+}
+
+function addModalCloseListener() {
+  // Close modal when clicking outside the image or video
+  document.getElementById('mediaModal').addEventListener('click', e => {
+    if (
+      e.target !== document.getElementById('modalImage') &&
+      e.target !== document.getElementById('modalVideo')
+    ) {
+      closeModal()
+    }
+  })
 }
 
 function showContextMenu(event, val, setterFn, contextMenuId) {
@@ -160,4 +236,5 @@ window.onload = () => {
   fetchFiles()
   addEventListeners()
   addContextMenuListener()
+  addModalCloseListener()
 }
