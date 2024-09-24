@@ -1384,7 +1384,7 @@ function createTagPill(tag, addTodoTagFilterAction, tagsContainer) {
   removeTagElement.classList.add('remove-tag')
   removeTagElement.innerHTML = 'x'
   removeTagElement.addEventListener('click', function () {
-    addTodoTagFilterAction.classList.remove('hidden')
+    addTodoTagFilterAction?.classList.remove('hidden')
     TAG_FILTERS.delete(tag)
     updateTagFilters()
     refreshTodos()
