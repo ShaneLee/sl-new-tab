@@ -1369,9 +1369,7 @@ function updateTagFilters() {
   if (!persistTagFilters) {
     return
   }
-  const tagFilters = localStorage.getItem('tag_filters')
-  const tagSet = tagFilters ? new Set(JSON.parse(tagFilters)) : TAG_FILTERS
-  localStorage.setItem('tag_filters', JSON.stringify([...tagSet]))
+  localStorage.setItem('tag_filters', JSON.stringify([...TAG_FILTERS]))
 }
 
 function createTagPill(tag, addTodoTagFilterAction, tagsContainer) {
