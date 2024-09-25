@@ -19,6 +19,11 @@ const LAST = new Array()
 const TAGS = new Set()
 let TAG_FILTERS = new Set()
 
+let isDragging = false
+let startX, startY
+let selectionBox
+const SELECTED_TODOS = new Set()
+
 class CircularQueue {
   constructor(elements) {
     this.elements = elements
@@ -1402,6 +1407,108 @@ function createTodoTagFilterElement(tagsContainer, addTodoTagFilterAction, tagPi
   })
 }
 
+function addTodoDragToSelectListener() {
+  function toggleSelection(item) {
+    const todosMap = Array.from(TODOS_SET).reduce((map, val) => {
+      map.set(val.id, val)
+      return map
+    }, new Map())
+    const todo = todosMap.get(item.id)
+    if (SELECTED_TODOS.has(todo)) {
+      SELECTED_TODOS.delete(todo)
+      item.classList.remove('selected')
+    } else {
+      SELECTED_TODOS.add(todo)
+      item.classList.add('selected')
+    }
+  }
+
+  function createSelectionBox() {
+    selectionBox = document.createElement('div')
+    selectionBox.id = 'selectionBox'
+    document.body.appendChild(selectionBox)
+  }
+
+  function updateSelectionBox(x1, y1, x2, y2) {
+    const left = Math.min(x1, x2)
+    const top = Math.min(y1, y2)
+    const width = Math.abs(x2 - x1)
+    const height = Math.abs(y2 - y1)
+
+    selectionBox.style.left = `${left}px`
+    selectionBox.style.top = `${top}px`
+    selectionBox.style.width = `${width}px`
+    selectionBox.style.height = `${height}px`
+  }
+
+  function selectTodosWithinBox() {
+    const boxRect = selectionBox.getBoundingClientRect()
+    const todosMap = Array.from(TODOS_SET).reduce((map, val) => {
+      map.set(val.id, val)
+      return map
+    }, new Map())
+    document.querySelectorAll('.todo-item').forEach(item => {
+      const todo = todosMap.get(item.id)
+      const itemRect = item.getBoundingClientRect()
+      const isInside = !(
+        boxRect.right < itemRect.left ||
+        boxRect.left > itemRect.right ||
+        boxRect.bottom < itemRect.top ||
+        boxRect.top > itemRect.bottom
+      )
+
+      if (isInside) {
+        item.classList.add('selected')
+        SELECTED_TODOS.add(todo)
+      } else {
+        item.classList.remove('selected')
+        SELECTED_TODOS.delete(todo)
+      }
+    })
+  }
+
+  function cancelSelection(event) {
+    if (event.key === 'Escape' || event.key === 'Esc') {
+      document.querySelectorAll('.todo-item.selected').forEach(item => {
+        item.classList.remove('selected')
+      })
+      SELECTED_TODOS.clear()
+    }
+  }
+
+  function gToSelectListener() {
+    document.addEventListener('mousedown', event => {
+      if (event.shiftKey) {
+        isDragging = true
+        startX = event.pageX
+        startY = event.pageY
+
+        createSelectionBox()
+        updateSelectionBox(startX, startY, startX, startY)
+      }
+    })
+
+    document.addEventListener('mousemove', event => {
+      if (isDragging) {
+        updateSelectionBox(startX, startY, event.pageX, event.pageY)
+        selectTodosWithinBox()
+      }
+    })
+
+    document.addEventListener('mouseup', () => {
+      if (isDragging) {
+        isDragging = false
+        if (selectionBox) {
+          document.body.removeChild(selectionBox)
+          selectionBox = null
+        }
+      }
+    })
+  }
+  gToSelectListener()
+  document.addEventListener('keydown', cancelSelection)
+}
+
 function addTodoListener() {
   document.getElementById('todo-input').addEventListener('input', function () {
     if (this.innerHTML === '<br>') {
@@ -1443,6 +1550,7 @@ function addTodoListener() {
   const markImportantAction = document.getElementById('markImportantAction')
   const addTagAction = document.getElementById('addTagAction')
   const addNotesAction = document.getElementById('addNotesAction')
+  const addTagsToAllAction = document.getElementById('addTagsToAllAction')
 
   document.addEventListener('contextmenu', function (event) {
     hideContextMenu()
@@ -1682,13 +1790,27 @@ function addTodoListener() {
   moveAllNextAction.addEventListener('click', function () {
     // TODO update the backend to have a list edit endpoint
     // will need to validate that all are for the same user
-    TODOS_SET.forEach(todo => {
-      const category = todo?.category.replace(/\d+/, nextCategoryFn)
+    const setToUse = SELECTED_TODOS.size > 0 ? SELECTED_TODOS : TODOS_SET
+    setToUse.forEach(todo => {
       if (!!category) {
         todo.category = category
-        update(todo)
+        update(todo, true)
       }
     })
+    refreshTodos()
+    hideContextMenu()
+  })
+
+  addTagsToAllAction.addEventListener('click', function () {
+    const tags = prompt('Enter the new tag(s) comma separated:')
+    const setToUse = SELECTED_TODOS.size > 0 ? SELECTED_TODOS : TODOS_SET
+    setToUse.forEach(selectedTodo => {
+      const todo = addTags(selectedTodo, tags)
+      if (!!tags) {
+        update(todo, true)
+      }
+    })
+    refreshTodos()
     hideContextMenu()
   })
 
@@ -1696,12 +1818,14 @@ function addTodoListener() {
     // TODO update the backend to have a list edit endpoint
     // will need to validate that all are for the same user
     const category = prompt('Enter the new category:')
-    TODOS_SET.forEach(todo => {
+    const setToUse = SELECTED_TODOS.size > 0 ? SELECTED_TODOS : TODOS_SET
+    setToUse.forEach(todo => {
       if (!!category) {
         todo.category = category
-        update(todo)
+        update(todo, true)
       }
     })
+    refreshTodos()
     hideContextMenu()
   })
 
@@ -1910,6 +2034,8 @@ function targetNote() {
 window.onload = function () {
   getPreferences().then(processPreferences).then(loadTagFilters)
   addTodoListener()
+  // Shift + click drag
+  addTodoDragToSelectListener()
   if (importantTodosEnabled) {
     targetNote()
   }
