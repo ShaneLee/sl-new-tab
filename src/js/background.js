@@ -320,7 +320,23 @@ browserAPI.runtime.onInstalled.addListener(() => {
 
 browserAPI.runtime.onInstalled.addListener(details => {
   if (details.reason === 'install') {
-    // OAuth2 goes here at some point
     browserAPI.tabs.create({ url: 'template/settings.html' })
   }
 })
+
+browserAPI.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
+  if (changeInfo.status === 'complete') {
+    checkAndChangeTitle(tab)
+  }
+})
+
+function checkAndChangeTitle(tab) {
+  const targetHost = 'linkedin'
+
+  if (new URL(tab.url).hostname.includes(targetHost)) {
+    browserAPI.scripting.executeScript({
+      target: { tabId: tab.id },
+      func: () => (document.title = 'Shitstorm'),
+    })
+  }
+}
