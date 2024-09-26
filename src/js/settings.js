@@ -24,6 +24,13 @@ function getPreferences() {
   }).then(res => (!!res ? res.json() : null))
 }
 
+function getUserTags() {
+  return api(tagsEndpoint, {
+    method: 'GET',
+    headers: headers,
+  }).then(res => (!!res ? res.json() : null))
+}
+
 function saveSettings() {
   localStorage.removeItem('userPreferences')
   const name = document.getElementById('name').value
@@ -56,21 +63,35 @@ function saveSettings() {
 function loadSettings() {
   getPreferences()
     .then(prefs => {
-      if (prefs) {
+      return getUserTags().then(val => {
+        return {
+          prefs: prefs,
+          tags: new Set([...val]),
+        }
+      })
+    })
+    .then(prefs => {
+      if (prefs.prefs) {
+        const tagsWithoutColours = [...prefs.tags].filter(
+          tag => !(prefs.prefs.coloursByTags && prefs.prefs.coloursByTags.hasOwnProperty(tag)),
+        )
         document.getElementById('name').value = prefs.name || ''
 
-        if (prefs.coloursByTags) {
-          Object.entries(prefs.coloursByTags).forEach(([tag, colour]) => {
-            addTagColourPair(tag, colour)
+        if (prefs.prefs.coloursByTags) {
+          Object.entries(prefs.prefs.coloursByTags).forEach(([tag, colour]) => {
+            addTagColourPair(tag, colour, 'configuredTagColourPairs')
           })
         }
+        tagsWithoutColours.forEach(tag => {
+          addTagColourPair(tag, '', (div = 'unconfiguredTagColourPairs'))
+        })
       }
     })
     .catch(error => console.error('Error loading preferences:', error))
 }
 
-function addTagColourPair(tag = '', colour = '') {
-  const tagColourPairsDiv = document.getElementById('tagColourPairs')
+function addTagColourPair(tag = '', colour = '', div = 'unconfiguredTagColourPairs') {
+  const tagColourPairsDiv = document.getElementById(div)
 
   const newPairDiv = document.createElement('div')
   newPairDiv.className = 'tag-pair'

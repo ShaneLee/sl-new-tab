@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
     <title id="title">Settings</title>
@@ -7,7 +7,7 @@
     <script src="../js/environment.js" charset="UTF-8"></script>
     <script src="../js/settings.js" charset="UTF-8"></script>
     <script src="../js/jquery-3.5.0.min.js" charset="utf-8"></script>
-    <link rel="stylesheet" type="text/css" href="../css/style.css">
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
   </head>
   <body>
     <div id="feedback" class="feedback hidden"></div>
@@ -15,15 +15,18 @@
       <form id="settingsForm" class="default-form">
         <h2>Preferences and Settings</h2>
         <input name="name" id="name" placeholder="What Should I Call You?" />
-        
-        <h2>Colours</h2>
+
         <div id="tagColourPairs">
-          <div class="tag-pair">
-            <input name="tag" class="tag" placeholder="Tag Name" />
-            <input name="colour" type="color" class="colour" placeholder="Colour" />
-          </div>
+          <section id="configuredTagColourPairs">
+            <h2>Configured Tag Colours</h2>
+            <div class="tag-pair"></div>
+          </section>
+          <section id="unconfiguredTagColourPairs">
+            <h2>Unconfigured Tag Colours</h2>
+            <div class="tag-pair"></div>
+          </section>
         </div>
-        
+
         <button type="button" id="addTagPairButton">Add Tag</button>
         <button id="saveButton" type="submit">Submit</button>
       </form>
