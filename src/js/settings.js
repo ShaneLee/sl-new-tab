@@ -75,7 +75,7 @@ function loadSettings() {
         const tagsWithoutColours = [...prefs.tags].filter(
           tag => !(prefs.prefs.coloursByTags && prefs.prefs.coloursByTags.hasOwnProperty(tag)),
         )
-        document.getElementById('name').value = prefs.name || ''
+        document.getElementById('name').value = prefs.prefs.name || ''
 
         if (prefs.prefs.coloursByTags) {
           Object.entries(prefs.prefs.coloursByTags).forEach(([tag, colour]) => {
