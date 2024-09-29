@@ -1792,6 +1792,7 @@ function addTodoListener() {
     // will need to validate that all are for the same user
     const setToUse = SELECTED_TODOS.size > 0 ? SELECTED_TODOS : TODOS_SET
     setToUse.forEach(todo => {
+      const category = todo?.category.replace(/\d+/, nextCategoryFn)
       if (!!category) {
         todo.category = category
         update(todo, true)
