@@ -2032,6 +2032,26 @@ function targetNote() {
     })
 }
 
+function addShortcuts() {
+  let keySequence = []
+  document.addEventListener('keydown', event => {
+    keySequence.push(event.key)
+
+    if (keySequence.join('') === 'gt') {
+      const category = `Week ${currentWeekNumber()}`
+      const selectElement = document.getElementById('category-input')
+      selectElement.value = category
+      keysPressed = {}
+      keySequence = []
+      refreshTodos()
+    }
+
+    if (keySequence.length > 2) {
+      keySequence = []
+    }
+  })
+}
+
 window.onload = function () {
   getPreferences().then(processPreferences).then(loadTagFilters)
   addTodoListener()
@@ -2050,6 +2070,7 @@ window.onload = function () {
     updateTaskButton(false)
     getRunningTask()
   }
+  addShortcuts()
   pages.forEach(page => page.init())
   const eventDates = getEventStartAndEndDates()
   getEvents(eventDates['start'], eventDates['end'])
