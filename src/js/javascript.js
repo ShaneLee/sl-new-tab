@@ -1231,7 +1231,7 @@ function showContextMenu(event, todo) {
     return
   }
   event.preventDefault()
-  const isTodoContextMenu = !!todo
+  const isTodoContextMenu = !!todo && SELECTED_TODOS.size == 0
   selectedTodo = todo
   const contextMenuId = isTodoContextMenu ? 'todoContextMenu' : 'contextMenu'
   contextMenu = document.getElementById(contextMenuId)
