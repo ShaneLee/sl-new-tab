@@ -1791,28 +1791,38 @@ function addTodoListener() {
     // TODO update the backend to have a list edit endpoint
     // will need to validate that all are for the same user
     const setToUse = SELECTED_TODOS.size > 0 ? SELECTED_TODOS : TODOS_SET
-    setToUse.forEach(todo => {
+    const promises = [...setToUse].map(todo => {
       const category = todo?.category.replace(/\d+/, nextCategoryFn)
       if (!!category) {
         todo.category = category
-        update(todo, true)
+        return update(todo, true)
       }
+      return Promise.resolve()
     })
-    refreshTodos()
-    hideContextMenu()
+
+    Promise.all(promises).then(() => {
+      SELECTED_TODOS.clear()
+      refreshTodos()
+      hideContextMenu()
+    })
   })
 
   addTagsToAllAction.addEventListener('click', function () {
     const tags = prompt('Enter the new tag(s) comma separated:')
     const setToUse = SELECTED_TODOS.size > 0 ? SELECTED_TODOS : TODOS_SET
-    setToUse.forEach(selectedTodo => {
+    const promises = [...setToUse].map(selectedTodo => {
       const todo = addTags(selectedTodo, tags)
       if (!!tags) {
-        update(todo, true)
+        return update(todo, true)
       }
+      return Promise.resolve()
     })
-    refreshTodos()
-    hideContextMenu()
+
+    Promise.all(promises).then(() => {
+      SELECTED_TODOS.clear()
+      refreshTodos()
+      hideContextMenu()
+    })
   })
 
   changeAllCategoryAction.addEventListener('click', function () {
@@ -1820,14 +1830,19 @@ function addTodoListener() {
     // will need to validate that all are for the same user
     const category = prompt('Enter the new category:')
     const setToUse = SELECTED_TODOS.size > 0 ? SELECTED_TODOS : TODOS_SET
-    setToUse.forEach(todo => {
+    const promises = [...setToUse].map(todo => {
       if (!!category) {
         todo.category = category
-        update(todo, true)
+        return update(todo, true)
       }
+      return Promise.resolve()
     })
-    refreshTodos()
-    hideContextMenu()
+
+    Promise.all(promises).then(() => {
+      SELECTED_TODOS.clear()
+      refreshTodos()
+      hideContextMenu()
+    })
   })
 
   editAction.addEventListener('click', function () {
