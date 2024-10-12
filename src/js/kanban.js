@@ -1,3 +1,5 @@
+const COLUMNS = 5
+
 class CircularQueue {
   constructor(elements) {
     this.elements = elements
@@ -53,15 +55,31 @@ function todosBacklog() {
   }).then(response => response.json())
 }
 
-function todos() {
-  const category = `Week ${currentWeekNumber()}`
-
+function todosByCategory(category) {
   const endpoint =
     !!category && category !== 'all' ? `${todosEndpoint}?category=${category}` : todosEndpoint
   return api(endpoint, {
     method: 'GET',
     headers: headers,
-  }).then(response => response.json())
+  }).then(response => (response.status === 200 ? response.json() : []))
+}
+
+function todos(type) {
+  if (!!type) {
+    let startWeekNumber = currentWeekNumber()
+    let promises = []
+
+    for (let i = 0; i < COLUMNS; i++) {
+      const weekNumber = startWeekNumber + i
+      const category = `Week ${weekNumber}`
+      const promise = todosByCategory(category)
+      promises.push(promise)
+    }
+
+    return Promise.all(promises).then(results => results.flat())
+  }
+  const category = `Week ${currentWeekNumber()}`
+  return todosByCategory(category)
 }
 
 function displayBy(type, todos, backlog) {
@@ -132,6 +150,24 @@ function groupByTags(todos) {
   return tagGroups
 }
 
+function getQueryParams() {
+  const params = {}
+  const queryString = window.location.search
+  if (queryString) {
+    const pairs = queryString.substring(1).split('&')
+    pairs.forEach(pair => {
+      const [key, value] = pair.split('=')
+      params[decodeURIComponent(key)] = decodeURIComponent(value || '')
+    })
+  }
+  return params
+}
+
 window.onload = function () {
-  todos().then(todos => todosBacklog().then(backlog => displayBy('tags', todos, backlog)))
+  const params = getQueryParams()
+  const displayType = params.type === 'WEEK' ? 'categories' : 'tags'
+
+  todos(params.type).then(todos =>
+    todosBacklog().then(backlog => displayBy(displayType, todos, backlog)),
+  )
 }
