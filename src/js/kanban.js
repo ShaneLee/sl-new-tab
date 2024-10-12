@@ -1,4 +1,5 @@
 const COLUMNS = 5
+let draggedTodo = null
 
 class CircularQueue {
   constructor(elements) {
@@ -45,6 +46,22 @@ function currentWeekNumber() {
   const weekNumber = Math.max(1, Math.ceil(days / 7))
 
   return weekNumber
+}
+
+function update(todo, dontRefresh, dontShowSuccessMessage) {
+  if (!!dontShowSuccessMessage) {
+    todo.noSuccessFeedback = true
+  }
+  return api(todosEndpoint, {
+    method: 'PUT',
+    headers: headers,
+    body: JSON.stringify(todo),
+  }).then(_ => {
+    if (!dontRefresh) {
+      // TODO maybe we don't need this
+      // refreshTodos()
+    }
+  })
 }
 
 function todosBacklog() {
@@ -104,6 +121,10 @@ function displayBy(type, todos, backlog) {
 function addColumn(groups, groupName, board) {
   const column = document.createElement('div')
   column.className = 'column'
+  column.setAttribute('data-group', groupName)
+  column.addEventListener('dragover', handleDragOver)
+  column.addEventListener('drop', handleDrop)
+
   const tagElement = document.createElement('span')
   tagElement.title = groupName
   const colour = getTagColour(groupName)
@@ -121,6 +142,9 @@ function addColumn(groups, groupName, board) {
     card.className = 'card'
     card.draggable = true
     card.textContent = todo.todo
+    card.setAttribute('data-id', todo.id)
+    card.setAttribute('data', JSON.stringify(todo))
+    card.addEventListener('dragstart', handleDragStart)
     column.appendChild(card)
   })
 
@@ -148,6 +172,51 @@ function groupByTags(todos) {
     })
   })
   return tagGroups
+}
+
+function handleDragStart(event) {
+  draggedTodo = event.target
+  event.dataTransfer.setData('text/plain', event.target.getAttribute('data-id'))
+  setTimeout(() => {
+    event.target.style.display = 'none' // Hide the todo being dragged
+  }, 0)
+}
+
+function handleDragOver(event) {
+  event.preventDefault()
+}
+
+function handleDrop(event) {
+  event.preventDefault()
+  const targetColumn = event.currentTarget
+  const groupName = targetColumn.getAttribute('data-group')
+  const todoId = event.dataTransfer.getData('text/plain')
+
+  if (draggedTodo) {
+    draggedTodo.style.display = 'block'
+    targetColumn.appendChild(draggedTodo)
+
+    handleTodoMove(todoId, groupName)
+  }
+}
+
+function handleTodoMove(todoId, groupName) {
+  const isWeekColumn = groupName.startsWith('Week')
+
+  if (isWeekColumn) {
+    const newCategory = groupName
+    const todo = JSON.parse(draggedTodo.getAttribute('data'))
+    console.log(todo)
+    todo.category = newCategory
+    update(todo, false, false)
+  } else {
+    // TODO do I want to add to the tags and duplicate or move the tags?
+    console.log(`Todo ${todoId} moved to ${groupName}`)
+  }
+}
+
+function handleDragEnd() {
+  draggedTodo = null
 }
 
 function getQueryParams() {
