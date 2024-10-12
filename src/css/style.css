@@ -950,6 +950,7 @@ video {
 }
 
 .card {
+  overflow-wrap: break-word;
   font-size: 1.2rem;
   margin-bottom: 10px;
   padding: 10px;
