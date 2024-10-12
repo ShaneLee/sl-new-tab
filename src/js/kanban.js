@@ -201,12 +201,11 @@ function handleDrop(event) {
 }
 
 function handleTodoMove(todoId, groupName) {
-  const isWeekColumn = groupName.startsWith('Week')
+  const isWeekColumn = groupName.startsWith('Week') || groupName === 'backlog'
 
   if (isWeekColumn) {
     const newCategory = groupName
     const todo = JSON.parse(draggedTodo.getAttribute('data'))
-    console.log(todo)
     todo.category = newCategory
     update(todo, false, false)
   } else {
