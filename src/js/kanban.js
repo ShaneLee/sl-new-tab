@@ -233,6 +233,7 @@ function getQueryParams() {
 }
 
 window.onload = function () {
+  // TODO support month
   const params = getQueryParams()
   const displayType = params.type === 'WEEK' ? 'categories' : 'tags'
 
