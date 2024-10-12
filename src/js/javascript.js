@@ -2015,6 +2015,13 @@ const pages = [
     shortcut: ',k',
   }),
   new Page({
+    id: 'kanban-week-link',
+    url: `${browserExtension}://${extensionId}/template/kanban.html?type=WEEK`,
+    name: 'Kanban Week',
+    emoji: withEmojis ? '🗽' : '',
+    shortcut: ',kw',
+  }),
+  new Page({
     id: 'version-catalogue-link',
     url: `${browserExtension}://${extensionId}/template/version-catalogue.html`,
     name: 'Version Catalogue',
