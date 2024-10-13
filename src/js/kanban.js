@@ -78,7 +78,11 @@ function todosByCategory(category) {
   return api(endpoint, {
     method: 'GET',
     headers: headers,
-  }).then(response => (response.status === 200 ? response.json() : []))
+    // If we have no response, create a todo that is just a category
+    // that way we render the column
+  }).then(response =>
+    response.status === 200 ? response.json() : !!category ? [{ category: category }] : [],
+  )
 }
 
 function todos(type) {
@@ -138,14 +142,19 @@ function addColumn(groups, groupName, board) {
   column.appendChild(h2)
 
   groups[groupName].forEach(todo => {
-    const card = document.createElement('div')
-    card.className = 'card'
-    card.draggable = true
-    card.textContent = todo.todo
-    card.setAttribute('data-id', todo.id)
-    card.setAttribute('data', JSON.stringify(todo))
-    card.addEventListener('dragstart', handleDragStart)
-    column.appendChild(card)
+    // We have blank todos when the category
+    // is empty, we don't want to render these cards,
+    // but we do want to render the column
+    if (!!todo.todo) {
+      const card = document.createElement('div')
+      card.className = 'card'
+      card.draggable = true
+      card.textContent = todo.todo
+      card.setAttribute('data-id', todo.id)
+      card.setAttribute('data', JSON.stringify(todo))
+      card.addEventListener('dragstart', handleDragStart)
+      column.appendChild(card)
+    }
   })
 
   board.appendChild(column)
