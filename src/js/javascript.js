@@ -780,9 +780,20 @@ function setToCsv(val) {
   return Array.from(val).join(',')
 }
 
+function shouldDisplayMoveToThisWeek(category) {
+  const thisWeekcategoryAction = document.getElementById('thisWeekCategoryAction')
+  const thisWeek = `Week ${currentWeekNumber()}`
+  if (thisWeek === category) {
+    thisWeekCategoryAction.classList.add('hidden')
+  } else {
+    thisWeekCategoryAction.classList.remove('hidden')
+  }
+}
+
 function todos() {
   pendingTodos()
   const category = document.getElementById('category-input').value
+  shouldDisplayMoveToThisWeek(category)
   const today = new Date()
   today.setHours(0, 0, 0, 0)
 
