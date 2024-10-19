@@ -1,4 +1,6 @@
 const COLUMNS = 5
+let originalColumn = null
+let originalIndex = -1
 let draggedTodo = null
 
 class CircularQueue {
@@ -185,14 +187,12 @@ function groupByTags(todos) {
 
 function handleDragStart(event) {
   draggedTodo = event.target
+  originalColumn = draggedTodo.parentElement // Store the original column
+  originalIndex = Array.from(originalColumn.children).indexOf(draggedTodo) // Store the original index
   event.dataTransfer.setData('text/plain', event.target.getAttribute('data-id'))
   setTimeout(() => {
     event.target.style.display = 'none' // Hide the todo being dragged
   }, 0)
-}
-
-function handleDragOver(event) {
-  event.preventDefault()
 }
 
 function handleDrop(event) {
@@ -202,6 +202,19 @@ function handleDrop(event) {
   const todoId = event.dataTransfer.getData('text/plain')
 
   if (draggedTodo) {
+    const todo = JSON.parse(draggedTodo.getAttribute('data'))
+    const isWeekColumn = groupName.startsWith('Week') || groupName === 'backlog'
+
+    if (isWeekColumn && todo.category === groupName) {
+      restoreTodoToOriginalPosition()
+      return
+    }
+
+    if (!isWeekColumn && todo.tags.includes(groupName)) {
+      restoreTodoToOriginalPosition()
+      return
+    }
+
     draggedTodo.style.display = 'block'
     targetColumn.appendChild(draggedTodo)
 
@@ -209,12 +222,27 @@ function handleDrop(event) {
   }
 }
 
-function handleTodoMove(todoId, groupName) {
+function restoreTodoToOriginalPosition() {
+  if (originalColumn && originalIndex >= 0) {
+    // Restore the todo to its original position within the original column
+    originalColumn.insertBefore(draggedTodo, originalColumn.children[originalIndex])
+    draggedTodo.style.display = 'block'
+  }
+}
+
+function handleDragEnd() {
+  draggedTodo = null
+}
+
+function handleDragOver(event) {
+  event.preventDefault()
+}
+
+function handleTodoMove(todoId, groupName, todo) {
   const isWeekColumn = groupName.startsWith('Week') || groupName === 'backlog'
 
   if (isWeekColumn) {
     const newCategory = groupName
-    const todo = JSON.parse(draggedTodo.getAttribute('data'))
     todo.category = newCategory
     update(todo, false, false)
   } else {
