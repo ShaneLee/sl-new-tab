@@ -1858,7 +1858,14 @@ function addTodoListener() {
 
   editAction.addEventListener('click', function () {
     const todo = selectedTodo
-    const task = prompt('Edit todo:', todo.todo)
+    let task = prompt('Edit todo:', todo.todo)
+    const tags = parseTags(task)
+    if (!!tags) {
+      task = replaceTags(task)
+    }
+    if (tags && tags.length > 0) {
+      todo.tags = Array.from(new Set([...todo.tags, ...tags]))
+    }
     if (!!task && todo.todo !== task) {
       todo.todo = task
       update(todo)
