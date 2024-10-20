@@ -173,11 +173,9 @@ ul {
 }
 
 .right-boxes {
-  position: absolute;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
   display: flex;
+  flex-basis: auto;
+  min-width: 0;
   gap: 3px;
 }
 
@@ -345,6 +343,14 @@ div.todo-input:focus {
   ); /* This ensures that .content is solid and covers the .delete div */
   flex-grow: 1;
   z-index: 2; /* Ensures that the content div is above the delete div */
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.todo-text {
+  flex-grow: 1;
+  transition: width 0.3s ease;
 }
 
 .slide-category {
@@ -375,6 +381,7 @@ div.todo-input:focus {
   background-color: var(--link-hover-color);
   padding: 5px;
   border-radius: 3px;
+  margin: -5px 0 -5px 0; /* Prevent the due box padding making the whole todo taller */
 }
 
 .due-date-box.emoji {

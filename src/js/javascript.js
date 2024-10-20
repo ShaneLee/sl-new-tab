@@ -862,7 +862,11 @@ function addTodo(uL, todo) {
     contentDiv.classList.add('strikethrough')
   }
   contentDiv.classList.add('content')
-  contentDiv.innerHTML = todo.todo.replace('<', '').replace('>', '')
+  const contentTextDiv = document.createElement('div')
+  contentDiv.appendChild(contentTextDiv)
+
+  contentTextDiv.classList.add('todo-text')
+  contentTextDiv.innerHTML = todo.todo.replace('<', '').replace('>', '')
 
   listItem.appendChild(contentDiv)
   listItem.addEventListener('contextmenu', function (event) {
@@ -933,10 +937,6 @@ function addTodo(uL, todo) {
 
     rightBoxes.appendChild(importantElement)
     spanItemCount++
-  }
-
-  if (spanItemCount > 1 && !!countElement) {
-    countElement.classList.add('margin-right-todo-span')
   }
 
   if (todo.dueDate && !todo.complete) {
