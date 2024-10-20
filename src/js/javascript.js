@@ -1324,6 +1324,89 @@ function hideContextMenu() {
   }
 }
 
+function createTodoEditForm(todo, updateTodoAction) {
+  let form = document.getElementById('todo-edit-popup')
+  if (form) {
+    return form
+  }
+
+  function closeForm() {
+    let form = document.getElementById('todo-edit-popup')
+    if (form) {
+      form.style.display = 'none'
+    }
+  }
+
+  form = document.createElement('div')
+  form.id = 'todo-edit-popup'
+  form.classList.add('default-form')
+
+  const closeButton = document.createElement('button')
+  closeButton.type = 'button'
+  closeButton.id = 'close-todo-edit-form-button'
+  closeButton.innerHTML = 'Close'
+  closeButton.addEventListener('click', closeForm)
+
+  const formHTML = `
+    <form id="edit-todo-form">
+      <h4>Edit Todo</h4>
+      
+      <!-- Todo description -->
+      <label for="todo-description">Todo</label>
+      <input type="text" id="todo-description" name="todo" value="${todo.todo}" required>
+
+      <!-- Category -->
+      <label for="todo-category">Category</label>
+      <input type="text" id="todo-category" name="category" value="${todo.category}" required>
+
+      <!-- Due date -->
+      <label for="todo-dueDate">Due Date</label>
+      <input type="date" id="todo-dueDate" name="dueDate" value="${todo.dueDate || ''}">
+      
+      ${todo.recurring ? `<label for="todo-recurring">Recurring</label>` : ''}
+
+      <!-- Important -->
+      <label for="todo-important">Important</label>
+      <input type="checkbox" id="todo-important" name="important" ${todo.important ? 'checked' : ''}>
+      
+      <!-- Tags -->
+      <label for="todo-tags">Tags</label>
+      <input type="text" id="todo-tags" name="tags" value="${todo.tags.join(', ')}" placeholder="Comma separated">
+
+      <!-- Notes -->
+      <label for="todo-notes">Notes</label>
+      <textarea id="todo-notes" name="notes" placeholder="Additional notes">${todo.notes || ''}</textarea>
+
+      <button type="submit">Update Todo</button>
+    </form>
+  `
+  form.innerHTML = formHTML
+  form.appendChild(closeButton)
+
+  form.querySelector('form').addEventListener('submit', function (e) {
+    e.preventDefault()
+
+    const updatedTodo = {
+      ...todo,
+      id: todo.id,
+      todo: document.getElementById('todo-description').value,
+      category: document.getElementById('todo-category').value,
+      dueDate: document.getElementById('todo-dueDate').value || null,
+      important: document.getElementById('todo-important').checked,
+      tags: document
+        .getElementById('todo-tags')
+        .value.split(',')
+        .map(tag => tag.trim()),
+      notes: document.getElementById('todo-notes').value || null,
+    }
+
+    updateTodoAction(updatedTodo)
+    closeForm()
+  })
+
+  return form
+}
+
 function createTagFilterForm(tags, addTodoTagFilterAction, tagPillFn, tagsContainer) {
   let form = document.getElementById('tag-filter-popup')
   if (form) {
@@ -1875,18 +1958,21 @@ function addTodoListener() {
 
   editAction.addEventListener('click', function () {
     const todo = selectedTodo
-    let task = prompt('Edit todo:', todo.todo)
-    const tags = parseTags(task)
-    if (!!tags) {
-      task = replaceTags(task)
-    }
-    if (tags && tags.length > 0) {
-      todo.tags = Array.from(new Set([...todo.tags, ...tags]))
-    }
-    if (!!task && todo.todo !== task) {
-      todo.todo = task
-      update(todo)
-    }
+    const todoForm = createTodoEditForm(todo, update)
+    showPopupForm(todoForm)
+
+    // let task = prompt('Edit todo:', todo.todo)
+    // const tags = parseTags(task)
+    // if (!!tags) {
+    //   task = replaceTags(task)
+    // }
+    // if (tags && tags.length > 0) {
+    //   todo.tags = Array.from(new Set([...todo.tags, ...tags]))
+    // }
+    // if (!!task && todo.todo !== task) {
+    //   todo.todo = task
+    //   update(todo)
+    // }
     selectedTodo = null
     hideContextMenu()
   })
