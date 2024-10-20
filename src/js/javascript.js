@@ -1668,7 +1668,8 @@ function addTodoListener() {
     window.location.href = `${browserExtension}://${extensionId}/template/settings.html`
   })
 
-  showCompleteTodosAction.addEventListener('click', function () {
+  showCompleteTodosAction.addEventListener('click', function (event) {
+    event.preventDefault()
     refreshTodos(true)
   })
 
