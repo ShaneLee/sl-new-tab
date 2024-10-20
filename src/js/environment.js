@@ -30,6 +30,7 @@ if (!token) {
 
 // Endpoints
 const todosEndpoint = `${host}/todos`
+const completeTodosEndpoint = `${host}/todos?onlyComplete=true`
 const tagsEndpoint = `${host}/todos/tags`
 const importantEndpointFn = limit =>
   !limit ? `${todosEndpoint}/important` : `${todosEndpoint}/important?limit=${limit}`

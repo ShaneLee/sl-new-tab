@@ -72,6 +72,10 @@ a:hover {
   text-align: center;
 }
 
+.strikethrough {
+  text-decoration: line-through;
+}
+
 .main {
   overflow: hidden;
   margin-left: 25%;

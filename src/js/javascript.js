@@ -573,11 +573,11 @@ function playAudio() {
   new Audio('../sounds/great-success.mp3').play()
 }
 
-function refreshTodos() {
+function refreshTodos(includeComplete = false) {
   TODOS_SET = new Set()
   const list = document.getElementById('todos')
   ;[...list.children].forEach(val => list.removeChild(val))
-  todos()
+  todos(includeComplete)
 }
 
 function filterAndSlice(array, count, week) {
@@ -790,7 +790,7 @@ function shouldDisplayMoveToThisWeek(category) {
   }
 }
 
-function todos() {
+function todos(includeComplete = false) {
   pendingTodos()
   const category = document.getElementById('category-input').value
   shouldDisplayMoveToThisWeek(category)
@@ -798,7 +798,10 @@ function todos() {
   today.setHours(0, 0, 0, 0)
 
   let endpoint =
-    !!category && category !== 'all' ? `${todosEndpoint}?category=${category}` : todosEndpoint
+    !!category && category !== 'all'
+      ? `${todosEndpoint}?category=${category}&includeComplete=
+  ${includeComplete}`
+      : `${todosEndpoint}&includeComplete=${includeComplete}`
   endpoint = TAG_FILTERS.size === 0 ? endpoint : `${endpoint}&tags=${setToCsv(TAG_FILTERS)}`
   api(endpoint, {
     method: 'GET',
@@ -852,7 +855,10 @@ function addTodo(uL, todo) {
   listItem.addEventListener('drop', handleDrop)
 
   const contentDiv = document.createElement('div')
-  contentDiv.className = 'content'
+  if (todo.complete) {
+    contentDiv.classList.add('strikethrough')
+  }
+  contentDiv.classList.add('content')
   contentDiv.innerHTML = todo.todo.replace('<', '').replace('>', '')
 
   listItem.appendChild(contentDiv)
@@ -897,7 +903,7 @@ function addTodo(uL, todo) {
     spanItemCount++
   }
 
-  if (!!todo.movedWeeksCount && todo.movedWeeksCount >= 3) {
+  if (!todo.complete && !!todo.movedWeeksCount && todo.movedWeeksCount >= 3) {
     const movedWeeksCountElement = document.createElement('span')
     movedWeeksCountElement.title = `Put off for ${todo.movedWeeksCount} weeks`
     movedWeeksCountElement.innerHTML = withEmojis ? '🕷️' : '***'
@@ -930,7 +936,7 @@ function addTodo(uL, todo) {
     countElement.classList.add('margin-right-todo-span')
   }
 
-  if (todo.dueDate) {
+  if (todo.dueDate && !todo.complete) {
     const dueDateElement = document.createElement('span')
     const currentDate = new Date()
     const date = new Date(todo.dueDate)
@@ -971,6 +977,9 @@ function addTodo(uL, todo) {
   }
 
   listItem.addEventListener('click', () => {
+    if (todo.complete) {
+      return uncomplete(todo)
+    }
     if (todo.targetCount != null) {
       const existingCountInput = document.getElementById('countInput')
       if (existingCountInput) {
@@ -1542,6 +1551,7 @@ function addTodoListener() {
 
   contextMenu = document.getElementById('contextMenu')
   const deleteThisInstanceAction = document.getElementById('deleteThisInstanceAction')
+  const showCompleteTodosAction = document.getElementById('showCompleteTodosAction')
   const deleteAllInstancesAction = document.getElementById('deleteAllInstancesAction')
   const editAction = document.getElementById('editAction')
   const moveNextAction = document.getElementById('moveNextAction')
@@ -1570,6 +1580,10 @@ function addTodoListener() {
 
   openSettingsAction.addEventListener('click', function () {
     window.location.href = `${browserExtension}://${extensionId}/template/settings.html`
+  })
+
+  showCompleteTodosAction.addEventListener('click', function () {
+    refreshTodos(true)
   })
 
   addTodoTagFilterAction.addEventListener('click', function () {
