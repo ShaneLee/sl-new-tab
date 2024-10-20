@@ -791,6 +791,9 @@ function shouldDisplayMoveToThisWeek(category) {
 }
 
 function todos(includeComplete = false) {
+  if (typeof includeComplete !== 'boolean') {
+    includeComplete = false
+  }
   pendingTodos()
   const category = document.getElementById('category-input').value
   shouldDisplayMoveToThisWeek(category)
