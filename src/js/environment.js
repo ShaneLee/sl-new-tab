@@ -140,7 +140,10 @@ function withFeedback(response, obj) {
       const wwwAuthenticateHeader = response.headers.get('WWW-Authenticate')
       if (wwwAuthenticateHeader) {
         const message = parseWWWAuthenticateHeader(wwwAuthenticateHeader)
-        if (message === 'Token has expired') {
+        if (
+          message === 'Token has expired' ||
+          wwwAuthenticateHeader.includes('Token has expired')
+        ) {
           redirectToLogin()
         }
       }
