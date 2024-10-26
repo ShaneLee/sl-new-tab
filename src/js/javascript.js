@@ -770,6 +770,9 @@ function pendingTodos() {
 
     pendingElement.addEventListener('click', () => {
       const selectElement = document.getElementById('category-input')
+      if (selectElement.value === 'PENDING') {
+        return
+      }
       selectElement.value = 'PENDING'
       refreshTodos()
     })
