@@ -1338,6 +1338,7 @@ function createTodoEditForm(todo, updateTodoAction) {
     if (form) {
       form.style.display = 'none'
       document.removeEventListener('keydown', handleKeydown)
+      form.remove()
       selectedTodo = null
     }
   }
