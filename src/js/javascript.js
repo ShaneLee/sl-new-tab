@@ -1337,7 +1337,7 @@ function createTodoEditForm(todo, updateTodoAction) {
     let form = document.getElementById('todo-edit-popup')
     if (form) {
       form.style.display = 'none'
-      document.removeEventListener('keydown', handleKeydown) // Remove Esc listener
+      document.removeEventListener('keydown', handleKeydown)
     }
   }
 
@@ -1378,6 +1378,10 @@ function createTodoEditForm(todo, updateTodoAction) {
       <!-- Important -->
       <label for="todo-important">Important</label>
       <input type="checkbox" id="todo-important" name="important" ${todo.important ? 'checked' : ''}>
+
+      <!-- Important -->
+      <label for="todo-time-estimate-hours">Time Estimate (Hours)</label>
+      <input type="number" id="todo-time-estimate-hours" name="time-esimate-hours" ${todo.timeEstimateHours}>
       
       <!-- Tags -->
       <label for="todo-tags">Tags</label>
@@ -1403,6 +1407,7 @@ function createTodoEditForm(todo, updateTodoAction) {
       category: document.getElementById('todo-category').value,
       dueDate: document.getElementById('todo-dueDate').value || null,
       important: document.getElementById('todo-important').checked,
+      timeEstimateHours: document.getElementById('todo-time-estimate-hours').value || null,
       tags: document
         .getElementById('todo-tags')
         .value.split(',')
