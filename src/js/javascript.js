@@ -1337,6 +1337,13 @@ function createTodoEditForm(todo, updateTodoAction) {
     let form = document.getElementById('todo-edit-popup')
     if (form) {
       form.style.display = 'none'
+      document.removeEventListener('keydown', handleKeydown) // Remove Esc listener
+    }
+  }
+
+  function handleKeydown(event) {
+    if (event.key === 'Escape') {
+      closeForm()
     }
   }
 
@@ -1406,6 +1413,8 @@ function createTodoEditForm(todo, updateTodoAction) {
     updateTodoAction(updatedTodo)
     closeForm()
   })
+
+  document.addEventListener('keydown', handleKeydown) // Add Esc listener
 
   return form
 }
