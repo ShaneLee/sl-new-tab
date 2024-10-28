@@ -19,6 +19,7 @@
   --bright-red-color: #f40303;
   --bright-orange-color: #f47903;
   --bright-green-color: #03f403;
+  --purple-color: #5a03f4;
   --blue-color: #3498db;
   --font-family: 'Helvetica Neue', sans-serif;
   --main-color: #e7b91b;
@@ -142,6 +143,10 @@ ul {
 
 .warning {
   background: var(--bright-orange-color);
+}
+
+.informational {
+  background: var(--purple-color);
 }
 
 /* END FEEDBACK */
