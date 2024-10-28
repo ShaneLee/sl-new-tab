@@ -28,6 +28,24 @@ if (!token) {
   redirectToLogin()
 }
 
+function getPreferences() {
+  const storedPreferences = localStorage.getItem('userPreferences')
+
+  if (storedPreferences) {
+    return Promise.resolve(JSON.parse(storedPreferences))
+  } else {
+    return api(userPreferences, {
+      method: 'GET',
+      headers: headers,
+    })
+      .then(res => res.json())
+      .then(res => {
+        localStorage.setItem('userPreferences', JSON.stringify(res))
+        return res
+      })
+  }
+}
+
 // Endpoints
 const todosEndpoint = `${host}/todos`
 const completeTodosEndpoint = `${host}/todos?onlyComplete=true`
@@ -229,6 +247,8 @@ function withFeedbackMessage(type, message) {
     feedback.classList.remove('success', 'failure', 'warning', 'informational')
   }, 5000)
 }
+
+function getFavouriteCategories() {}
 
 const defaultTheme = new Map()
 defaultTheme.set('--background-color', '#272725')

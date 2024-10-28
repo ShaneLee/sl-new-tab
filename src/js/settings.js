@@ -1,6 +1,7 @@
 window.onload = function () {
   const token = getUrlParameter('token')
 
+  getCategories()
   if (!!token) {
     localStorage.setItem('token', token)
     headers.Authorization = `Bearer ${token}`
@@ -17,6 +18,8 @@ window.onload = function () {
   loadSettings()
 }
 
+const MAX_CATEGORIES = 3
+
 function getPreferences() {
   return api(userPreferences, {
     method: 'GET',
@@ -31,6 +34,35 @@ function getUserTags() {
   }).then(res => (!!res ? res.json() : null))
 }
 
+function loadCategories(categories) {
+  const categoriesContainer = document.getElementById('categoriesContainer')
+  categoriesContainer.innerHTML = ''
+
+  const selectedCategories = new Set()
+
+  categories.forEach(category => {
+    const label = document.createElement('label')
+    const checkbox = document.createElement('input')
+    checkbox.type = 'checkbox'
+    checkbox.value = category
+    checkbox.addEventListener('change', function () {
+      if (this.checked) {
+        if (selectedCategories.size < MAX_CATEGORIES) {
+          selectedCategories.add(this.value)
+        } else {
+          this.checked = false
+          alert('You can select up to 3 favourite categories')
+        }
+      } else {
+        selectedCategories.delete(this.value)
+      }
+    })
+    label.appendChild(checkbox)
+    label.appendChild(document.createTextNode(category))
+    categoriesContainer.appendChild(label)
+  })
+}
+
 function saveSettings() {
   localStorage.removeItem('userPreferences')
   const name = document.getElementById('name').value
@@ -39,20 +71,25 @@ function saveSettings() {
   const coloursByTags = {}
 
   document.querySelectorAll('.tag-pair').forEach(pair => {
-    const tag = pair.querySelector('.tag').value
-    const colour = pair.querySelector('.colour').value
+    const tag = pair.querySelector('.tag')?.value
+    const colour = pair.querySelector('.colour')?.value
     if (tag && colour) {
       coloursByTags[tag] = colour
     }
   })
 
+  // Get selected categories
+  const selectedCategories = Array.from(
+    document.querySelectorAll('#categoriesContainer input:checked'),
+  ).map(input => input.value)
+
   const prefs = {
     name: name,
     timezone: timezone,
     coloursByTags: coloursByTags,
+    favouriteCategories: selectedCategories,
   }
 
-  // TODO put if already exists?
   api(userPreferences, {
     method: 'POST',
     headers: headers,
@@ -85,9 +122,29 @@ function loadSettings() {
         tagsWithoutColours.forEach(tag => {
           addTagColourPair(tag, '', (div = 'unconfiguredTagColourPairs'))
         })
+
+        if (prefs.prefs.favouriteCategories) {
+          prefs.prefs.favouriteCategories.forEach(category => {
+            const checkbox = Array.from(
+              document.querySelectorAll(`#categoriesContainer input[value="${category}"]`),
+            )[0]
+            if (checkbox) checkbox.checked = true
+          })
+        }
       }
     })
     .catch(error => console.error('Error loading preferences:', error))
+}
+
+function getCategories() {
+  api(categoriesEndpoint, {
+    method: 'GET',
+    headers: headers,
+  })
+    .then(response => response?.json())
+    .then(val => (!!val ? val : []))
+    .then(val => val.filter(cat => !cat.includes('Week ')))
+    .then(val => loadCategories(val))
 }
 
 function addTagColourPair(tag = '', colour = '', div = 'unconfiguredTagColourPairs') {

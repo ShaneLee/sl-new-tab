@@ -42,29 +42,15 @@ const DEFAULT_TAG_COLOURS = new CircularQueue(['red', 'yellow', 'green', 'cyan']
 
 const DEFAULT_RANK = 1000
 
+let FAVOURITE_CATEGORIES = []
+
 function processPreferences(prefs) {
   const coloursByTags = new Map(Object.entries(prefs.coloursByTags))
   coloursByTags.forEach((colour, tag) => {
     TAG_COLOURS.set(tag, colour)
   })
-}
 
-function getPreferences() {
-  const storedPreferences = localStorage.getItem('userPreferences')
-
-  if (storedPreferences) {
-    return Promise.resolve(JSON.parse(storedPreferences))
-  } else {
-    return api(userPreferences, {
-      method: 'GET',
-      headers: headers,
-    })
-      .then(res => res.json())
-      .then(res => {
-        localStorage.setItem('userPreferences', JSON.stringify(res))
-        return res
-      })
-  }
+  FAVOURITE_CATEGORIES = prefs.favouriteCategories
 }
 
 function getUserTags() {
@@ -1683,6 +1669,27 @@ function addTodoListener() {
     showContextMenu(event)
   })
 
+  function moveToCategory(category) {
+    const todo = selectedTodo
+    todo.category = category
+    update(todo)
+    selectedTodo = null
+    hideContextMenu()
+  }
+
+  if (!!FAVOURITE_CATEGORIES) {
+    for (let i = 0; i < FAVOURITE_CATEGORIES.length; i++) {
+      const cat = FAVOURITE_CATEGORIES[i]
+      // TODO moveAllTo favourite
+      const el = document.getElementById(`moveToFavourite${i}`)
+      el.innerHTML = `Move to ${cat}`
+      el.classList.remove('hidden')
+      el.addEventListener('click', function () {
+        moveToCategory(cat)
+      })
+    }
+  }
+
   openSettingsAction.addEventListener('click', function () {
     window.location.href = `${browserExtension}://${extensionId}/template/settings.html`
   })
@@ -1848,15 +1855,6 @@ function addTodoListener() {
       todo.category = category
       update(todo)
     }
-    selectedTodo = null
-    hideContextMenu()
-  })
-
-  moveToBacklogAction.addEventListener('click', function () {
-    const todo = selectedTodo
-    const category = 'Backlog'
-    todo.category = category
-    update(todo)
     selectedTodo = null
     hideContextMenu()
   })
@@ -2216,8 +2214,7 @@ function addShortcuts() {
 }
 
 window.onload = function () {
-  getPreferences().then(processPreferences).then(loadTagFilters)
-  addTodoListener()
+  getPreferences().then(processPreferences).then(loadTagFilters).then(addTodoListener)
   // Shift + click drag
   addTodoDragToSelectListener()
   if (importantTodosEnabled) {
