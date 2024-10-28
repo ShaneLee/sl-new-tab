@@ -10,7 +10,7 @@ const headers = {
   Authorization: `Bearer ${localStorage.getItem('token')}`,
 }
 
-function redirectToLogin() {
+function redirectToLogin(message) {
   if (
     window.location.href.includes('login.html') ||
     window.location.href.includes('settings.html')
@@ -19,7 +19,7 @@ function redirectToLogin() {
   }
   localStorage.removeItem('token')
   delete headers.Authorization
-  const redirectUrl = `${browserExtension}://${extensionId}/template/login.html`
+  const redirectUrl = `${browserExtension}://${extensionId}/template/login.html?message=${message}`
   window.location.href = redirectUrl
 }
 
@@ -144,7 +144,7 @@ function withFeedback(response, obj) {
           message === 'Token has expired' ||
           wwwAuthenticateHeader.includes('Token has expired')
         ) {
-          redirectToLogin()
+          redirectToLogin('Your session has expired, please reauthenicate 🥺')
         }
       }
     }
@@ -189,7 +189,7 @@ function withFeedback(response, obj) {
   setTimeout(() => {
     feedback.classList.add('hidden')
     feedback.textContent = ''
-    feedback.classList.remove('success', 'failure')
+    feedback.classList.remove('success', 'failure', 'warning', 'informational')
   }, 5000)
 
   return response
@@ -210,10 +210,15 @@ function withFeedbackMessage(type, message) {
     feedback.classList.remove('hidden')
     feedback.textContent = message
   }
-  if (type === 'wariing') {
+  if (type === 'warning') {
     feedback.classList.add('warning')
     feedback.classList.remove('success')
     feedback.classList.remove('hidden')
+    feedback.textContent = message
+  }
+  if (type === 'informational') {
+    feedback.classList.remove('success', 'failure', 'warning', 'informational')
+    feedback.classList.add('informational')
     feedback.textContent = message
   }
   //
@@ -221,7 +226,7 @@ function withFeedbackMessage(type, message) {
   setTimeout(() => {
     feedback.classList.add('hidden')
     feedback.textContent = ''
-    feedback.classList.remove('success', 'failure', 'warning')
+    feedback.classList.remove('success', 'failure', 'warning', 'informational')
   }, 5000)
 }
 

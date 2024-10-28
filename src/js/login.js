@@ -69,3 +69,10 @@ function clearForm(response) {
 
   return null
 }
+
+window.onload = () => {
+  const message = getUrlParameter('message')
+  if (message) {
+    withFeedbackMessage('warning', message)
+  }
+}
