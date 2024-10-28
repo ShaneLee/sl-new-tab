@@ -1195,7 +1195,10 @@ function replaceTags(todoStr) {
 function parseTags(csvString) {
   const tags = matchTags(csvString)
   if (tags) {
-    return tags.split(',')
+    return tags
+      .split(',')
+      .map(tag => tag.trim())
+      .filter(tag => tag !== '')
   }
   return []
 }
