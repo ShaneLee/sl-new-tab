@@ -1,4 +1,9 @@
 window.onload = function () {
+  const message = getUrlParameter('message')
+  if (message) {
+    withFeedbackMessage('warning', message)
+  }
+
   const form = document.getElementById('loginForm')
   const loginButton = document.getElementById('loginButton')
   const registerButton = document.getElementById('registerButton')
@@ -68,11 +73,4 @@ function clearForm(response) {
   }
 
   return null
-}
-
-window.onload = () => {
-  const message = getUrlParameter('message')
-  if (message) {
-    withFeedbackMessage('warning', message)
-  }
 }

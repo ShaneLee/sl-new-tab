@@ -19,7 +19,8 @@ function redirectToLogin(message) {
   }
   localStorage.removeItem('token')
   delete headers.Authorization
-  const redirectUrl = `${browserExtension}://${extensionId}/template/login.html?message=${message}`
+  const messageParam = !message ? '' : `?message=${message}`
+  const redirectUrl = `${browserExtension}://${extensionId}/template/login.html${messageParam}`
   window.location.href = redirectUrl
 }
 
