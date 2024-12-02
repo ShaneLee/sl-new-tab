@@ -31,30 +31,29 @@ function showPopupForm() {
       <input type="text" id="category-popup-input" name="category" placeholder="Category">
       <textarea id="notes-popup-input" name="notes" placeholder="Notes"></textarea>
       <input type="submit" value="Submit">
-      <button type="button" onclick="closeForm()">Close</button>
+      <button type="button" onclick="closePopupForm('idea-popup-form')">Close</button>
     </form>
   `
 
-  // Stylings based on provided CSS
   form.style.position = 'fixed'
-  form.style.top = '5%' // Adjusted to keep it centered after increasing size
-  form.style.left = '25%' // Adjusted to keep it centered after increasing size
+  form.style.top = '5%'
+  form.style.left = '25%'
   form.style.zIndex = '10000'
-  form.style.backgroundColor = '#272725'
-  form.style.color = '#8d8271'
-  form.style.padding = '30px' // Increased padding for a larger appearance
+  form.style.backgroundColor = 'var(--background-color)'
+  form.style.color = 'var(--text-color)'
+  form.style.padding = '30px'
   form.style.boxShadow = '0px 0px 15px rgba(0,0,0,0.2)'
   form.style.fontFamily = "'Helvetica Neue', sans-serif"
   form.style.fontWeight = 'bold'
   form.style.textAlign = 'center'
-  form.style.width = '50%' // Increased for a larger appearance
-  form.style.borderRadius = '15px' // Optional: added for rounded corners
+  form.style.width = '50%'
+  form.style.borderRadius = '15px'
 
   const formInputs = form.querySelectorAll('input, button, textarea')
   formInputs.forEach(el => {
     if (el.type === 'submit' || el.type === 'button') {
-      el.style.backgroundColor = '#e7b91b'
-      el.style.color = '#272725'
+      el.style.backgroundColor = 'var(--main-color)'
+      el.style.color = 'var(--very-dark)'
       el.style.border = 'none'
       el.style.padding = '10px 20px'
       el.style.cursor = 'pointer'
@@ -62,10 +61,10 @@ function showPopupForm() {
     } else {
       el.style.padding = '10px'
       el.style.marginBottom = '10px'
-      el.style.border = '1px solid #8d8271'
-      el.style.backgroundColor = '#2C2C2C'
-      el.style.color = '#8d8271'
-      el.style.width = '100%' // Make the input elements take the full width
+      el.style.border = '1px solid var(--link-color)'
+      el.style.backgroundColor = 'var(--dark-grey)'
+      el.style.color = 'var(--link-color)'
+      el.style.width = '100%'
     }
   })
 

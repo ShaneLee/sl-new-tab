@@ -10,6 +10,13 @@ const headers = {
   Authorization: `Bearer ${localStorage.getItem('token')}`,
 }
 
+function closePopupForm(id) {
+  let form = document.getElementById(id)
+  if (form) {
+    form.style.display = 'none'
+  }
+}
+
 function redirectToLogin(message) {
   if (
     window.location.href.includes('login.html') ||
