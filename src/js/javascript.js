@@ -555,8 +555,13 @@ function currentWeekNumber() {
   return weekNumber
 }
 
+let audio
+
 function playAudio() {
-  new Audio('../sounds/great-success.mp3').play()
+  if (!audio || audio.paused) {
+    audio = new Audio('../sounds/great-success.mp3')
+    audio.play()
+  }
 }
 
 function refreshTodos(includeComplete = false) {
