@@ -3,8 +3,8 @@ form.style.position = 'fixed'
 form.style.top = '5%'
 form.style.left = '25%'
 form.style.zIndex = '10000'
-form.style.backgroundColor = '#272725'
-form.style.color = '#8d8271'
+form.style.backgroundColor = 'var(--background-color)'
+form.style.color = 'var(--text-color)'
 form.style.padding = '30px'
 form.style.boxShadow = '0px 0px 15px rgba(0,0,0,0.2)'
 form.style.fontFamily = "'Helvetica Neue', sans-serif"
@@ -16,8 +16,8 @@ form.style.borderRadius = '15px'
 const formInputs = form.querySelectorAll('input, button, textarea')
 formInputs.forEach(el => {
   if (el.type === 'submit' || el.type === 'button') {
-    el.style.backgroundColor = '#e7b91b'
-    el.style.color = '#272725'
+    el.style.backgroundColor = 'var(--main-color)'
+    el.style.color = 'var(--background-color)'
     el.style.border = 'none'
     el.style.padding = '10px 20px'
     el.style.cursor = 'pointer'
@@ -25,9 +25,9 @@ formInputs.forEach(el => {
   } else {
     el.style.padding = '10px'
     el.style.marginBottom = '10px'
-    el.style.border = '1px solid #8d8271'
-    el.style.backgroundColor = '#2C2C2C'
-    el.style.color = '#8d8271'
+    el.style.border = '1px solid var(--text-color)'
+    el.style.backgroundColor = 'var(--dark-grey)'
+    el.style.color = 'var(--link-color)'
     el.style.width = '100%'
   }
 })

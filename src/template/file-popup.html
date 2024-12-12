@@ -1,26 +1,27 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
-  <link rel="stylesheet" type="text/css" href="../css/style.css">
-  <title>Save File</title>
-  <style>
-    body {
-      width: 300px;
-      padding: 10px;
-    }
-  </style>
-</head>
-<body>
-  <form id="saveForm" class="default-form">
-    <label for="category">Bucket:</label>
-    <input type="text" id="bucket" name="bucket" value="itemsofinterest" required><br><br>
-    <label for="category">Category:</label>
-    <input type="text" id="category" name="category" required><br><br>
-    <label for="notes">Notes:</label>
-    <textarea id="notes" name="notes"></textarea><br><br>
-    <input type="hidden" id="fileUrl" name="fileUrl">
-    <button type="submit">Save</button>
-  </form>
-  <script src="../js/file-popup.js"></script>
-</body>
+  <head>
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+    <title>Save File</title>
+    <style>
+      body {
+        width: 300px;
+        padding: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <form id="saveForm" class="default-form">
+      <label for="category">Bucket:</label>
+      <input type="text" id="bucket" name="bucket" value="itemsofinterest" required /><br /><br />
+      <label for="category">Category:</label>
+      <input type="text" id="category" name="category" required /><br /><br />
+      <label for="notes">Notes:</label>
+      <textarea id="notes" name="notes"></textarea><br /><br />
+      <input type="hidden" id="fileUrl" name="fileUrl" />
+      <button type="submit">Save</button>
+    </form>
+    <script src="../js/environment.js"></script>
+    <script src="../js/file-popup.js"></script>
+  </body>
 </html>
