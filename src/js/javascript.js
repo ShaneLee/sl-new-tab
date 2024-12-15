@@ -800,6 +800,9 @@ function shouldDisplayMoveToThisWeek(category) {
 }
 
 function shouldDisplayCopyToSubcategory(todo) {
+  if (!todo) {
+    return
+  }
   const action = document.getElementById('copyToSubCategoryAction')
   if (!todo.isLinkable) {
     action.classList.add('hidden')
