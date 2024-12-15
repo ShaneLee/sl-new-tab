@@ -57,6 +57,7 @@ function getPreferences() {
 // Endpoints
 const todosEndpoint = `${host}/todos`
 const completeTodosEndpoint = `${host}/todos?onlyComplete=true`
+const linkTodosEndpoint = `${host}/todos/link`
 const tagsEndpoint = `${host}/todos/tags`
 const importantEndpointFn = limit =>
   !limit ? `${todosEndpoint}/important` : `${todosEndpoint}/important?limit=${limit}`

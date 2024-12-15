@@ -518,6 +518,21 @@ function update(todo, dontRefresh, dontShowSuccessMessage) {
   })
 }
 
+function link(todo, dontRefresh, dontShowSuccessMessage) {
+  if (!!dontShowSuccessMessage) {
+    todo.noSuccessFeedback = true
+  }
+  return api(linkTodosEndpoint, {
+    method: 'PATCH',
+    headers: headers,
+    body: JSON.stringify(todo),
+  }).then(_ => {
+    if (!dontRefresh) {
+      refreshTodos()
+    }
+  })
+}
+
 function updateRanks(todos) {
   return api(rankEndpoint, {
     noFeedback: true,
@@ -781,6 +796,15 @@ function shouldDisplayMoveToThisWeek(category) {
     thisWeekCategoryAction.classList.add('hidden')
   } else {
     thisWeekCategoryAction.classList.remove('hidden')
+  }
+}
+
+function shouldDisplayCopyToSubcategory(todo) {
+  const action = document.getElementById('copyToSubCategoryAction')
+  if (!todo.isLinkable) {
+    action.classList.add('hidden')
+  } else {
+    action.classList.remove('hidden')
   }
 }
 
@@ -1250,6 +1274,7 @@ function showContextMenu(event, todo) {
   if (event.target.tagName.toLowerCase() === 'a') {
     return
   }
+  shouldDisplayCopyToSubcategory(todo)
   event.preventDefault()
   const isTodoContextMenu = !!todo && SELECTED_TODOS.size == 0
   selectedTodo = todo
@@ -1654,6 +1679,7 @@ function addTodoListener() {
   const deleteAllInstancesAction = document.getElementById('deleteAllInstancesAction')
   const editAction = document.getElementById('editAction')
   const moveNextAction = document.getElementById('moveNextAction')
+  const copyToSubcategoryAction = document.getElementById('copyToSubCategoryAction')
   const changeCategoryAction = document.getElementById('changeCategoryAction')
   const thisWeekcategoryAction = document.getElementById('thisWeekCategoryAction')
   const changeAllCategoryAction = document.getElementById('changeAllCategoryAction')
@@ -1684,6 +1710,17 @@ function addTodoListener() {
     selectedTodo = null
     hideContextMenu()
   }
+
+  copyToSubcategoryAction.addEventListener('click', function () {
+    const todo = selectedTodo
+    const category = prompt('Enter the new category:')
+    if (!!category) {
+      todo.category = category
+      link(todo)
+    }
+    selectedTodo = null
+    hideContextMenu()
+  })
 
   if (!!FAVOURITE_CATEGORIES) {
     for (let i = 0; i < FAVOURITE_CATEGORIES.length; i++) {
