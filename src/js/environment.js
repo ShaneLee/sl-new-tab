@@ -78,6 +78,9 @@ const registerEndpoint = `${host}/v1/register`
 const spendCategoriesEndpoint = `${host}/spend-category`
 const wellEndpoint = type => `${host}/well?rangeType=${type}`
 
+// Books
+const readBooksEndpoint = `${host}/book/read`
+
 const weightTrackingEndpoint = `${host}/tracking/weight`
 
 const runningTaskEndpoint = `${host}/tracking/running`

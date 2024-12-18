@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+    <script src="../js/environment.js" charset="UTF-8"></script>
+    <script src="../js/books-list.js" charset="UTF-8"></script>
+    <title>Books List</title>
+    <style>
+      table {
+        border-collapse: collapse;
+        width: 80%;
+        margin: 20px auto;
+      }
+      th,
+      td {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+      }
+      th {
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Books List</h1>
+    <div id="feedback" class="feedback hidden"></div>
+    <div id="booksContextMenu" class="context-menu">
+      <!-- <div class="context-menu-item" id="editAction">Edit</div> -->
+      <!-- <div class="context-menu-item" id="deleteAction">Delete</div> -->
+      <!-- <div class="context-menu-item" id="changeCategoryAction">Change Category</div> -->
+      <!-- <div class="context-menu-item" id="copyToTodoAction">Copy to Todo</div> -->
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Author</th>
+          <th>Rating</th>
+          <th>Date Read</th>
+        </tr>
+      </thead>
+      <tbody id="read-books-table"></tbody>
+    </table>
+  </body>
+</html>

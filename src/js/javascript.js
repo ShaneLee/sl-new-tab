@@ -2216,6 +2216,13 @@ const pages = [
     shortcut: ',k',
   }),
   new Page({
+    id: 'books-list-link',
+    url: `${browserExtension}://${extensionId}/template/books-list.html`,
+    name: 'Books List',
+    emoji: withEmojis ? '📔' : '',
+    shortcut: ',e',
+  }),
+  new Page({
     id: 'quarter-review-link',
     url: `${browserExtension}://${extensionId}/template/review.html?type=YEAR&name="Quarter1"`,
     name: 'Quarterly Review',
