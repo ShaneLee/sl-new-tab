@@ -33,6 +33,42 @@
       <!-- <div class="context-menu-item" id="copyToTodoAction">Copy to Todo</div> -->
     </div>
 
+    <section>
+      <h1>Add Book 📕</h1>
+      <form id="newBookForm" class="default-form">
+        <input type="text" id="title" name="title" placeholder="Title" required /><br />
+        <input type="text" id="author" name="author" placeholder="Author" required /><br />
+        <input type="text" id="isbn13" name="isbn13" placeholder="ISBN-13" /><br />
+        <input type="text" id="publisher" name="publisher" placeholder="Publisher" /><br />
+        <input
+          type="number"
+          id="yearPublished"
+          name="yearPublished"
+          placeholder="Year Published"
+        /><br />
+        <input
+          type="number"
+          id="originalPublicationYear"
+          name="originalPublicationYear"
+          placeholder="Original Publication Year"
+        /><br />
+        <input
+          type="number"
+          id="numberOfPages"
+          name="numberOfPages"
+          placeholder="Number of Pages"
+        /><br />
+        <input
+          type="text"
+          id="listeningTime"
+          name="listeningTime"
+          placeholder="Listening Time (e.g., PT5H30M)"
+          pattern="PT\\d+H\\d{1,2}M?"
+        /><br />
+        <button type="submit">Submit</button>
+      </form>
+    </section>
+
     <table>
       <thead>
         <tr>

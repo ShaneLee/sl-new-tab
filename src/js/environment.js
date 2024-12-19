@@ -80,6 +80,7 @@ const wellEndpoint = type => `${host}/well?rangeType=${type}`
 
 // Books
 const readBooksEndpoint = `${host}/book/read`
+const addManualBookEndpoint = `${host}/book/add-manually`
 
 const weightTrackingEndpoint = `${host}/tracking/weight`
 

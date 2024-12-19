@@ -14,6 +14,16 @@ function getBooks() {
     })
 }
 
+function addNewBook(book) {
+  return api(addManualBookEndpoint, {
+    method: 'POST',
+    headers: headers,
+    body: JSON.stringify(book),
+  }).then(response =>
+    response.status === 200 || response.status === 201 ? response?.json() : null,
+  )
+}
+
 function createTodo(todo) {
   return api(todosEndpoint, {
     method: 'POST',
@@ -22,6 +32,20 @@ function createTodo(todo) {
   }).then(response =>
     response.status === 200 || response.status === 201 ? response?.json() : null,
   )
+}
+
+function addNewBookFormListener() {
+  document.getElementById('newBookForm').addEventListener('submit', function (event) {
+    event.preventDefault()
+
+    const formData = new FormData(this)
+    const jsonObject = {}
+    formData.forEach(function (value, key) {
+      jsonObject[key] = value
+    })
+
+    addNewBook(jsonObject)
+  })
 }
 
 // listItem.addEventListener('contextmenu', function(event) {
@@ -142,6 +166,7 @@ function addBookListener() {
 }
 
 window.addEventListener('load', getBooks)
+window.addEventListener('load', addNewBookFormListener)
 window.onload = function () {
   addBookListener()
 }
