@@ -57,6 +57,10 @@ function populateBooksTable(books) {
     dateReadCell.textContent = book.dateRead || ''
     row.appendChild(dateReadCell)
 
+    const readCountCell = document.createElement('td')
+    readCountCell.textContent = book.readCount || ''
+    row.appendChild(readCountCell)
+
     row.addEventListener('contextmenu', function (event) {
       if (!!contextMenu) {
         hideContextMenu()
