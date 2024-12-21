@@ -34,6 +34,45 @@
     </div>
 
     <section>
+      <h1>Add Book to Shelves 📗</h1>
+
+      <form id="addBookToShelfForm" class="default-form">
+        <label for="bookSearch">Search Book:</label>
+        <input
+          type="text"
+          id="bookSearch"
+          name="query"
+          placeholder="Start typing to search for a book"
+        />
+        <ul id="bookSuggestions" class="suggestion-list"></ul>
+
+        <label for="isbn13">ISBN-13:</label>
+        <input type="text" id="isbn13" name="isbn13" required />
+
+        <label for="shelfName">Select Main Shelf:</label>
+        <select id="shelfName" name="shelfName" required>
+          <option value="currently-reading">Currently Reading</option>
+          <option value="to-read">To Read</option>
+          <option value="read">Read</option>
+        </select>
+
+        <label for="additionalShelves">Additional Shelves:</label>
+        <select id="additionalShelves" name="additionalShelves" multiple></select>
+
+        <label for="position">Position:</label>
+        <input
+          type="number"
+          id="position"
+          name="position"
+          placeholder="Position on shelf"
+          min="1"
+        />
+
+        <button type="submit">Add to Shelf</button>
+      </form>
+    </section>
+
+    <section>
       <h1>Add Book 📕</h1>
       <form id="newBookForm" class="default-form">
         <input type="text" id="title" name="title" placeholder="Title" required /><br />

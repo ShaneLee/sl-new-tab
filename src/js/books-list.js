@@ -1,6 +1,9 @@
 let contextMenu
 let selectedBook
 
+// TODO remove and get from API
+const userShelves = ['Favorites', 'Wishlist', 'Recommended'] // Example additional shelves
+
 function getAllReadBooks() {
   fetch(readBooksEndpoint, {
     method: 'GET',
@@ -27,11 +30,29 @@ function getCurrentlyReadingBooks() {
     })
 }
 
+function searchSuggestions(query) {
+  return fetch(bookSuggestEndpointFn(query), {
+    method: 'GET',
+    headers: headers,
+  }).then(response => (response.status === 200 ? response?.json() : null))
+}
+
 function addNewBook(book) {
   return api(addManualBookEndpoint, {
     method: 'POST',
     headers: headers,
     body: JSON.stringify(book),
+  }).then(response =>
+    response.status === 200 || response.status === 201 ? response?.json() : null,
+  )
+}
+
+function addBookToShelf(bookRequest) {
+  console.log('Adding book to shelf:', bookRequest)
+  return api(bookShelfEndpoint, {
+    method: 'POST',
+    headers: headers,
+    body: JSON.stringify(bookRequest),
   }).then(response =>
     response.status === 200 || response.status === 201 ? response?.json() : null,
   )
@@ -178,9 +199,67 @@ function addBookListener() {
   })
 }
 
-// window.addEventListener('load', getAllReadBooks)
-window.addEventListener('load', getCurrentlyReadingBooks)
-window.addEventListener('load', addNewBookFormListener)
-window.onload = function () {
-  addBookListener()
+function addBookToShelfFormListener() {
+  const additionalShelvesSelect = document.getElementById('additionalShelves')
+  userShelves.forEach(shelf => {
+    const option = document.createElement('option')
+    option.value = shelf
+    option.textContent = shelf
+    additionalShelvesSelect.appendChild(option)
+  })
+  document.getElementById('addBookToShelfForm').addEventListener('submit', function (event) {
+    event.preventDefault()
+
+    const formData = new FormData(this)
+    const jsonObject = {}
+    formData.forEach((value, key) => {
+      if (key === 'additionalShelves') {
+        // Handle multiple selected shelves as CSV
+        jsonObject[key] = jsonObject[key] ? `${jsonObject[key]},${value}` : value
+      } else {
+        jsonObject[key] = value
+      }
+    })
+
+    addBookToShelf(jsonObject)
+  })
 }
+
+function addBookSearchListener() {
+  const bookSearchInput = document.getElementById('bookSearch')
+  const suggestionsList = document.getElementById('bookSuggestions')
+
+  bookSearchInput.addEventListener('input', function () {
+    const query = bookSearchInput.value.trim()
+    if (query.length < 3) {
+      suggestionsList.innerHTML = ''
+      return
+    }
+
+    searchSuggestions(query).then(suggestions => {
+      suggestionsList.innerHTML = ''
+      suggestions?.forEach(book => {
+        const listItem = document.createElement('li')
+        listItem.textContent = `${book.title} by ${book.author}`
+        listItem.dataset.isbn13 = book.isbn13
+        listItem.addEventListener('click', () => populateBookDetails(book))
+        suggestionsList.appendChild(listItem)
+      })
+    })
+  })
+}
+
+function populateBookDetails(book) {
+  document.getElementById('isbn13').value = book.isbn13
+  document.getElementById('bookSearch').value = book.title
+  document.getElementById('bookSuggestions').innerHTML = ''
+}
+
+window.addEventListener('load', () => {
+  // getAllReadBooks()
+  getCurrentlyReadingBooks()
+  addBookToShelfFormListener()
+  addBookSearchListener()
+  addNewBookFormListener()
+  addBookListener()
+})

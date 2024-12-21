@@ -81,7 +81,9 @@ const wellEndpoint = type => `${host}/well?rangeType=${type}`
 // Books
 const readBooksEndpoint = `${host}/book?shelf=read`
 const booksOnShelfEndpointFn = shelf => `${host}/book?shelf=${shelf}`
+const bookShelfEndpoint = `${host}/book/shelf`
 const addManualBookEndpoint = `${host}/book/add-manually`
+const bookSuggestEndpointFn = q => `${host}/book/suggest?query=${q}`
 
 const weightTrackingEndpoint = `${host}/tracking/weight`
 
