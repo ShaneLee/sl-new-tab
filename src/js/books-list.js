@@ -1,8 +1,21 @@
 let contextMenu
 let selectedBook
 
-function getBooks() {
+function getAllReadBooks() {
   fetch(readBooksEndpoint, {
+    method: 'GET',
+    headers: headers,
+  })
+    .then(response => (response.status === 200 ? response?.json() : null))
+    .then(val => {
+      if (!!val) {
+        populateBooksTable(val)
+      }
+    })
+}
+
+function getCurrentlyReadingBooks() {
+  fetch(booksOnShelfEndpointFn('currently-reading'), {
     method: 'GET',
     headers: headers,
   })
@@ -165,7 +178,8 @@ function addBookListener() {
   })
 }
 
-window.addEventListener('load', getBooks)
+// window.addEventListener('load', getAllReadBooks)
+window.addEventListener('load', getCurrentlyReadingBooks)
 window.addEventListener('load', addNewBookFormListener)
 window.onload = function () {
   addBookListener()

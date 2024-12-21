@@ -79,7 +79,8 @@ const spendCategoriesEndpoint = `${host}/spend-category`
 const wellEndpoint = type => `${host}/well?rangeType=${type}`
 
 // Books
-const readBooksEndpoint = `${host}/book/read`
+const readBooksEndpoint = `${host}/book?shelf=read`
+const booksOnShelfEndpointFn = shelf => `${host}/book?shelf=${shelf}`
 const addManualBookEndpoint = `${host}/book/add-manually`
 
 const weightTrackingEndpoint = `${host}/tracking/weight`
