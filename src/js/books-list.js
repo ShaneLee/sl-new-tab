@@ -1,9 +1,6 @@
 let contextMenu
 let selectedBook
 
-// TODO remove and get from API
-const userShelves = ['Favorites', 'Wishlist', 'Recommended'] // Example additional shelves
-
 function getAllReadBooks() {
   fetch(readBooksEndpoint, {
     method: 'GET',
@@ -32,6 +29,13 @@ function getCurrentlyReadingBooks() {
 
 function searchSuggestions(query) {
   return fetch(bookSuggestEndpointFn(query), {
+    method: 'GET',
+    headers: headers,
+  }).then(response => (response.status === 200 ? response?.json() : null))
+}
+
+function getUserShelves(query) {
+  return fetch(bookShelvesEndpoint, {
     method: 'GET',
     headers: headers,
   }).then(response => (response.status === 200 ? response?.json() : null))
@@ -201,12 +205,15 @@ function addBookListener() {
 
 function addBookToShelfFormListener() {
   const additionalShelvesSelect = document.getElementById('additionalShelves')
-  userShelves.forEach(shelf => {
-    const option = document.createElement('option')
-    option.value = shelf
-    option.textContent = shelf
-    additionalShelvesSelect.appendChild(option)
-  })
+
+  getUserShelves().then(userShelves =>
+    userShelves.forEach(shelf => {
+      const option = document.createElement('option')
+      option.value = shelf
+      option.textContent = shelf
+      additionalShelvesSelect.appendChild(option)
+    }),
+  )
   document.getElementById('addBookToShelfForm').addEventListener('submit', function (event) {
     event.preventDefault()
 
@@ -214,7 +221,6 @@ function addBookToShelfFormListener() {
     const jsonObject = {}
     formData.forEach((value, key) => {
       if (key === 'additionalShelves') {
-        // Handle multiple selected shelves as CSV
         jsonObject[key] = jsonObject[key] ? `${jsonObject[key]},${value}` : value
       } else {
         jsonObject[key] = value
