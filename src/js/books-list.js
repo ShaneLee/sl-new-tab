@@ -9,7 +9,8 @@ function getAllReadBooks() {
     .then(response => (response.status === 200 ? response?.json() : null))
     .then(val => {
       if (!!val) {
-        populateBooksTable(val)
+        const tbody = document.getElementById('all-books-table')
+        populateBooksTable(val, tbody)
       }
     })
 }
@@ -22,7 +23,22 @@ function getCurrentlyReadingBooks() {
     .then(response => (response.status === 200 ? response?.json() : null))
     .then(val => {
       if (!!val) {
-        populateBooksTable(val)
+        const tbody = document.getElementById('read-books-table')
+        populateBooksTable(val, tbody)
+      }
+    })
+}
+
+function getToReadBooks() {
+  fetch(booksOnShelfEndpointFn('to-read'), {
+    method: 'GET',
+    headers: headers,
+  })
+    .then(response => (response.status === 200 ? response?.json() : null))
+    .then(val => {
+      if (!!val) {
+        const tbody = document.getElementById('want-to-read-books-table')
+        populateBooksTable(val, tbody)
       }
     })
 }
@@ -93,9 +109,7 @@ function addNewBookFormListener() {
 //   showContextMenu(event, book);
 // });
 
-function populateBooksTable(books) {
-  const tbody = document.getElementById('read-books-table')
-
+function populateBooksTable(books, tbody) {
   // Clear the current content of the tbody
   tbody.innerHTML = ''
 
@@ -191,6 +205,18 @@ function addBookListener() {
   contextMenu = document.getElementById('booksContextMenu')
   const copyToTodoAction = document.getElementById('copyToTodoAction')
 
+  copyToTodoAction.addEventListener('click', function () {
+    const book = selectedBook
+    const todo = { todo: `Read: ${book.title}`, linkedBookId: book.bookId, tags: ['reading'] }
+    const category = prompt('Enter the new category:')
+    if (!!category) {
+      todo.category = category
+    }
+    createTodo(todo)
+    selectedIdea = null
+    hideContextMenu()
+  })
+  //
   // No global context menu for books
   // document.addEventListener('contextmenu', function(event) {
   //   hideContextMenu()
@@ -264,6 +290,7 @@ function populateBookDetails(book) {
 window.addEventListener('load', () => {
   // getAllReadBooks()
   getCurrentlyReadingBooks()
+  getToReadBooks()
   addBookToShelfFormListener()
   addBookSearchListener()
   addNewBookFormListener()
