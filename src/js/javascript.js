@@ -174,8 +174,12 @@ function printQuote(quoteAuthor, quote) {
 function startOfMonthCurrentDatePair() {
   const currentDate = new Date()
   const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1)
-  const formattedStartOfMonth = `${startOfMonth.getFullYear()}-${(startOfMonth.getMonth() + 1).toString().padStart(2, '0')}-01`
-  const formattedCurrentDate = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1).toString().padStart(2, '0')}-${currentDate.getDate().toString().padStart(2, '0')}`
+  const formattedStartOfMonth = `${startOfMonth.getFullYear()}-${(startOfMonth.getMonth() + 1)
+    .toString()
+    .padStart(2, '0')}-01`
+  const formattedCurrentDate = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1)
+    .toString()
+    .padStart(2, '0')}-${currentDate.getDate().toString().padStart(2, '0')}`
 
   return { start: formattedStartOfMonth, end: formattedCurrentDate }
 }
@@ -588,13 +592,16 @@ function refreshTodos(includeComplete = false) {
 
 function filterAndSlice(array, count, week) {
   const weekNum = Number(week.split(' ')[1])
+  const maxWeeks = 52
   let result = []
   let foundWeeks = 0
 
   for (let i = 0; i < array.length; i++) {
     if (array[i].match(/^Week \d+$/)) {
-      const iWeekNum = Number(array[i].split(' ')[1])
-      if (iWeekNum <= weekNum + count && iWeekNum >= weekNum && foundWeeks < count) {
+      let iWeekNum = Number(array[i].split(' ')[1])
+      let relativeWeekNum = iWeekNum >= weekNum ? iWeekNum - weekNum : maxWeeks - weekNum + iWeekNum
+
+      if (relativeWeekNum < count && foundWeeks < count) {
         result.push(array[i])
         foundWeeks++
       }
@@ -1401,19 +1408,27 @@ function createTodoEditForm(todo, updateTodoAction) {
 
       <!-- Important -->
       <label for="todo-important">Important</label>
-      <input type="checkbox" id="todo-important" name="important" ${todo.important ? 'checked' : ''}>
+      <input type="checkbox" id="todo-important" name="important" ${
+        todo.important ? 'checked' : ''
+      }>
 
       <!-- Important -->
       <label for="todo-time-estimate-hours">Time Estimate (Hours)</label>
-      <input type="number" id="todo-time-estimate-hours" name="time-esimate-hours" ${todo.timeEstimateHours}>
+      <input type="number" id="todo-time-estimate-hours" name="time-esimate-hours" ${
+        todo.timeEstimateHours
+      }>
       
       <!-- Tags -->
       <label for="todo-tags">Tags</label>
-      <input type="text" id="todo-tags" name="tags" value="${todo.tags.join(', ')}" placeholder="Comma separated">
+      <input type="text" id="todo-tags" name="tags" value="${todo.tags.join(
+        ', ',
+      )}" placeholder="Comma separated">
 
       <!-- Notes -->
       <label for="todo-notes">Notes</label>
-      <textarea id="todo-notes" name="notes" placeholder="Additional notes">${todo.notes || ''}</textarea>
+      <textarea id="todo-notes" name="notes" placeholder="Additional notes">${
+        todo.notes || ''
+      }</textarea>
 
       <button type="submit">Update Todo</button>
     </form>
