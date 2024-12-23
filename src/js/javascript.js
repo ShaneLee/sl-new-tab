@@ -767,7 +767,7 @@ function todoForm() {
 }
 
 function pendingTodos() {
-  const endpoint = `${todosEndpoint}?category=PENDING`
+  const endpoint = todosForCategoryEndpointFn('PENDING')
   api(endpoint, {
     method: 'GET',
     headers: headers,
@@ -2236,6 +2236,13 @@ const pages = [
     name: 'Books List',
     emoji: withEmojis ? '📔' : '',
     shortcut: ',e',
+  }),
+  new Page({
+    id: 'reading-goals-link',
+    url: `${browserExtension}://${extensionId}/template/reading-goals.html`,
+    name: 'Reading Goals',
+    emoji: withEmojis ? '👓' : '',
+    shortcut: ',rg',
   }),
   new Page({
     id: 'quarter-review-link',

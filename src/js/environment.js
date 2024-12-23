@@ -56,6 +56,7 @@ function getPreferences() {
 
 // Endpoints
 const todosEndpoint = `${host}/todos`
+const todosForCategoryEndpointFn = category => `${host}/todos?category=${category}`
 const completeTodosEndpoint = `${host}/todos?onlyComplete=true`
 const linkTodosEndpoint = `${host}/todos/link`
 const tagsEndpoint = `${host}/todos/tags`
