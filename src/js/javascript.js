@@ -13,6 +13,9 @@ importantTodosForThisWeek = false
 defaultToAll = false
 const withEmojis = true
 
+const concatWithPlus = s => s.replace(' ', '+')
+const searchEngineFn = q => `https://www.google.com/search?q=${concatWithPlus(q)}`
+
 const CATEGORIES_SET = new Set()
 const LAST = new Array()
 
@@ -1715,6 +1718,7 @@ function addTodoListener() {
   const addTagAction = document.getElementById('addTagAction')
   const addNotesAction = document.getElementById('addNotesAction')
   const addTagsToAllAction = document.getElementById('addTagsToAllAction')
+  const openInSearchEngineAction = document.getElementById('openInSearchEngineAction')
 
   document.addEventListener('contextmenu', function (event) {
     hideContextMenu()
@@ -1817,7 +1821,14 @@ function addTodoListener() {
     const todo = selectedTodo
     // If this has been clicked we already know that there is a link in there
     const link = parseLink(todo.todo)
-    window.location.href = link
+    window.open(link, '_blank')
+    selectedTodo = null
+    hideContextMenu()
+  })
+
+  openInSearchEngineAction.addEventListener('click', function () {
+    const todo = selectedTodo
+    window.open(searchEngineFn(todo.todo), '_blank')
     selectedTodo = null
     hideContextMenu()
   })
