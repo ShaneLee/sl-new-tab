@@ -79,7 +79,6 @@ function addReadingGoals(data, container) {
   data.forEach(goal => {
     const progress = (goal.count / goal.targetCount) * 100
     const isComplete = goal.count >= goal.targetCount
-    const completeColor = `var(--complete-${goal.year}-color)`
 
     const card = document.createElement('div')
     card.className = 'reading-goals-card'
@@ -87,7 +86,7 @@ function addReadingGoals(data, container) {
     const badge = document.createElement('div')
     badge.className = `reading-goals-badge ${isComplete ? 'reading-goals-complete' : ''}`
     badge.innerText = isComplete ? '✓' : `${goal.year}`
-    if (isComplete) badge.style.background = completeColor
+    badge.style.background = `var(--complete-${goal.year}-color)`
 
     const title = document.createElement('h1')
     title.innerText = `Reading Goal ${goal.year}`
