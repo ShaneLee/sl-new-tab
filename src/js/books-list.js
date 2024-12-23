@@ -29,6 +29,20 @@ function getCurrentlyReadingBooks() {
     })
 }
 
+function getFavouriteBooks() {
+  fetch(booksOnShelfEndpointFn('favourites'), {
+    method: 'GET',
+    headers: headers,
+  })
+    .then(response => (response.status === 200 ? response?.json() : null))
+    .then(val => {
+      if (!!val) {
+        const tbody = document.getElementById('favourite-books-table')
+        populateBooksTable(val, tbody)
+      }
+    })
+}
+
 function getToReadBooks() {
   fetch(booksOnShelfEndpointFn('to-read'), {
     method: 'GET',
