@@ -305,6 +305,7 @@ window.addEventListener('load', () => {
   // getAllReadBooks()
   getCurrentlyReadingBooks()
   getToReadBooks()
+  getFavouriteBooks()
   addBookToShelfFormListener()
   addBookSearchListener()
   addNewBookFormListener()
