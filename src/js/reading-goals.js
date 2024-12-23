@@ -1,3 +1,63 @@
+function createTodo(todo) {
+  return api(todosEndpoint, {
+    method: 'POST',
+    headers: headers,
+    body: JSON.stringify(todo),
+  }).then(response =>
+    response.status === 200 || response.status === 201 ? response?.json() : null,
+  )
+}
+
+function shouldDisplayReadingGoalForm(readingGoals, weekNumber, year) {
+  const hasThisYear = readingGoals.some(val => val.year === year)
+  const nextYear = year + 1
+  const hasNextYear = readingGoals.some(val => val.year === nextYear)
+
+  if (hasThisYear && hasNextYear) {
+    return null
+  }
+
+  if (!hasThisYear && weekNumber < 50) {
+    return year
+  }
+
+  if (!hasNextYear) {
+    return nextYear
+  }
+  return null
+}
+
+function addFormListener(readingGoals) {
+  const weekNumber = currentWeekNumber()
+  const year = shouldDisplayReadingGoalForm(readingGoals, weekNumber, currentYear())
+  if (!year) {
+    return
+  }
+
+  const title = document.getElementById('readingGoalFormTitle')
+  title.innerText = `Set a Reading Goal for ${year}`
+
+  const form = document.getElementById('readingGoalForm')
+  const section = document.getElementById('readingGoalFormSection')
+  section.classList.remove('hidden')
+
+  form.addEventListener('submit', function (event) {
+    event.preventDefault()
+
+    const formData = new FormData(this)
+    const jsonObject = {}
+    formData.forEach(function (value, key) {
+      jsonObject[key] = value
+    })
+
+    jsonObject.category = 'reading-goals'
+    jsonObject.todo = `Reading Goal ${year}`
+    jsonObject.year = year
+
+    createTodo(jsonObject)
+  })
+}
+
 function getReadingGoals() {
   fetch(todosForCategoryEndpointFn('reading-goals'), {
     method: 'GET',
@@ -8,6 +68,7 @@ function getReadingGoals() {
       if (!!val) {
         const container = document.getElementById('grid-container')
         addReadingGoals(val, container)
+        addFormListener(val)
       }
     })
 }

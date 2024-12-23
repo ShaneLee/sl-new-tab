@@ -24,17 +24,30 @@
     </style>
   </head>
   <body>
-    <h1>Reading Goals</h1>
-    <div id="feedback" class="feedback hidden"></div>
+    <div class="center">
+      <div id="feedback" class="feedback hidden"></div>
     </div>
 
     <div class="reading-goals">
+      <h1>Reading Goals</h1>
+
+      <section id="readingGoalFormSection" class="hidden">
+        <h1 id="readingGoalFormTitle">Set Your Reading Goal</h1>
+        <form id="readingGoalForm" class="default-form">
+          <input
+            type="number"
+            id="target"
+            name="targetCount"
+            placeholder="Number of Books to Read"
+            required
+          /><br />
+          <button type="submit">Submit</button>
+        </form>
+      </section>
 
       <section>
         <div class="reading-goals-grid-container" id="grid-container"></div>
-      <section>
-
+      </section>
     </div>
-
   </body>
 </html>

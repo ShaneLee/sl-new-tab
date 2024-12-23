@@ -35,6 +35,7 @@
   --selection-box-border: rgba(0, 125, 255, 0.7);
 
   /** Reading goals TODO move elsewhere **/
+  --complete-2025-color: #547980;
   --complete-2024-color: var(--blue-color);
   --complete-2023-color: var(--bright-green-color);
   --complete-2022-color: var(--bright-orange-color);
@@ -1020,10 +1021,7 @@ video {
   font-family: var(--font-family);
   margin: 0;
   padding: 0;
-  display: flex;
   justify-content: center;
-  align-items: center;
-  min-height: 100vh;
   background-color: var(--background-color);
   color: var(--text-color);
 }
@@ -1034,6 +1032,9 @@ video {
   gap: 20px;
   width: 90%;
   max-width: 1200px;
+  margin: 20px auto;
+  align-items: start;
+  min-height: auto;
 }
 
 .reading-goals-card {
