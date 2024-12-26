@@ -1,6 +1,19 @@
 let contextMenu
 let selectedBook
 
+function getBookSummary() {
+  fetch(booksSummaryEndpoint('all'), {
+    method: 'GET',
+    headers: headers,
+  })
+    .then(response => (response.status === 200 ? response?.json() : null))
+    .then(val => {
+      if (!!val) {
+        renderReadingStats(val)
+      }
+    })
+}
+
 function getAllReadBooks() {
   fetch(readBooksEndpoint, {
     method: 'GET',
@@ -100,6 +113,13 @@ function createTodo(todo) {
   }).then(response =>
     response.status === 200 || response.status === 201 ? response?.json() : null,
   )
+}
+
+function renderReadingStats(stats) {
+  document.getElementById('uniqueNumberOfBooksRead').textContent = stats.uniqueNumberOfBooksRead
+  document.getElementById('numberOfBooksRead').textContent = stats.numberOfBooksRead
+  document.getElementById('numberOfPagesRead').textContent = stats.numberOfPagesRead
+  document.getElementById('wantToReadCount').textContent = stats.wantToReadCount
 }
 
 function addNewBookFormListener() {
@@ -305,6 +325,7 @@ window.addEventListener('load', () => {
   // getAllReadBooks()
   getCurrentlyReadingBooks()
   getToReadBooks()
+  getBookSummary()
   getFavouriteBooks()
   addBookToShelfFormListener()
   addBookSearchListener()
