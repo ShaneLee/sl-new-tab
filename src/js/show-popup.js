@@ -31,7 +31,7 @@ function showPopupForm() {
       <input type="text" id="category-popup-input" name="category" placeholder="Category">
       <textarea id="notes-popup-input" name="notes" placeholder="Notes"></textarea>
       <input type="submit" value="Submit">
-      <button type="button" onclick="closePopupForm('idea-popup-form')">Close</button>
+      <button type="button" onclick="(() => document.getElementById('idea-bucket-popup')?.remove())()">Close</button>
     </form>
   `
 
@@ -94,7 +94,11 @@ function showPopupForm() {
 }
 
 function closeForm() {
-  let form = document.getElementById('idea-bucket-popup')
+  closeForm('idea-bucket-popup')
+}
+
+function closeForm(formId) {
+  let form = document.getElementById(formId)
   if (form) {
     form.style.display = 'none'
   }
