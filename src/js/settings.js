@@ -1,11 +1,17 @@
 window.onload = function () {
   const token = getUrlParameter('token')
+  const spotifyCode = getUrlParameter('code')
 
   getCategories()
   if (!!token) {
     localStorage.setItem('token', token)
     headers.Authorization = `Bearer ${token}`
   }
+
+  if (!!spotifyCode) {
+    callSpotifyCallback(spotifyCode)
+  }
+
   document.getElementById('settingsForm').addEventListener('submit', function (e) {
     e.preventDefault()
     saveSettings()
@@ -15,10 +21,25 @@ window.onload = function () {
     addTagColourPair()
   })
 
+  document.getElementById('spotifyLoginButton').addEventListener('click', function () {
+    spotifyLogin()
+  })
+
   loadSettings()
 }
 
 const MAX_CATEGORIES = 3
+
+function spotifyLogin() {
+  window.location.href = `${host}/spotify/login`
+}
+
+function callSpotifyCallback(code) {
+  return api(spotifyCallbackEndpointFn(code), {
+    method: 'GET',
+    headers: headers,
+  }).then(res => (!!res ? res.json() : null))
+}
 
 function getPreferences() {
   return api(userPreferences, {

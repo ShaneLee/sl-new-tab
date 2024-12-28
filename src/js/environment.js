@@ -152,6 +152,9 @@ const foodItemCsvEndpoint = `${host}/nutrition/food/item/csv`
 const filesEndpointFn = (category, page, size) =>
   `${host}/files?category=${category}&page=${page}&size=${size}`
 
+// Spotify Endpoints
+const spotifyCallbackEndpointFn = code => `${host}/spotify/callback?code=${code}`
+
 function categoryParam(category) {
   return !!category ? `&category=${category}` : ''
 }
