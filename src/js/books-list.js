@@ -151,7 +151,18 @@ function populateBooksTable(books, tbody) {
     const row = document.createElement('tr')
 
     const bookCell = document.createElement('td')
-    bookCell.textContent = book.title
+
+    if (book.amazonAffiliateLink) {
+      const link = document.createElement('a')
+      link.href = book.amazonAffiliateLink
+      link.textContent = book.title
+      // Open in a new tab
+      link.target = '_blank'
+      bookCell.appendChild(link)
+    } else {
+      bookCell.textContent = book.title
+    }
+
     row.appendChild(bookCell)
 
     const authorCell = document.createElement('td')
