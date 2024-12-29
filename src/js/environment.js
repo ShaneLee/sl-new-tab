@@ -15,11 +15,16 @@ function currentYear() {
 }
 
 function currentWeekNumber() {
+  // This will limit the number of weeks to 52
+  // even when there are a few additional days at the end of the
+  // year that would otherwise be week 53.
+  // We can't eagerly switch to week 1 because we currently set
+  // the year of the todo based on the current year
   const currentDate = new Date()
   const startDate = new Date(currentDate.getFullYear(), 0, 1)
   const days = Math.ceil((currentDate - startDate) / (24 * 60 * 60 * 1000))
 
-  const weekNumber = Math.max(1, Math.ceil(days / 7))
+  const weekNumber = Math.max(1, Math.min(52, Math.ceil(days / 7)))
 
   return weekNumber
 }
