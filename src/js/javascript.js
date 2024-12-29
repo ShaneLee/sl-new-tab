@@ -1917,6 +1917,9 @@ function addTodoListener() {
     const category = todo?.category.replace(/\d+/, nextCategoryFn)
     if (!!category) {
       todo.category = category
+      if (category === 'Week 1') {
+        todo.year = !todo.year ? null : todo.year + 1
+      }
       update(todo)
     }
     selectedTodo = null
@@ -1988,6 +1991,9 @@ function addTodoListener() {
       const category = todo?.category.replace(/\d+/, nextCategoryFn)
       if (!!category) {
         todo.category = category
+        if (category === 'Week 1') {
+          todo.year = !todo.year ? null : todo.year + 1
+        }
         return update(todo, true)
       }
       return Promise.resolve()
