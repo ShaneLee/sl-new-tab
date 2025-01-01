@@ -12,6 +12,8 @@ importantTodosForThisWeek = false
 // Should we default to all todos or the current week number
 defaultToAll = false
 const withEmojis = true
+const spotifyEnabled = true
+const showCurrentPlayingTrackEnabled = true
 
 const concatWithPlus = s => s.replace(' ', '+')
 const searchEngineFn = q => `https://www.google.com/search?q=${concatWithPlus(q)}`
@@ -2297,6 +2299,53 @@ function addShortcuts() {
   })
 }
 
+function showCurrentlyListening() {
+  document.getElementById('spotify-widget')?.classList.remove('hidden')
+}
+
+function hideCurrentlyListening() {
+  document.getElementById('spotify-widget')?.classList.add('hidden')
+}
+
+function fetchCurrentlyPlaying() {
+  return api(spotifyCurrentlyPlayingEndpoint, {
+    method: 'GET',
+    headers: headers,
+  })
+    .then(response => {
+      if (response.ok) {
+        showCurrentlyListening()
+        return response.json()
+      } else {
+        hideCurrentlyListening()
+      }
+    })
+    .then(data => {
+      if (!!data) {
+        const trackName = data.name || 'Unknown Track'
+        const artistName = data.artists.map(artist => artist.name).join(', ') || 'Unknown Artist'
+        const albumName = data.album.name || 'Unknown Album'
+        const albumArtUrl = data.album.images
+          ? data.album.images.reduce((closest, image) => {
+              const currentDiff = Math.abs(image.height - 60) + Math.abs(image.width - 60)
+              const closestDiff = Math.abs(closest.height - 60) + Math.abs(closest.width - 60)
+              return currentDiff < closestDiff ? image : closest
+            }).url
+          : '../img/placeholder.png'
+
+        document.getElementById('track-title').textContent = trackName
+        document.getElementById('artist-name').textContent = artistName
+        document.getElementById('album-title').textContent = albumName
+        const albumArtImg = document.getElementById('album-art-img')
+        albumArtImg.src = albumArtUrl
+        albumArtImg.style.width = '60px'
+        albumArtImg.style.height = '60px'
+      } else {
+        hideCurrentlyListening()
+      }
+    })
+}
+
 window.onload = function () {
   getPreferences().then(processPreferences).then(loadTagFilters).then(addTodoListener)
   // Shift + click drag
@@ -2315,6 +2364,10 @@ window.onload = function () {
     getRunningTask()
   }
   addShortcuts()
+  if (spotifyEnabled && showCurrentPlayingTrackEnabled) {
+    fetchCurrentlyPlaying()
+    setInterval(fetchCurrentlyPlaying, 10000)
+  }
   pages.forEach(page => page.init())
   const eventDates = getEventStartAndEndDates()
   getEvents(eventDates['start'], eventDates['end'])

@@ -159,6 +159,7 @@ const filesEndpointFn = (category, page, size) =>
 
 // Spotify Endpoints
 const spotifyCallbackEndpointFn = code => `${host}/spotify/callback?code=${code}`
+const spotifyCurrentlyPlayingEndpoint = `${host}/spotify/currently-playing`
 
 function categoryParam(category) {
   return !!category ? `&category=${category}` : ''
