@@ -258,7 +258,24 @@ function addBookListener() {
       todo.category = category
     }
     createTodo(todo)
-    selectedIdea = null
+    selectedBook = null
+    hideContextMenu()
+  })
+
+  const markAsReadAction = document.getElementById('markAsReadAction')
+
+  markAsReadAction.addEventListener('click', function () {
+    const book = selectedBook
+    const today = new Date().toISOString().split('T')[0]
+    const userInput = prompt('Enter the date read (yyyy-MM-dd):', today)
+    const dateRead = userInput && userInput.trim() !== '' ? userInput.trim() : today
+    const addToShelfRequest = {
+      bookId: book.bookId,
+      shelfName: 'read',
+      dateRead: dateRead,
+    }
+    addBookToShelf(addToShelfRequest)
+    selectedBook = null
     hideContextMenu()
   })
   //
