@@ -2313,7 +2313,7 @@ function fetchCurrentlyPlaying() {
     headers: headers,
   })
     .then(response => {
-      if (response.ok) {
+      if (response.status === 200) {
         showCurrentlyListening()
         return response.json()
       } else {
