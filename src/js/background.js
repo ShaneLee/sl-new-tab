@@ -6,6 +6,7 @@ const stopEndpoint = `${host}/tracking/web/stop`
 const podcastSubscribeEndpoint = `${host}/podcast/subscribe`
 const fileUploadEndpoint = `${host}/files/upload`
 const podcastListenLater = `${host}/podcast/listenLater`
+const bookShelfEndpoint = `${host}/book/shelf`
 const webTrackingEnabled = false
 
 const browserAPI = typeof browser !== 'undefined' ? browser : chrome
@@ -31,6 +32,19 @@ function getHighlightedLinks() {
 
 function basename(path) {
   return path.split('/').reverse()[0]
+}
+
+function saveBookAsToRead(req) {
+  const isbn13 = !req.isbn13 ? `978${req.isbn10}` : req.isbn13
+  const payload = {
+    isbn13: isbn13,
+    shelfName: 'to-read',
+  }
+  fetch(bookShelfEndpoint, {
+    method: 'POST',
+    headers: headers,
+    body: JSON.stringify(payload),
+  })
 }
 
 function saveFile(file, metadata) {
@@ -233,6 +247,17 @@ browserAPI.contextMenus.onClicked.addListener((info, tab) => {
       url: info.pageUrl,
       title: info.title || tab.title,
     })
+  } else if (info.menuItemId === 'saveBookAsToRead') {
+    if (info.pageUrl.includes('amazon.co')) {
+      const isbn10 = info.pageUrl.split('dp/')[1].split('/')[0]
+      saveBookAsToRead({ isbn10: isbn10 })
+      return
+    }
+    if (!!info.selectionText) {
+      const isbn13 = info.selectionText.replace('-', '')
+      saveBookAsToRead({ isbn13: isbn13 })
+      return
+    }
   } else if (info.menuItemId === 'saveFile') {
     browserAPI.storage.local.set({ fileUrl: info.srcUrl }, function () {
       browserAPI.windows.create({
@@ -302,6 +327,12 @@ browserAPI.runtime.onInstalled.addListener(() => {
   browserAPI.contextMenus.create({
     id: 'createNote',
     title: 'Create Note',
+    contexts: ['page', 'selection'],
+  })
+
+  browserAPI.contextMenus.create({
+    id: 'saveBookAsToRead',
+    title: 'Save Book as To Read',
     contexts: ['page', 'selection'],
   })
 

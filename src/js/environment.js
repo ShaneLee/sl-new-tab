@@ -3,7 +3,7 @@ host = 'http://192.168.0.46:8080'
 
 const isChrome = /Chrome/.test(navigator.userAgent)
 const browserExtension = isChrome ? 'chrome-extension' : 'moz-extension'
-const extensionId = isChrome ? chrome.runtime.id : 'afadb1cf-b426-431a-a9f7-47adf0ceff91'
+const extensionId = isChrome ? chrome.runtime.id : '81be2699-c7c2-4b3b-95c0-b12162e94558'
 
 const headers = {
   'Content-Type': 'application/json',
