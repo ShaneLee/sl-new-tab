@@ -20,13 +20,15 @@ function currentWeekNumber() {
   // year that would otherwise be week 53.
   // We can't eagerly switch to week 1 because we currently set
   // the year of the todo based on the current year
-  const currentDate = new Date()
-  const startDate = new Date(currentDate.getFullYear(), 0, 1)
-  const days = Math.ceil((currentDate - startDate) / (24 * 60 * 60 * 1000))
-
-  const weekNumber = Math.max(1, Math.min(52, Math.ceil(days / 7)))
-
-  return weekNumber
+  const target = new Date()
+  const dayNr = (target.getDay() + 6) % 7
+  target.setDate(target.getDate() - dayNr + 3)
+  const firstThursday = target.valueOf()
+  target.setMonth(0, 1)
+  if (target.getDay() != 4) {
+    target.setMonth(0, 1 + ((4 - target.getDay() + 7) % 7))
+  }
+  return Math.min(52, 1 + Math.ceil((firstThursday - target) / 604800000))
 }
 
 function closePopupForm(id) {
