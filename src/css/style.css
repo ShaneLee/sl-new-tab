@@ -1154,3 +1154,36 @@ video {
   font-size: 12px;
   opacity: 0.7;
 }
+
+/** 
+ * MOOD
+ */
+
+#mood-grid-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.month-container {
+  width: calc(100% / 3 - 16px);
+  margin-bottom: 16px;
+}
+
+h3 {
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.days-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.square {
+  width: 20px;
+  height: 20px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}

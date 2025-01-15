@@ -2254,6 +2254,13 @@ const pages = [
     shortcut: ',rg',
   }),
   new Page({
+    id: 'year-mood-link',
+    url: `${browserExtension}://${extensionId}/template/year-mood.html`,
+    name: 'Year of Mood',
+    emoji: withEmojis ? '😀' : '',
+    shortcut: ',ym',
+  }),
+  new Page({
     id: 'quarter-review-link',
     url: `${browserExtension}://${extensionId}/template/review.html?type=YEAR&name="Quarter1"`,
     name: 'Quarterly Review',
