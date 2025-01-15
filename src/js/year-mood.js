@@ -32,17 +32,21 @@ function createGrid(ratings) {
 
   const dailyRatings = {}
 
-  ratings.forEach(({ createdAt, rating }) => {
-    const date = new Date(createdAt).toISOString().split('T')[0]
+  // Aggregate ratings and collect notes for each day
+  ratings.forEach(({ createdAt, rating, notes }) => {
+    const date = new Date(createdAt).toISOString().split('T')[0] // YYYY-MM-DD
     if (!dailyRatings[date]) {
-      dailyRatings[date] = { total: 0, count: 0 }
+      dailyRatings[date] = { total: 0, count: 0, notes: [] }
     }
     dailyRatings[date].total += rating
     dailyRatings[date].count += 1
+    if (!!notes) {
+      dailyRatings[date].notes.push(notes.trim())
+    }
   })
 
   Object.keys(dailyRatings).forEach(date => {
-    dailyRatings[date] = dailyRatings[date].total / dailyRatings[date].count
+    dailyRatings[date].average = dailyRatings[date].total / dailyRatings[date].count
   })
 
   function getColor(rating) {
@@ -88,14 +92,18 @@ function createGrid(ratings) {
         2,
         '0',
       )}`
-      const averageRating = dailyRatings[date]
+      const dataForDay = dailyRatings[date]
+      const averageRating = dataForDay ? dataForDay.average : null
+      const notes = dataForDay ? dataForDay.notes : []
 
       const square = document.createElement('div')
       square.classList.add('square')
       square.style.backgroundColor = getColor(averageRating)
 
       if (averageRating) {
-        square.title = `Date: ${date}\nRating: ${averageRating.toFixed(1)}`
+        square.title = `Date: ${date}\nRating: ${averageRating.toFixed(1)}\nNotes:\n- ${notes.join(
+          '\n- ',
+        )}`
       } else {
         square.title = `Date: ${date}\nNo rating yet.`
       }
