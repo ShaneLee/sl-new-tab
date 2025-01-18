@@ -120,6 +120,7 @@ function renderReadingStats(stats) {
   document.getElementById('numberOfBooksRead').textContent = stats.numberOfBooksRead
   document.getElementById('numberOfPagesRead').textContent = stats.numberOfPagesRead
   document.getElementById('wantToReadCount').textContent = stats.wantToReadCount
+  document.getElementById('totalListeningTime').textContent = stats.totalListeningTime
 }
 
 function addNewBookFormListener() {
