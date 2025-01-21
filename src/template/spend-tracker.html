@@ -1,101 +1,119 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="../css/style.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
     <script src="../js/environment.js" charset="UTF-8"></script>
     <script src="../js/spend-tracker.js" charset="UTF-8"></script>
     <title>Spend Tracker</title>
     <style>
-        table {
-            border-collapse: collapse;
-            width: 80%;
-            margin: 20px auto;
-        }
-        th, td {
-            border: 1px solid #dddddd;
-            text-align: left;
-            padding: 8px;
-        }
-        th {
-        }
+      table {
+        border-collapse: collapse;
+        width: 80%;
+        margin: 20px auto;
+      }
+      th,
+      td {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+      }
+      th {
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div id="feedback" class="feedback hidden"></div>
     <h1>Spend Tracker 💰</h1>
 
     <section>
       <h1>Create Transaction</h1>
       <form id="transactionForm" class="default-form">
-        <input type="text" id="account" name="account" placeholder="Account" required><br>
-        <input type="text" id="account-alias" name="accountAlias" placeholder="Account Alias" required><br>
-        <input type="text" id="amount" name="amount" placeholder="Amount" pattern="\d+(\.\d{2})?" required><br>
-        <input type="text" id="description" name="description" placeholder="Description" required><br>
-        <input type="date" id="date" name="date" placeholder="Date" required><br>
-        <textarea id="notes" name="notes" placeholder="Notes"></textarea><br>
+        <input type="text" id="account" name="account" placeholder="Account" required /><br />
+        <input
+          type="text"
+          id="account-alias"
+          name="accountAlias"
+          placeholder="Account Alias"
+          required
+        /><br />
+        <input
+          type="text"
+          id="amount"
+          name="amount"
+          placeholder="Amount"
+          pattern="\d+(\.\d{2})?"
+          required
+        /><br />
+        <input
+          type="text"
+          id="description"
+          name="description"
+          placeholder="Description"
+          required
+        /><br />
+        <input type="date" id="date" name="date" placeholder="Date" required /><br />
+        <textarea id="notes" name="notes" placeholder="Notes"></textarea><br />
         <select id="category" name="category" required>
-          <option value="" disabled selected>Select Category</option>
-        </select><br>
+          <option value="" disabled selected>Select Category</option></select
+        ><br />
         <button type="submit">Submit</button>
       </form>
     </section>
     <div id="spendContextMenu" class="context-menu">
       <div class="context-menu-item" id="deleteAction">Delete</div>
       <div class="context-menu-item" id="changeCategoryAction">Change Category</div>
+      <div class="context-menu-item" id="changeAccountAction">Change Account Alias</div>
     </div>
     <section>
       <table>
-          <thead>
-              <tr>
-                  <th>Date</th>
-                  <th>Description</th>
-                  <th>Category</th>
-                  <th>Account Alias</th>
-                  <th>Amount</th>
-                  <th>Deducted</th>
-                  <th>Notes</th>
-              </tr>
-          </thead>
-          <tbody id="spend-tracker-table">
-          </tbody>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Description</th>
+            <th>Category</th>
+            <th>Account Alias</th>
+            <th>Amount</th>
+            <th>Deducted</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody id="spend-tracker-table"></tbody>
       </table>
     </section>
 
     <section>
       <h2 class="text-center">To Deduct By Account</h2>
       <table>
-          <thead>
-              <tr>
-                  <th>Date</th>
-                  <th>Description</th>
-                  <th>Category</th>
-                  <th>Account Alias</th>
-                  <th>Amount</th>
-                  <th>Deducted</th>
-                  <th>Notes</th>
-              </tr>
-          </thead>
-          <tbody id="to-deduct-by-account-spend-tracker-table">
-          </tbody>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Description</th>
+            <th>Category</th>
+            <th>Account Alias</th>
+            <th>Amount</th>
+            <th>Deducted</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody id="to-deduct-by-account-spend-tracker-table"></tbody>
       </table>
       <h2 class="text-center">To Deduct</h2>
       <table>
-          <thead>
-              <tr>
-                  <th>Date</th>
-                  <th>Description</th>
-                  <th>Category</th>
-                  <th>Account Alias</th>
-                  <th>Amount</th>
-                  <th>Deducted</th>
-                  <th>Notes</th>
-              </tr>
-          </thead>
-          <tbody id="to-deduct-spend-tracker-table">
-          </tbody>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Description</th>
+            <th>Category</th>
+            <th>Account Alias</th>
+            <th>Amount</th>
+            <th>Deducted</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody id="to-deduct-spend-tracker-table"></tbody>
       </table>
     </section>
-</body>
+  </body>
 </html>

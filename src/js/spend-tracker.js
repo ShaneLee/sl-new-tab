@@ -283,6 +283,7 @@ function addContextMenuListener() {
   contextMenu = document.getElementById('spendContextMenu')
   const deleteAction = document.getElementById('deleteAction')
   const changeCategoryAction = document.getElementById('changeCategoryAction')
+  const changeAccountAction = document.getElementById('changeAccountAction')
 
   deleteAction.addEventListener('click', function () {
     deleteTransaction(selectedSpend)
@@ -295,6 +296,17 @@ function addContextMenuListener() {
     const category = prompt('Enter the new category:')
     if (!!category) {
       spend.category = category
+      updateTransaction(spend)
+    }
+    selectedSpend = null
+    hideContextMenu()
+  })
+
+  changeAccountAction.addEventListener('click', function () {
+    const spend = selectedSpend
+    const accountAlias = prompt('Enter the new account alias:')
+    if (!!accountAlias) {
+      spend.accountAlias = accountAlias
       updateTransaction(spend)
     }
     selectedSpend = null
