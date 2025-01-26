@@ -1,26 +1,53 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="../css/style.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
     <script src="../js/environment.js" charset="UTF-8"></script>
     <script src="../js/events.js" charset="UTF-8"></script>
     <title>Events</title>
-</head>
-<body>
+  </head>
+  <body>
     <h1>Events</h1>
     <div id="feedback" class="feedback hidden"></div>
     <section>
       <h1>Create Event 🐸</h1>
       <form id="eventForm" class="default-form">
-          <input type="text" id="name" name="name" placeholder="Event Name" required><br>
-          <input type="date" id="date" name="date" required><br>
-          <input type="time" id="startTime" name="startTime" required><br>
-          <input type="time" id="endTime" name="endTime"><br>
-          <textarea id="notes" name="notes" placeholder="Notes"></textarea><br>
-          <button type="submit">Submit</button>
+        <input type="text" id="name" name="name" placeholder="Event Name" required /><br />
+        <input type="date" id="date" name="date" required /><br />
+        <input type="time" id="startTime" name="startTime" required /><br />
+        <input type="time" id="endTime" name="endTime" /><br />
+        <textarea id="notes" name="notes" placeholder="Notes"></textarea><br />
+        <button type="submit">Submit</button>
       </form>
     </section>
-</body>
+    <section class="event-calendar">
+      <div class="calendar">
+        <div class="header">
+          <h1>Calendar View</h1>
+          <div class="view-options">
+            <button onclick="showView('year')">Year</button>
+            <button onclick="showView('month')">Month</button>
+            <button onclick="showView('week')">Week</button>
+          </div>
+        </div>
+
+        <div id="year-view" class="year-view visible">
+          <h2>Year View</h2>
+          <div id="year-events"></div>
+        </div>
+
+        <div id="month-view" class="month-view">
+          <h2>Month View</h2>
+          <div id="month-events"></div>
+        </div>
+
+        <div id="week-view" class="week-view">
+          <h2>Week View</h2>
+          <div id="week-events"></div>
+        </div>
+      </div>
+    </section>
+  </body>
 </html>

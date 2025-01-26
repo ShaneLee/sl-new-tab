@@ -32,7 +32,79 @@ function addEventFormListener() {
   })
 }
 
+function getEventStartAndEndDates() {
+  const today = new Date()
+  const futureDate = new Date()
+  futureDate.setDate(today.getDate() + 365)
+
+  const todayFormatted = formatDate(today)
+  const futureDateFormatted = formatDate(futureDate)
+
+  return { start: todayFormatted, end: futureDateFormatted }
+}
+
+function renderEvents(events, view, containerId) {
+  const container = document.getElementById(containerId)
+  container.innerHTML = ''
+
+  const filteredEvents = events.filter(event => {
+    const eventDate = new Date(event.date)
+    const now = new Date()
+
+    if (view === 'year') {
+      return eventDate.getFullYear() === now.getFullYear()
+    } else if (view === 'month') {
+      return eventDate.getMonth() === now.getMonth()
+    } else if (view === 'week') {
+      const weekStart = new Date(now.setDate(now.getDate() - now.getDay()))
+      const weekEnd = new Date(weekStart)
+      weekEnd.setDate(weekStart.getDate() + 6)
+      return eventDate >= weekStart && eventDate <= weekEnd
+    }
+  })
+
+  filteredEvents.forEach(event => {
+    const div = document.createElement('div')
+    div.className = 'event'
+    div.innerHTML = `<strong>${event.name}</strong> (${event.date})<br>Time: ${event.startTime} - ${
+      event.endTime
+    }<br>Notes: ${event.notes || 'None'}`
+    container.appendChild(div)
+  })
+}
+
+function showView(view) {
+  document
+    .querySelectorAll('.year-view, .month-view, .week-view')
+    .forEach(el => el.classList.remove('visible'))
+  document.getElementById(`${view}-view`).classList.add('visible')
+
+  if (view === 'year') {
+    renderEvents('year', 'year-events')
+  } else if (view === 'month') {
+    renderEvents('month', 'month-events')
+  } else if (view === 'week') {
+    renderEvents('week', 'week-events')
+  }
+}
+
+function getEvents(start, end) {
+  api(eventsEndpointFn(start, end), {
+    method: 'GET',
+    headers: headers,
+  })
+    .then(response => (response.status === 200 ? response?.json() : null))
+    .then(val => {
+      if (!!val) {
+        renderEvents(val, 'year', 'year-events')
+      }
+    })
+    .catch(err => {})
+}
+
 window.addEventListener('load', () => {
   setDefaultDate()
   addEventFormListener()
+  const eventDates = getEventStartAndEndDates()
+  getEvents(eventDates['start'], eventDates['end'])
 })
