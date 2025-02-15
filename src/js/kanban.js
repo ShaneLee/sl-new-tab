@@ -82,7 +82,7 @@ function todosBacklog() {
  *    • For special categories (i.e. ones that do not start with "Week"), we override the
  *      todo.category to be the queried category. This ensures that even if the API
  *      returns todos with a week label (e.g. "Week 50"), the UI will group them
- *      under the expected column (e.g. "2025" or "March").
+ *      under the expected column (e.g. "Yearly 2025" or "March").
  *    • If no todo in the (possibly remapped) list has the queried category, we add a dummy todo.
  */
 function todosByCategory(category) {
@@ -253,7 +253,8 @@ function handleDrop(event) {
     draggedTodo.style.display = 'block'
     targetColumn.appendChild(draggedTodo)
 
-    handleTodoMove(todoId, groupName)
+    // Pass along the todo so we can decide whether to update or create a linked copy
+    handleTodoMove(todoId, groupName, todo)
   }
 }
 
@@ -269,25 +270,57 @@ function handleDragEnd() {
   draggedTodo = null
 }
 
+/**
+ * Updated handleTodoMove:
+ * - When dropping on the backlog, update the existing todo’s category.
+ * - Otherwise, if the original todo is from a special category (i.e. not a week or backlog todo),
+ *   create a new, linked todo with the new category.
+ * - For normal week todos, simply update the category.
+ */
+function handleTodoMove(todoId, groupName, todo) {
+  if (groupName === 'backlog') {
+    // Moving to backlog: simply update the category.
+    todo.category = groupName
+    update(todo, false, false)
+    return
+  }
+
+  // Determine if the dragged todo is from a special category.
+  // (Here, special means its category does not start with 'Week' and is not 'Backlog' (or 'backlog').)
+  const isSpecial = !(
+    todo.category.startsWith('Week') ||
+    todo.category === 'Backlog' ||
+    todo.category === 'backlog'
+  )
+
+  if (isSpecial) {
+    // Instead of moving the original todo, create a new linked todo with the new category.
+    const newTodo = { ...todo, category: groupName }
+    link(newTodo, false, false)
+  } else {
+    // For normal week todos, update the category.
+    todo.category = groupName
+    update(todo, false, false)
+  }
+}
+
 function handleDragOver(event) {
   event.preventDefault()
 }
 
-function handleTodoMove(todoId, groupName, todo) {
-  const isWeekColumn = groupName.startsWith('Week') || groupName === 'backlog'
-
-  if (isWeekColumn) {
-    const newCategory = groupName
-    todo.category = newCategory
-    update(todo, false, false)
-  } else {
-    // TODO do I want to add to the tags and duplicate or move the tags?
-    console.log(`Todo ${todoId} moved to ${groupName}`)
+/**
+ * Creates a linked todo by issuing a PATCH request.
+ * The linked todo is a new todo with the desired category.
+ */
+function link(todo, dontRefresh, dontShowSuccessMessage) {
+  if (!!dontShowSuccessMessage) {
+    todo.noSuccessFeedback = true
   }
-}
-
-function handleDragEnd() {
-  draggedTodo = null
+  return api(linkTodosEndpoint, {
+    method: 'PATCH',
+    headers: headers,
+    body: JSON.stringify(todo),
+  })
 }
 
 function getQueryParams() {
