@@ -1,3 +1,4 @@
+const YEAR_AND_MONTH_DISPLAY = true
 const COLUMNS = 5
 let originalColumn = null
 let originalIndex = -1
@@ -74,6 +75,16 @@ function todosBacklog() {
   }).then(response => response.json())
 }
 
+/**
+ * Updated todosByCategory:
+ * - If the API returns a non-200 status, return a dummy todo with the queried category.
+ * - If the API returns a 200, then:
+ *    • For special categories (i.e. ones that do not start with "Week"), we override the
+ *      todo.category to be the queried category. This ensures that even if the API
+ *      returns todos with a week label (e.g. "Week 50"), the UI will group them
+ *      under the expected column (e.g. "2025" or "March").
+ *    • If no todo in the (possibly remapped) list has the queried category, we add a dummy todo.
+ */
 function todosByCategory(category) {
   const endpoint =
     !!category && category !== 'all' ? `${todosEndpoint}?category=${category}` : todosEndpoint
@@ -82,9 +93,22 @@ function todosByCategory(category) {
     headers: headers,
     // If we have no response, create a todo that is just a category
     // that way we render the column
-  }).then(response =>
-    response.status === 200 ? response.json() : !!category ? [{ category: category }] : [],
-  )
+  }).then(response => {
+    if (response.status !== 200) {
+      return !!category ? [{ category: category }] : []
+    }
+    return response.json().then(data => {
+      // For special (non-week) categories, ensure all todos have the queried category.
+      if (category && !category.startsWith('Week')) {
+        data = data.map(todo => ({ ...todo, category: category }))
+      }
+      // Always ensure that at least one todo carries the queried category.
+      if (!data.some(todo => todo.category === category)) {
+        data.unshift({ category: category })
+      }
+      return data
+    })
+  })
 }
 
 function todos(type) {
@@ -92,13 +116,24 @@ function todos(type) {
     let startWeekNumber = currentWeekNumber()
     let promises = []
 
+    if (YEAR_AND_MONTH_DISPLAY) {
+      const now = new Date()
+      const currentYear = `Yearly ${now.getFullYear().toString()}`
+      // Using 'en-GB' for English month names
+      const currentMonth = now.toLocaleString('en-GB', { month: 'long' })
+
+      // Year category first, then month category
+      promises.push(todosByCategory(currentYear))
+      promises.push(todosByCategory(currentMonth))
+    }
+
     for (let i = 0; i < COLUMNS; i++) {
       const weekNumber = startWeekNumber + i
       const category = `Week ${weekNumber}`
-      const promise = todosByCategory(category)
-      promises.push(promise)
+      promises.push(todosByCategory(category))
     }
 
+    // Flatten the results so displayBy gets a single array of todos.
     return Promise.all(promises).then(results => results.flat())
   }
   const category = `Week ${currentWeekNumber()}`
