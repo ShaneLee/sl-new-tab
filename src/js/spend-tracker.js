@@ -285,6 +285,7 @@ function addContextMenuListener() {
   const changeCategoryAction = document.getElementById('changeCategoryAction')
   const changeAccountAction = document.getElementById('changeAccountAction')
   const changeAmountAction = document.getElementById('changeAmountAction')
+  const createRefundAction = document.getElementById('createRefundAction')
 
   deleteAction.addEventListener('click', function () {
     deleteTransaction(selectedSpend)
@@ -310,6 +311,22 @@ function addContextMenuListener() {
       spend.amount = amount
       updateTransaction(spend)
     }
+    selectedSpend = null
+    hideContextMenu()
+  })
+
+  createRefundAction.addEventListener('click', function () {
+    const spend = selectedSpend
+    spend.id = null
+    const amount = prompt('If partial refund enter negative amount')
+    if (!!amount) {
+      spend.amount = amount
+      spend.description = `PARTIAL REFUND: ${spend.description}`
+    } else {
+      spend.description = `REFUND: ${spend.description}`
+      spend.amount = -spend.amount
+    }
+    createTransaction(spend)
     selectedSpend = null
     hideContextMenu()
   })
