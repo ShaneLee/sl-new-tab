@@ -494,7 +494,7 @@ function importantTodos() {
   return api(importantEndpointFn(IMPORTANT_TODO_DISPLAY_COUNT), {
     method: 'GET',
     headers: headers,
-  }).then(response => response.json())
+  }).then(response => (response.status === 200 ? response.json() : [{}]))
 }
 
 function uncomplete(todo) {
@@ -2127,12 +2127,14 @@ const pages = [
     name: 'Events',
     emoji: withEmojis ? '🐸' : '',
     shortcut: ',e',
+    feature: 'events',
   }),
   new Page({
     id: 'memes-link',
     url: `${browserExtension}://${extensionId}/template/memes.html`,
     name: 'Memes',
     emoji: withEmojis ? '🤣' : '',
+    feature: 'memes',
   }),
   new Page({
     id: 'logs-link',
@@ -2140,6 +2142,7 @@ const pages = [
     name: 'Logs',
     emoji: withEmojis ? '🤖' : '',
     shortcut: ',l',
+    feature: 'logs',
   }),
   new Page({
     id: 'time-tracking-summary-link',
@@ -2147,6 +2150,7 @@ const pages = [
     name: 'Time tracking summary',
     emoji: withEmojis ? '🕰️' : '',
     shortcut: ',t',
+    feature: 'time-tracking',
   }),
   new Page({
     id: 'spend-tracker-link',
@@ -2154,6 +2158,7 @@ const pages = [
     name: 'Spend Tracker',
     emoji: withEmojis ? '💰' : '',
     shortcut: ',s',
+    feature: 'spend-tracking',
   }),
   new Page({
     id: 'weight-tracker-link',
@@ -2161,6 +2166,7 @@ const pages = [
     name: 'Weight Tracker',
     emoji: withEmojis ? '⚖️' : '',
     shortcut: ',w',
+    feature: 'weight-tracking',
   }),
   new Page({
     id: 'notes-link',
@@ -2168,6 +2174,7 @@ const pages = [
     name: 'Notes',
     emoji: withEmojis ? '🗒️' : '',
     shortcut: ',n',
+    feature: 'notes',
   }),
   new Page({
     id: 'reading-list-link',
@@ -2175,6 +2182,7 @@ const pages = [
     name: 'Reading List',
     emoji: withEmojis ? '📚' : '',
     shortcut: ',r',
+    feature: 'reading-list',
   }),
   new Page({
     id: 'ratings-link',
@@ -2182,6 +2190,7 @@ const pages = [
     name: 'Mood Ratings',
     emoji: withEmojis ? '🌺' : '',
     shortcut: ',m',
+    feature: 'mood',
   }),
   new Page({
     id: 'idea-bucket-link',
@@ -2189,6 +2198,7 @@ const pages = [
     name: 'Idea Bucket',
     emoji: withEmojis ? '💡' : '',
     shortcut: ',i',
+    feature: 'idea-bucket',
   }),
   new Page({
     id: 'review-link',
@@ -2196,6 +2206,7 @@ const pages = [
     name: 'Review',
     emoji: withEmojis ? '🌱' : '',
     shortcut: ',v',
+    feature: 'review',
   }),
   new Page({
     id: 'podcasts-link',
@@ -2203,6 +2214,7 @@ const pages = [
     name: 'Podcasts',
     emoji: withEmojis ? '🎧' : '',
     shortcut: ',p',
+    feature: 'podcasts',
   }),
   new Page({
     id: 'food-link',
@@ -2210,6 +2222,7 @@ const pages = [
     name: 'Nutrition',
     emoji: withEmojis ? '🥗' : '',
     shortcut: ',f',
+    feature: 'food',
   }),
   new Page({
     id: 'kanban-link',
@@ -2217,6 +2230,7 @@ const pages = [
     name: 'Kanban',
     emoji: withEmojis ? '🦘' : '',
     shortcut: ',k',
+    feature: 'kanban',
   }),
   new Page({
     id: 'kanban-week-link',
@@ -2224,6 +2238,7 @@ const pages = [
     name: 'Kanban Week',
     emoji: withEmojis ? '🗽' : '',
     shortcut: ',kw',
+    feature: 'kanban',
   }),
   new Page({
     id: 'version-catalogue-link',
@@ -2231,6 +2246,7 @@ const pages = [
     name: 'Version Catalogue',
     emoji: withEmojis ? '🗂️' : '',
     shortcut: ',k',
+    feature: 'version-catalogue',
   }),
   new Page({
     id: 'books-list-link',
@@ -2238,6 +2254,7 @@ const pages = [
     name: 'Books List',
     emoji: withEmojis ? '📔' : '',
     shortcut: ',e',
+    feature: 'books',
   }),
   new Page({
     id: 'reading-goals-link',
@@ -2245,6 +2262,7 @@ const pages = [
     name: 'Reading Goals',
     emoji: withEmojis ? '👓' : '',
     shortcut: ',rg',
+    feature: 'books',
   }),
   new Page({
     id: 'year-mood-link',
@@ -2252,6 +2270,7 @@ const pages = [
     name: 'Year of Mood',
     emoji: withEmojis ? '😀' : '',
     shortcut: ',ym',
+    feature: 'mood',
   }),
   new Page({
     id: 'quarter-review-link',
@@ -2259,6 +2278,7 @@ const pages = [
     name: 'Quarterly Review',
     emoji: withEmojis ? '🍀' : '',
     shortcut: ',q',
+    feature: 'review',
     clickHandler: function (event) {
       event.preventDefault()
 
@@ -2368,7 +2388,8 @@ window.onload = function () {
     fetchCurrentlyPlaying()
     setInterval(fetchCurrentlyPlaying, 10000)
   }
-  pages.forEach(page => page.init())
+  const enabledPages = pages.filter(page => features.get(page.id.replace('-link', '')) === true)
+  enabledPages.forEach(page => page.init())
   const eventDates = getEventStartAndEndDates()
   getEvents(eventDates['start'], eventDates['end'])
   categories()
