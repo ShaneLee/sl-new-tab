@@ -1,18 +1,18 @@
 IMPORTANT_TODO_DISPLAY_COUNT = 3
 TAGS_FILTER_LIMIT = 3
 quotesEnabled = false
-timerEnabled = true
-eventsEnabled = true
+timerEnabled = features.get('time-tracking')?.enabled
+eventsEnabled = features.get('events')?.enabled
 showTags = true
 persistTagFilters = true
-spendTrackingEnabled = true
+spendTrackingEnabled = features.get('spendTracking')?.enabled
 importantTodosEnabled = true
 // Should we include this week's todos in the main note?
 importantTodosForThisWeek = false
 // Should we default to all todos or the current week number
 defaultToAll = false
 const withEmojis = true
-const spotifyEnabled = true
+const spotifyEnabled = features.get('spotify')?.enabled
 const showCurrentPlayingTrackEnabled = true
 
 const concatWithPlus = s => s.replace(' ', '+')
@@ -85,12 +85,13 @@ let contextMenu
 let TODOS_SET = new Set()
 
 class Page {
-  constructor({ id, url, name, emoji, shortcut, clickHandler }) {
+  constructor({ id, url, name, emoji, shortcut, feature, clickHandler }) {
     this.id = id
     this.url = url
     this.name = name
     this.emoji = emoji
     this.shortcut = shortcut ? shortcut.split('') : []
+    this.feature = feature
     this.clickHandler = clickHandler
 
     this.createLink()
@@ -2319,6 +2320,15 @@ function addShortcuts() {
   })
 }
 
+function toggleTimerVisibility(show) {
+  const timer = document.getElementById('timer')
+  if (show) {
+    timer.classList.add('visible')
+  } else {
+    timer.classList.remove('visible')
+  }
+}
+
 function showCurrentlyListening() {
   document.getElementById('spotify-widget')?.classList.remove('hidden')
 }
@@ -2388,7 +2398,10 @@ window.onload = function () {
     fetchCurrentlyPlaying()
     setInterval(fetchCurrentlyPlaying, 10000)
   }
-  const enabledPages = pages.filter(page => features.get(page.id.replace('-link', '')) === true)
+  if (timerEnabled) {
+    toggleTimerVisibility(true)
+  }
+  const enabledPages = pages.filter(page => features.get(page.feature)?.enabled === true)
   enabledPages.forEach(page => page.init())
   const eventDates = getEventStartAndEndDates()
   getEvents(eventDates['start'], eventDates['end'])

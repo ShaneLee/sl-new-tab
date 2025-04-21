@@ -5,6 +5,39 @@ const isChrome = /Chrome/.test(navigator.userAgent)
 const browserExtension = isChrome ? 'chrome-extension' : 'moz-extension'
 const extensionId = isChrome ? chrome.runtime.id : '81be2699-c7c2-4b3b-95c0-b12162e94558'
 
+class Feature {
+  constructor(name, enabled = false) {
+    this.name = name
+    this.enabled = enabled
+  }
+}
+
+// TODO in the future some of these will be configurable at frontend build time
+// and some will be configurable from the backend
+
+const featuresList = [
+  new Feature('books', true),
+  new Feature('events', true),
+  new Feature('food', true),
+  new Feature('idea-bucket', true),
+  new Feature('kanban', true),
+  new Feature('logs', true),
+  new Feature('memes', true),
+  new Feature('mood', true),
+  new Feature('notes', true),
+  new Feature('podcasts', true),
+  new Feature('reading-list', true),
+  new Feature('review', true),
+  new Feature('spend-tracking', true),
+  new Feature('time-tracking', true),
+  new Feature('version-catalogue', true),
+  new Feature('weight-tracking', true),
+  new Feature('spotify', true),
+]
+
+// TODO feature map should be the feature flags source of truth
+const features = new Map(featuresList.map(feature => [feature.name, feature]))
+
 const headers = {
   'Content-Type': 'application/json',
   Authorization: `Bearer ${localStorage.getItem('token')}`,

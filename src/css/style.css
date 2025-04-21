@@ -492,8 +492,13 @@ div.todo-input:focus {
 }
 
 .timer-container {
+  visibility: hidden; /* Hides the timer but keeps its space */
   display: flex;
   align-items: center;
+}
+
+.timer-container.visible {
+  visibility: visible; /* Makes the timer visible */
 }
 
 .timer-text {
