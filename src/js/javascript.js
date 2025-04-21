@@ -495,7 +495,7 @@ function importantTodos() {
   return api(importantEndpointFn(IMPORTANT_TODO_DISPLAY_COUNT), {
     method: 'GET',
     headers: headers,
-  }).then(response => (response.status === 200 ? response.json() : [{}]))
+  }).then(response => (response.status === 200 ? response.json() : []))
 }
 
 function uncomplete(todo) {
@@ -2105,6 +2105,9 @@ function getDaysUntilTargetDate(targetDate) {
 }
 
 function mapWithDueDate(todos) {
+  if (!todos) {
+    return
+  }
   const category = document.getElementById('category-input').value
   const weekCategory = category.includes('Week')
   return todos
@@ -2296,7 +2299,9 @@ function targetNote() {
   const important = importantTodos()
     .then(mapWithDueDate)
     .then(val => {
-      note.innerHTML = val
+      if (!!val) {
+        note.innerHTML = val
+      }
     })
 }
 
