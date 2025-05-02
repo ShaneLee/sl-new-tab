@@ -5,7 +5,7 @@ timerEnabled = features.get('time-tracking')?.enabled
 eventsEnabled = features.get('events')?.enabled
 showTags = true
 persistTagFilters = true
-spendTrackingEnabled = features.get('spendTracking')?.enabled
+spendTrackingEnabled = features.get('spend-tracking')?.enabled
 importantTodosEnabled = true
 // Should we include this week's todos in the main note?
 importantTodosForThisWeek = false
