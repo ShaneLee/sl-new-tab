@@ -1,3 +1,13 @@
+let contextMenu
+let selectedEvent
+
+function deleteEvent(event) {
+  return api(deleteEventEndpointFn(event.id), {
+    method: 'DELETE',
+    headers: headers,
+  })
+}
+
 function createEvent(eventObj) {
   return api(eventEndpoint, {
     method: 'POST',
@@ -16,6 +26,22 @@ function setDefaultDate() {
   const day = String(today.getDate()).padStart(2, '0')
 
   dateInput.value = `${currentYear}-${month}-${day}`
+}
+
+function addContextMenuListener() {
+  contextMenu = document.getElementById('eventContextMenu')
+  const deleteAction = document.getElementById('deleteAction')
+
+  deleteAction.addEventListener('click', function () {
+    deleteEvent(selectedEvent)
+    selectedEvent = null
+    hideContextMenu()
+  })
+
+  // Event listener to hide context menu on window click
+  window.addEventListener('click', function () {
+    hideContextMenu()
+  })
 }
 
 function addEventFormListener() {
@@ -69,6 +95,13 @@ function renderEvents(events, view, containerId) {
     div.innerHTML = `<strong>${event.name}</strong> (${event.date})<br>Time: ${event.startTime} - ${
       event.endTime
     }<br>Notes: ${event.notes || 'None'}`
+    div.addEventListener('contextmenu', function (e) {
+      if (!!contextMenu) {
+        hideContextMenu()
+      }
+      showContextMenu(e, event)
+    })
+
     container.appendChild(div)
   })
 }
@@ -102,9 +135,57 @@ function getEvents(start, end) {
     .catch(err => {})
 }
 
+function showContextMenu(event, eventObj) {
+  // Check if the right-click occurred outside of an 'a' tag
+  if (event.target.tagName.toLowerCase() === 'a') {
+    return
+  }
+  event.preventDefault()
+  selectedEvent = eventObj
+  const contextMenuId = 'eventContextMenu'
+  contextMenu = document.getElementById(contextMenuId)
+
+  // Ensure the context menu is visible before retrieving dimensions
+  contextMenu.style.display = 'block'
+
+  const contextMenuWidth = contextMenu.offsetWidth
+  const contextMenuHeight = contextMenu.offsetHeight
+  const viewportWidth = window.innerWidth
+  const viewportHeight = window.innerHeight
+
+  let left = event.clientX
+  let top = event.clientY
+
+  // Adjust left position if the context menu goes off the right edge
+  if (left + contextMenuWidth > viewportWidth) {
+    left = viewportWidth - contextMenuWidth
+  }
+
+  // Adjust top position if the context menu goes off the bottom edge
+  if (top + contextMenuHeight > viewportHeight) {
+    top = viewportHeight - contextMenuHeight
+  }
+
+  // Ensure the top position is never negative
+  top = Math.max(top, 0)
+
+  contextMenu.style.left = `${left}px`
+  contextMenu.style.top = `${top}px`
+
+  event.stopPropagation()
+}
+
+function hideContextMenu() {
+  if (!!contextMenu) {
+    contextMenu.style.display = 'none'
+    contextMenu = null
+  }
+}
+
 window.addEventListener('load', () => {
   setDefaultDate()
   addEventFormListener()
   const eventDates = getEventStartAndEndDates()
   getEvents(eventDates['start'], eventDates['end'])
+  addContextMenuListener()
 })

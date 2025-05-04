@@ -132,6 +132,7 @@ const transactionsEndpointFn = (start, end) =>
   `${host}/transaction?start=${start}&endInclusive=${end}`
 const transactionEndpoint = `${host}/transaction`
 const eventsEndpointFn = (start, end) => `${host}/event?start=${start}&endInclusive=${end}`
+const deleteEventEndpointFn = id => `${host}/event?id=${id}`
 const eventEndpoint = `${host}/event`
 const transactionToDeductEndpoint = `${host}/transaction/to-deduct`
 const transactionToDeductEndpointFn = end => `${host}/transaction/to-deduct?endInclusive=${end}`
