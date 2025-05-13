@@ -42,6 +42,7 @@ function getCompletedReviewForWeek(dateParam) {
     .then(val => {
       if (!!val) {
         renderMoodForType('WEEK')
+        renderDiaryForType('WEEK')
         const todoListsElement = getTodoListsElement()
         renderTodos(val.responses.todoReviewSummary, todoListsElement)
         renderTimeTrackingSummaryFromData(val.responses.timeTrackingSummary, todoListsElement)
@@ -83,6 +84,7 @@ function getReviewForm(typeParam) {
   getFormConfig()
     .then(renderForm)
     .then(val => renderMoodForType(typeParam))
+    .then(val => renderDiaryForType(typeParam))
     .then(val => renderTodosForType(typeParam))
     .then(val => renderTimeTrackingSummary(typeParam))
     .then(val => renderWellForType(typeParam))
@@ -142,6 +144,60 @@ function renderMoodTable(ratings) {
   })
 
   const container = document.getElementById('ratings-table-container')
+  container.appendChild(table)
+}
+
+function renderDiaryForType(type) {
+  getDiaryForType(type).then(renderDiaryTable)
+}
+
+function renderDiaryTable(entries) {
+  if (!entries) return
+  const table = document.createElement('table')
+  table.className = 'time-tracking-summary'
+
+  const headerRow = table.insertRow(0)
+
+  const headers = ['Created At', 'Entry']
+
+  // Add headers to the header row
+  headers.forEach((headerText, index) => {
+    const th = document.createElement('th')
+    th.textContent = headerText
+    headerRow.appendChild(th)
+  })
+
+  // Iterate through the ratings data and create table rows
+  entries.forEach((data, index) => {
+    const row = table.insertRow(index + 1) // +1 to skip the header row
+
+    const createdAtDate = new Date(data.createdAt)
+    const daysOfWeek = [
+      'Sunday',
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+    ]
+    const dayOfWeekText = daysOfWeek[createdAtDate.getDay()]
+    const createdAtText = `${dayOfWeekText} ${createdAtDate.getFullYear()}-${(
+      createdAtDate.getMonth() + 1
+    )
+      .toString()
+      .padStart(2, '0')}-${createdAtDate.getDate().toString().padStart(2, '0')}`
+
+    // Populate table cells with data
+    const createdAtCell = row.insertCell(0)
+    createdAtCell.textContent = createdAtText
+
+    const notesCell = row.insertCell(1)
+    notesCell.textContent = data.notes
+    notesCell.style.width = '70%'
+  })
+
+  const container = document.getElementById('diary-table-container')
   container.appendChild(table)
 }
 

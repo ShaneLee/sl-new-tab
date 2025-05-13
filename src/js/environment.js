@@ -24,6 +24,7 @@ const featuresList = [
   new Feature('logs', true),
   new Feature('memes', true),
   new Feature('mood', true),
+  new Feature('diary', true),
   new Feature('notes', true),
   new Feature('podcasts', true),
   new Feature('reading-list', true),
@@ -164,6 +165,8 @@ const bucketEndpoint = `${host}/bucket`
 
 const moodEndpoint = `${host}/mood?rangeType=`
 
+const diaryEndpoint = `${host}/diary?rangeType=`
+
 const reviewEndpoint = `${host}/review`
 const reviewEndpointFn = date => `${host}/review?reviewDate=${date}`
 const tempFormId = '91f2994f-2446-459c-806d-f99387fd2f1c'
@@ -225,6 +228,19 @@ function parseWWWAuthenticateHeader(header) {
     }
   }
   return null
+}
+
+function getDiaryForType(type) {
+  return fetch(diaryEndpoint + type, {
+    method: 'GET',
+    headers: headers,
+  })
+    .then(response => (response.status === 200 ? response?.json() : null))
+    .then(val => {
+      if (!!val) {
+        return val
+      }
+    })
 }
 
 function api(endpoint, obj, rethrow) {
