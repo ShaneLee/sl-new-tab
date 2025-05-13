@@ -193,7 +193,7 @@ function renderDiaryTable(entries) {
     createdAtCell.textContent = createdAtText
 
     const notesCell = row.insertCell(1)
-    notesCell.textContent = data.notes
+    notesCell.textContent = data.entry
     notesCell.style.width = '70%'
   })
 
