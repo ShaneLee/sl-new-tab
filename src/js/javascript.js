@@ -815,6 +815,8 @@ function todos(includeComplete = false) {
   }
   pendingTodos()
   const category = document.getElementById('category-input').value
+  // This overrides the death day thing
+  document.title = category
   shouldDisplayMoveToThisWeek(category)
   const today = new Date()
   today.setHours(0, 0, 0, 0)
