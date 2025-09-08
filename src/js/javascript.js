@@ -624,7 +624,9 @@ function categories() {
       defaultCategory.className = 'categories-item'
       all.className = 'categories-item'
       all.innerHTML = 'all'
-      const week = `Week ${currentWeekNumber()}`
+      const currentWeek = currentWeekNumber()
+      const week = `Week ${currentWeek}`
+      const previousWeek = `Week ${currentWeek - 1}`
       if (defaultToAll) {
         categories.appendChild(all)
       } else {
@@ -635,9 +637,9 @@ function categories() {
       if (!!val) {
         filterAndSlice(
           val.filter(category => category !== week),
-          3,
-          week,
-        ) // Keep 3+ weeks
+          4,
+          previousWeek,
+        ) // Keep 3+ weeks + -1 weeek
           .forEach(category => {
             CATEGORIES_SET.add(category)
             const item = document.createElement('option')
@@ -2155,6 +2157,13 @@ const pages = [
     emoji: withEmojis ? '🕰️' : '',
     shortcut: ',t',
     feature: 'time-tracking',
+  }),
+  new Page({
+    id: 'file-upload-link',
+    url: `${browserExtension}://${extensionId}/template/file-upload.html`,
+    name: 'File Upload',
+    emoji: withEmojis ? '☁️' : '',
+    feature: 'memes',
   }),
   new Page({
     id: 'spend-tracker-link',

@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+  <head>
+    <title>File Upload</title>
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <a href="index.html" class="back-link">Back</a>
+      <h1>File Upload</h1>
+      <form id="file-upload-form" class="default-form">
+        <label for="file">File:</label>
+        <input type="file" id="file" name="file" required /><br /><br />
+        <label for="category">Category:</label>
+        <input
+          type="text"
+          id="category"
+          name="category"
+          value="itemsofinterest"
+          required
+        /><br /><br />
+        <label for="subcategory">Sub-Category:</label>
+        <input type="text" id="subcategory" name="subcategory" required /><br /><br />
+        <label for="notes">Notes:</label>
+        <textarea id="notes" name="notes"></textarea><br /><br />
+        <button type="submit">Upload</button>
+      </form>
+    </div>
+    <script src="../js/environment.js"></script>
+    <script src="../js/file-upload.js"></script>
+  </body>
+</html>
