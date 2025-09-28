@@ -284,6 +284,23 @@ browserAPI.contextMenus.onClicked.addListener((info, tab) => {
       .catch(error => {
         console.error('Error fetching image:', error)
       })
+  } else if (info.menuItemId === 'saveBucketList') {
+    const imageUrl = info.srcUrl
+
+    fetch(imageUrl)
+      .then(response => response.blob())
+      .then(blob => {
+        const file = new File([blob], basename(info.srcUrl), { type: blob.type })
+        const metadata = {
+          category: 'bucket-list',
+          fileName: `${basename(file.name)}`,
+          notes: `Source: ${info.pageUrl}`,
+        }
+        saveFile(file, metadata)
+      })
+      .catch(error => {
+        console.error('Error fetching image:', error)
+      })
   }
 })
 
@@ -345,6 +362,12 @@ browserAPI.runtime.onInstalled.addListener(() => {
   browserAPI.contextMenus.create({
     id: 'saveMeme',
     title: 'Save Meme',
+    contexts: ['image', 'audio', 'video'],
+  })
+
+  browserAPI.contextMenus.create({
+    id: 'saveBucketList',
+    title: 'Save Bucket List Item',
     contexts: ['image', 'audio', 'video'],
   })
 })

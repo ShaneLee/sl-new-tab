@@ -2264,6 +2264,13 @@ const pages = [
     feature: 'version-catalogue',
   }),
   new Page({
+    id: 'bucket-list-link',
+    url: `${browserExtension}://${extensionId}/template/bucket-list.html`,
+    name: 'Bucket List',
+    emoji: withEmojis ? '️🪣' : '',
+    feature: 'bucket-list',
+  }),
+  new Page({
     id: 'books-list-link',
     url: `${browserExtension}://${extensionId}/template/books-list.html`,
     name: 'Books List',

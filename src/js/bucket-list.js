@@ -234,7 +234,7 @@ function updatePaginationButtons(data) {
 }
 
 window.onload = () => {
-  fetchFiles('itemsofinterest')
+  fetchFiles('bucket-list')
   addEventListeners()
   addContextMenuListener()
   addModalCloseListener()

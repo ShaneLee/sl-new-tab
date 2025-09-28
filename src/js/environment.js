@@ -20,6 +20,7 @@ const featuresList = [
   new Feature('events', true),
   new Feature('food', true),
   new Feature('idea-bucket', true),
+  new Feature('bucket-list', true),
   new Feature('kanban', true),
   new Feature('logs', true),
   new Feature('memes', true),

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
     <title id="title">New Tab</title>
@@ -8,13 +8,13 @@
     <script src="../js/javascript.js" charset="UTF-8"></script>
     <script src="../js/popup-form.js" charset="UTF-8"></script>
     <script src="../js/jquery-3.5.0.min.js" charset="utf-8"></script>
-    <link rel="stylesheet" type="text/css" href="../css/style.css">
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
   </head>
   <body>
     <div class="tracking-container">
-    <div id="spotify-widget" class="hidden">
+      <div id="spotify-widget" class="hidden">
         <div id="album-art">
-          <img id="album-art-img" src="../img/placeholder.png" alt="Album Art">
+          <img id="album-art-img" src="../img/placeholder.png" alt="Album Art" />
         </div>
         <div class="track-info">
           <div class="scrolling-text track-title" id="track-title">Loading...</div>
@@ -24,59 +24,58 @@
       </div>
       <div id="timer" class="timer-container">
         <span id="timer-text" class="timer-text">
-            <form id="task-form" class="task-form">
-                <input name="task" id="task-input" placeholder="Track task"/>
-                <input name="category" id="task-category-input" placeholder="Category"/>
-                <input name="project" id="project-input" placeholder="Project"/>
-            </form>
-          </span>
+          <form id="task-form" class="task-form">
+            <input name="task" id="task-input" placeholder="Track task" />
+            <input name="category" id="task-category-input" placeholder="Category" />
+            <input name="project" id="project-input" placeholder="Project" />
+          </form>
+        </span>
 
-          <span id="task-name"></span>
-          <span id="timer-values">
-            <span id="hours">00</span>:<span id="minutes">00</span>:<span id="seconds">00</span>
-          </span>
+        <span id="task-name"></span>
+        <span id="timer-values">
+          <span id="hours">00</span>:<span id="minutes">00</span>:<span id="seconds">00</span>
+        </span>
         <button id="task-button" class="play">
           <div id="task-button-icon" class="icon stopped">■</div>
         </button>
       </div>
-      <ul id="events">
-      </ul>
+      <ul id="events"></ul>
       <ul>
-       <li><a id="time-tracking-summary-link"></a></li>
-       <li><a id="ratings-link"></a></li>
-       <li><a id="idea-bucket-link"></a></li>
-       <li><a id="review-link"></a></li>
-       <li><a id="quarter-review-link"></a></li>
-       <li><a id="reading-list-link"></a></li>
-       <li><a id="spend-tracker-link"></a></li>
-       <li><a id="events-link"></a></li>
-       <li><a id="logs-link"></a></li>
-       <li><a id="weight-tracker-link"></a></li>
-       <li><a id="notes-link"></a></li>
-       <li><a id="podcasts-link"></a></li>
-       <li><a id="food-link"></a></li>
-       <li><a id="memes-link"></a></li>
-       <li><a id="kanban-link"></a></li>
-       <li><a id="kanban-week-link"></a></li>
-       <li><a id="version-catalogue-link"></a></li>
-       <li><a id="books-list-link"></a></li>
-       <li><a id="reading-goals-link"></a></li>
-       <li><a id="year-mood-link"></a></li>
-       <li><a id="file-upload-link"></a></li>
+        <li><a id="time-tracking-summary-link"></a></li>
+        <li><a id="ratings-link"></a></li>
+        <li><a id="idea-bucket-link"></a></li>
+        <li><a id="review-link"></a></li>
+        <li><a id="quarter-review-link"></a></li>
+        <li><a id="reading-list-link"></a></li>
+        <li><a id="spend-tracker-link"></a></li>
+        <li><a id="events-link"></a></li>
+        <li><a id="logs-link"></a></li>
+        <li><a id="weight-tracker-link"></a></li>
+        <li><a id="notes-link"></a></li>
+        <li><a id="podcasts-link"></a></li>
+        <li><a id="food-link"></a></li>
+        <li><a id="memes-link"></a></li>
+        <li><a id="kanban-link"></a></li>
+        <li><a id="kanban-week-link"></a></li>
+        <li><a id="version-catalogue-link"></a></li>
+        <li><a id="books-list-link"></a></li>
+        <li><a id="reading-goals-link"></a></li>
+        <li><a id="year-mood-link"></a></li>
+        <li><a id="file-upload-link"></a></li>
+        <li><a id="bucket-list-link"></a></li>
       </ul>
     </div>
     <div class="main" id="main">
-
       <div id="pendingTodos" class="feedback warning hidden"></div>
       <div id="feedback" class="feedback hidden"></div>
       <h5 id="quote" class="quote">I made a prosperous voyage when I suffered shipwreck</h5>
-      <h6 id="author" class"author">Zeno of Citium</h6>
+      <h6 id="author" class="author">Zeno of Citium</h6>
 
       <div class="grid" id="grid-container"></div>
       <h5 id="totalMonthSpend"></h5>
 
       <h5 id="note"></h5>
-      <h5 id="deathCountdown"></h5> 
+      <h5 id="deathCountdown"></h5>
 
       <div class="todo-container">
         <!-- General Context Menu -->
@@ -86,13 +85,17 @@
           <div class="context-menu-item" id="addTagTodoFilterAction">Add Todo Tag Filter</div>
           <div class="context-menu-item" id="addTagsToAllAction">Add Tags to All</div>
           <div class="context-menu-item" id="openSettingsAction">Open Settings</div>
-          <div class="context-menu-item" id="deleteCurrentCategoryAction">Delete Current Category</div>
+          <div class="context-menu-item" id="deleteCurrentCategoryAction">
+            Delete Current Category
+          </div>
           <div class="context-menu-item" id="showCompleteTodosAction">Show Complete Todos</div>
         </div>
         <!-- Todo-specific Context Menu -->
         <div id="todoContextMenu" class="context-menu">
           <div class="context-menu-item" id="editAction">Edit</div>
-          <div class="context-menu-item" id="copyToSubCategoryAction">New Todo Linked to Subcategory</div>
+          <div class="context-menu-item" id="copyToSubCategoryAction">
+            New Todo Linked to Subcategory
+          </div>
           <div class="context-menu-item" id="deleteThisInstanceAction">Delete This Instance</div>
           <div class="context-menu-item" id="deleteAllInstancesAction">Delete This + Future</div>
           <div class="context-menu-item" id="moveNextAction">Move to Next Week</div>
@@ -112,10 +115,14 @@
           <div class="context-menu-item hidden" id="moveAllToFavourite0"></div>
           <div class="context-menu-item hidden" id="moveAllToFavourite1"></div>
           <div class="context-menu-item hidden" id="moveAllToFavourite2"></div>
-          <div class="context-menu-item"
+          <div
+            class="context-menu-item"
             title="The created todo will be associated with this one,
             such that when it is completed, the count of this current todo is incremented"
-          id="addLinkedCountAction">Add Linked Count Todo</div>
+            id="addLinkedCountAction"
+          >
+            Add Linked Count Todo
+          </div>
         </div>
 
         <div id="tags-container" class="hidden tags-container">
@@ -136,20 +143,28 @@
           </div>
           <div class="right">
             <div>
-              <select name="category" id="category-input" class="categories" value="main" style="display:none;">
-              </select>
+              <select
+                name="category"
+                id="category-input"
+                class="categories"
+                value="main"
+                style="display: none"
+              ></select>
             </div>
           </div>
         </div>
-        
+
         <form id="todo-form" class="todo-form">
-          <div contenteditable="true" id="todo-input" class="todo-input" data-placeholder="Create todo"></div>
+          <div
+            contenteditable="true"
+            id="todo-input"
+            class="todo-input"
+            data-placeholder="Create todo"
+          ></div>
           <input type="submit" hidden />
         </form>
 
-        <ul id="todos" class="todos">
-
-        </ul>
+        <ul id="todos" class="todos"></ul>
       </div>
     </div>
   </body>
