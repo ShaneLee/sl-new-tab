@@ -2138,6 +2138,13 @@ const pages = [
     feature: 'events',
   }),
   new Page({
+    id: 'songs-link',
+    url: `${browserExtension}://${extensionId}/template/songs.html`,
+    name: 'Songs',
+    emoji: withEmojis ? '🎵' : '',
+    feature: 'music',
+  }),
+  new Page({
     id: 'memes-link',
     url: `${browserExtension}://${extensionId}/template/memes.html`,
     name: 'Memes',

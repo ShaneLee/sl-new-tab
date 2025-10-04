@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+    <script src="../js/environment.js" charset="UTF-8"></script>
+    <script src="../js/songs.js" charset="UTF-8"></script>
+    <title>Songs</title>
+  </head>
+  <body>
+    <h1>Songs 🎵</h1>
+    <div id="feedback" class="feedback hidden"></div>
+
+    <section>
+      <h1>Add New Song</h1>
+      <form id="songForm" class="default-form">
+        <input type="text" id="song" name="song" placeholder="Song Title" required /><br />
+        <input
+          type="text"
+          id="instrument"
+          name="instrument"
+          placeholder="Instrument"
+          required
+        /><br />
+        <select id="difficulty" name="difficulty" required>
+          <option value="1">1 - Very Hard</option>
+          <option value="2">2 - Hard</option>
+          <option value="3" selected>3 - Medium</option>
+          <option value="4">4 - Easy</option>
+          <option value="5">5 - Very Easy</option></select
+        ><br />
+        <button type="submit">Add Song</button>
+      </form>
+    </section>
+
+    <section class="songs-list">
+      <h2>Your Songs</h2>
+      <div id="songs-container"></div>
+    </section>
+
+    <div id="songContextMenu" class="context-menu">
+      <div class="context-menu-item" id="deleteAction">Delete</div>
+    </div>
+
+    <template id="song-template">
+      <div class="song-item">
+        <span class="song-title"></span> (<span class="song-instrument"></span>)
+        <span class="song-status"></span>
+
+        <form class="practice-form" style="display: inline-block; margin-left: 10px">
+          <label for="difficulty">Difficulty:</label>
+          <select name="difficulty" required>
+            <option value="5">Very Easy</option>
+            <option value="4">Easy</option>
+            <option value="3" selected>Medium</option>
+            <option value="2">Hard</option>
+            <option value="1">Very Hard</option>
+          </select>
+          <button type="submit">Practice</button>
+        </form>
+      </div>
+    </template>
+  </body>
+</html>

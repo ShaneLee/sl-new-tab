@@ -34,6 +34,7 @@ const featuresList = [
   new Feature('time-tracking', true),
   new Feature('version-catalogue', true),
   new Feature('weight-tracking', true),
+  new Feature('music', true),
   new Feature('spotify', true),
 ]
 
@@ -42,6 +43,11 @@ const features = new Map(featuresList.map(feature => [feature.name, feature]))
 
 const headers = {
   'Content-Type': 'application/json',
+  Authorization: `Bearer ${localStorage.getItem('token')}`,
+}
+
+const formUrlEncodedHeaders = {
+  'Content-Type': 'application/x-www-form-urlencoded',
   Authorization: `Bearer ${localStorage.getItem('token')}`,
 }
 
@@ -146,6 +152,11 @@ const loginEndpoint = `${host}/v1/login`
 const registerEndpoint = `${host}/v1/register`
 const spendCategoriesEndpoint = `${host}/spend-category`
 const wellEndpoint = type => `${host}/well?rangeType=${type}`
+
+// Music
+const songsEndpoint = `${host}/music/songs`
+const recordPracticeFn = id => `${host}/music/songs/${id}/practice`
+const reviewSongsEndpoint = `${host}/music/songs/review`
 
 // Books
 const readBooksEndpoint = `${host}/book?shelf=read`
