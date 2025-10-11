@@ -491,6 +491,35 @@ function deathCountdown() {
   return Math.abs(today.diff(moment('1994-03-28'), 'weeks'))
 }
 
+function updateTimeLeft(targetHour = 21, targetMinute = 30, autoUpdate = true) {
+  const countdownEl = document.getElementById('hoursRemaining')
+
+  function calculateAndRender() {
+    const now = new Date()
+    const target = new Date()
+    target.setHours(targetHour, targetMinute, 0, 0)
+
+    // If time has already passed today, set target to tomorrow
+    if (now > target) {
+      target.setDate(target.getDate() + 1)
+    }
+
+    const diffMs = target - now
+    const totalMinutes = Math.floor(diffMs / 1000 / 60)
+    const hours = Math.floor(totalMinutes / 60)
+    const minutes = totalMinutes % 60
+
+    countdownEl.textContent = `${hours}h ${minutes}m`
+  }
+
+  calculateAndRender()
+
+  if (autoUpdate) {
+    // Update every minute (60000 ms)
+    setInterval(calculateAndRender, 60000)
+  }
+}
+
 function importantTodos() {
   return api(importantEndpointFn(IMPORTANT_TODO_DISPLAY_COUNT), {
     method: 'GET',
@@ -2449,4 +2478,5 @@ window.onload = function () {
     }
   })
   todoForm()
+  updateTimeLeft()
 }
