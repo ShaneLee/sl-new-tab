@@ -1,5 +1,5 @@
 host = 'http://localhost:8080'
-host = 'http://192.168.0.46:8080'
+host = 'http://192.168.0.12:8080'
 
 const isChrome = /Chrome/.test(navigator.userAgent)
 const browserExtension = isChrome ? 'chrome-extension' : 'moz-extension'

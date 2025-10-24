@@ -2182,7 +2182,7 @@ const pages = [
   }),
   new Page({
     id: 'logs-link',
-    url: `http://192.168.0.46/logs`,
+    url: `${host.replace(':8080', '')}/logs`,
     name: 'Logs',
     emoji: withEmojis ? '🤖' : '',
     shortcut: ',l',

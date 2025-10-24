@@ -1,10 +1,11 @@
 host = 'http://localhost:8080'
-host = 'http://192.168.0.46:8080'
+host = 'http://192.168.0.12:8080'
 const webTrackerEndpoint = `${host}/tracking/web`
 const readingListEndpoint = `${host}/reading-list`
 const stopEndpoint = `${host}/tracking/web/stop`
 const podcastSubscribeEndpoint = `${host}/podcast/subscribe`
 const fileUploadEndpoint = `${host}/files/upload`
+const fileUploadUrlEndpoint = `${host}/files/upload/url`
 const podcastListenLater = `${host}/podcast/listenLater`
 const bookShelfEndpoint = `${host}/book/shelf`
 const webTrackingEnabled = false
@@ -47,13 +48,13 @@ function saveBookAsToRead(req) {
   })
 }
 
-function saveFile(file, metadata) {
+function saveFile(imageUrl, metadata) {
   const metadataBlob = new Blob([JSON.stringify(metadata)], { type: 'application/json' })
   const formData = new FormData()
-  formData.append('file', file)
+  formData.append('url', imageUrl)
   formData.append('metadata', metadataBlob)
 
-  return fetch(fileUploadEndpoint, {
+  return fetch(fileUploadUrlEndpoint, {
     method: 'POST',
     headers: noContentTypeHeaders,
     body: formData,
@@ -269,38 +270,23 @@ browserAPI.contextMenus.onClicked.addListener((info, tab) => {
     })
   } else if (info.menuItemId === 'saveMeme') {
     const imageUrl = info.srcUrl
-
-    fetch(imageUrl)
-      .then(response => response.blob())
-      .then(blob => {
-        const file = new File([blob], basename(info.srcUrl), { type: blob.type })
-        const metadata = {
-          category: 'itemsofinterest',
-          fileName: `memes/${basename(file.name)}`,
-          notes: `Source: ${info.pageUrl}`,
-        }
-        saveFile(file, metadata)
-      })
-      .catch(error => {
-        console.error('Error fetching image:', error)
-      })
+    const name = basename(imageUrl)
+    const metadata = {
+      category: 'itemsofinterest',
+      fileName: `${basename(name)}`,
+      notes: `Source: ${info.pageUrl}`,
+    }
+    saveFile(imageUrl, metadata)
   } else if (info.menuItemId === 'saveBucketList') {
     const imageUrl = info.srcUrl
+    const name = basename(imageUrl)
 
-    fetch(imageUrl)
-      .then(response => response.blob())
-      .then(blob => {
-        const file = new File([blob], basename(info.srcUrl), { type: blob.type })
-        const metadata = {
-          category: 'bucket-list',
-          fileName: `${basename(file.name)}`,
-          notes: `Source: ${info.pageUrl}`,
-        }
-        saveFile(file, metadata)
-      })
-      .catch(error => {
-        console.error('Error fetching image:', error)
-      })
+    const metadata = {
+      category: 'bucket-list',
+      fileName: `${basename(name)}`,
+      notes: `Source: ${info.pageUrl}`,
+    }
+    saveFile(imageUrl, metadata)
   }
 })
 
