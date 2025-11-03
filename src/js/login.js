@@ -139,7 +139,8 @@ function verifyCode(email, code) {
     if (res?.status >= 200 && res?.status <= 299) {
       const data = await res.json()
       const token = data.token
-      await chrome.storage.local.set({ authToken: token })
+      localStorage.setItem('token', token)
+      headers.Authorization = `Bearer ${token}`
       withFeedbackMessage('success', '✅ Login successful!')
       setTimeout(() => {
         window.location.href = `${browserExtension}://${extensionId}/template/settings.html`
