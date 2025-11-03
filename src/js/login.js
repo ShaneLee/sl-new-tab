@@ -83,16 +83,35 @@ function showCodeEntry(email) {
   const inputs = document.querySelectorAll('.otp-box')
   inputs[0].focus()
 
-  // Auto-advance between inputs
   inputs.forEach((input, idx) => {
+    // Handle single input typing
     input.addEventListener('input', e => {
-      const val = e.target.value
-      if (/\\D/.test(val)) e.target.value = '' // only digits
+      const val = e.target.value.replace(/\D/g, '') // only digits
+      e.target.value = val
       if (val && idx < inputs.length - 1) inputs[idx + 1].focus()
     })
+
+    // Handle backspace navigation
     input.addEventListener('keydown', e => {
       if (e.key === 'Backspace' && !input.value && idx > 0) {
         inputs[idx - 1].focus()
+      }
+    })
+
+    // Handle paste (supports entire code)
+    input.addEventListener('paste', e => {
+      e.preventDefault()
+      const pasted = (e.clipboardData || window.clipboardData).getData('text').trim()
+      const digits = pasted.replace(/\D/g, '').split('').slice(0, 6)
+
+      digits.forEach((digit, i) => {
+        if (inputs[i]) inputs[i].value = digit
+      })
+
+      if (digits.length === 6) {
+        verifyCode(email, digits.join(''))
+      } else if (digits.length > idx) {
+        inputs[Math.min(digits.length, inputs.length) - 1].focus()
       }
     })
   })
@@ -103,7 +122,11 @@ function showCodeEntry(email) {
     const code = Array.from(inputs)
       .map(i => i.value)
       .join('')
-    verifyCode(email, code)
+    if (code.length === 6) {
+      verifyCode(email, code)
+    } else {
+      withFeedbackMessage('warning', 'Please enter all 6 digits.')
+    }
   })
 }
 
