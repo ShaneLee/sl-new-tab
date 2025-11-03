@@ -149,6 +149,7 @@ const eventEndpoint = `${host}/event`
 const transactionToDeductEndpoint = `${host}/transaction/to-deduct`
 const transactionToDeductEndpointFn = end => `${host}/transaction/to-deduct?endInclusive=${end}`
 const loginEndpoint = `${host}/v1/login`
+const loginV2Endpoint = `${host}/v2/login`
 const registerEndpoint = `${host}/v1/register`
 const spendCategoriesEndpoint = `${host}/spend-category`
 const wellEndpoint = type => `${host}/well?rangeType=${type}`
