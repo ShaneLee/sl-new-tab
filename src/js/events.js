@@ -92,9 +92,32 @@ function renderEvents(events, view, containerId) {
   filteredEvents.forEach(event => {
     const div = document.createElement('div')
     div.className = 'event'
-    div.innerHTML = `<strong>${event.name}</strong> (${event.date})<br>Time: ${event.startTime} - ${
-      event.endTime
-    }<br>Notes: ${event.notes || 'None'}`
+
+    const startDate = event.date
+    const endDate = event.toDate ? `–${event.toDate}` : ''
+    const dateDisplay = `${startDate}${endDate}`
+
+    let inner
+
+    if (event.toDate) {
+      // Multi-day event: no time fields
+      inner = `
+      <strong>${event.name}</strong> (${dateDisplay})<br>
+      Notes: ${event.notes || 'None'}
+    `
+    } else {
+      // Single-day event: include times
+      const startTime = event.startTime?.slice(0, 5) || ''
+      const endTime = event.endTime?.slice(0, 5) || ''
+
+      inner = `
+      <strong>${event.name}</strong> (${dateDisplay})<br>
+      Time: ${startTime} - ${endTime}<br>
+      Notes: ${event.notes || 'None'}
+    `
+    }
+
+    div.innerHTML = inner.trim()
     div.addEventListener('contextmenu', function (e) {
       if (!!contextMenu) {
         hideContextMenu()

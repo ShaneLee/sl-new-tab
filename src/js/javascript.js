@@ -241,13 +241,22 @@ function displayEvents(events) {
     .forEach(val => {
       const listItem = document.createElement('li')
 
-      // Format the date, start time, and optionally the end time
-      const eventDate = val.date
-      const startTime = val.startTime.slice(0, 5) // Truncate seconds from start time
-      const endTime = val.endTime ? ` - ${val.endTime.slice(0, 5)}` : '' // Truncate seconds from end time if present
+      const startDate = val.date
+      const endDate = val.toDate ? `-${val.toDate}` : ''
       const eventName = val.name
 
-      const displayText = `${eventDate} - ${startTime}${endTime} - ${eventName}`
+      let displayText
+
+      if (val.toDate) {
+        // Multi-day event → show date range only
+        displayText = `${startDate}${endDate} - ${eventName}`
+      } else {
+        // Single-day event → include times
+        const startTime = val.startTime.slice(0, 5)
+        const endTime = val.endTime ? ` - ${val.endTime.slice(0, 5)}` : ''
+        displayText = `${startDate} - ${startTime}${endTime} - ${eventName}`
+      }
+
       listItem.textContent = displayText
 
       // Add a tooltip with the notes if they exist
