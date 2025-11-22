@@ -1,6 +1,6 @@
 function variables() {
   host = 'http://localhost:8080'
-  host = 'http://192.168.0.46:8080'
+  host = 'http://192.168.0.12:8080'
   const bucketEndpoint = `${host}/bucket`
   const headers = {
     'Content-Type': 'application/json',
