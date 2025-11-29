@@ -221,6 +221,7 @@ const foodItemCsvEndpoint = `${host}/nutrition/food/item/csv`
 const filesEndpointFn = (category, page, size) =>
   `${host}/files?category=${category}&page=${page}&size=${size}`
 const fileUploadEndpoint = `${host}/files/upload`
+const fileUploadUrlEndpoint = `${host}/files/upload/url`
 
 // Spotify Endpoints
 const spotifyCallbackEndpointFn = code => `${host}/spotify/callback?code=${code}`
@@ -464,4 +465,8 @@ class CircularQueue {
     this.elements.unshift(element)
     return element
   }
+}
+
+function basename(path) {
+  return path.split('/').reverse()[0]
 }

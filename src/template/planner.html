@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>2026 Planner</title>
+    <title>Planner ⌨️</title>
     <script src="../js/environment.js" charset="UTF-8"></script>
     <script src="../js/planner.js" charset="UTF-8"></script>
     <link rel="stylesheet" type="text/css" href="../css/style.css" />
@@ -153,8 +153,9 @@
         </select>
         <button id="addBtn">Add</button>
         <label class="file-btn" title="Upload image or video">
-          <input id="fileInput" type="file" accept="image/*,video/*" />Upload
+          <input id="fileInput" type="file" accept="image/*,video/*" />Upload File
         </label>
+        <button id="uploadByUrlBtn">Upload by URL</button>
         <button id="exportBtn">Export JSON</button>
         <button id="importBtn">Import JSON</button>
         <button id="clearBtn">Clear</button>
@@ -164,7 +165,7 @@
     <div id="contextMenu" class="context-menu">
       <div class="context-menu-item" id="openSettingsAction">Open Settings</div>
       <div class="context-menu-item" id="deleteElementAction">Delete Current Element</div>
-      <div class="context-menu-item" id="editAction">Edit Current Element</div>
+      <div class="context-menu-item" id="editElementAction">Edit Current Element</div>
       <!-- <div class="context-menu-item" id="showCompleteTodosAction">Show Complete Todos</div> -->
     </div>
     <!-- Todo-specific Context Menu -->

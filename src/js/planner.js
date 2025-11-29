@@ -10,10 +10,65 @@ let TODOS_SET = new Set()
 const DEFAULT_TAG_COLOURS = new CircularQueue(['red', 'yellow', 'green', 'cyan'])
 const TAG_COLOURS = new Map()
 const withEmojis = true
+const uploadingEnabled = false
 
 let currentPlannerName = '2026'
 const PLANNERS_STORAGE_KEY = 'planner-names'
 const PLANNER_ELEMENTS_STORAGE_PREFIX = 'planner-elements-'
+
+function uploadFile(file) {
+  const formData = new FormData()
+  formData.append('file', file)
+  const metadata = {
+    category: 'planner',
+    fileName: $`planner/${file.name}`,
+    notes: `Source: ${url}`,
+  }
+
+  const metadataBlob = new Blob([JSON.stringify(metadata)], { type: 'application/json' })
+  formData.append('metadata', metadataBlob)
+
+  return fetch(fileUploadEndpoint, {
+    method: 'POST',
+    headers: noContentTypeHeaders,
+    body: formData,
+  }).then(response => {
+    if (!response.ok) throw new Error('Upload failed')
+    return response.json()
+  })
+}
+
+function uploadFileByUrl(url) {
+  if (uploadingEnabled === false) {
+    return Promise.resolve({
+      filePath: url,
+    })
+  }
+  const name = basename(url)
+  const metadata = {
+    category: 'planner',
+    fileName: `${basename(name)}`,
+    notes: `Source: ${url}`,
+  }
+
+  const metadataBlob = new Blob([JSON.stringify(metadata)], { type: 'application/json' })
+  const formData = new FormData()
+  formData.append('url', url)
+  formData.append('metadata', metadataBlob)
+
+  return fetch(fileUploadUrlEndpoint, {
+    method: 'POST',
+    headers: noContentTypeHeaders,
+    body: formData,
+  }).then(response => response?.json())
+}
+
+function getFileUrl(filePath) {
+  if (filePath.startsWith('http://') || filePath.startsWith('https://')) {
+    return filePath
+  }
+  return `${host.replace(':8080', '')}/synco/${filePath}`
+}
 
 function getPlannerStorageKey(plannerName) {
   return PLANNER_ELEMENTS_STORAGE_PREFIX + plannerName
@@ -661,18 +716,23 @@ document.addEventListener('DOMContentLoaded', async function () {
       })
       card.appendChild(ul)
     } else if (el.type === 'image') {
-      if (el.src) {
+      if (el.filePath) {
         const img = document.createElement('img')
-        img.src = el.src
+        img.src = getFileUrl(el.filePath)
         img.className = 'responsive'
+        img.style.maxWidth = '100%'
+        img.style.maxHeight = '100%'
+        img.style.objectFit = 'contain'
         card.appendChild(img)
       }
     } else if (el.type === 'video') {
-      if (el.src) {
+      if (el.filePath) {
         const vid = document.createElement('video')
-        vid.src = el.src
+        vid.src = getFileUrl(el.filePath)
         vid.controls = true
         vid.className = 'responsive'
+        vid.style.maxWidth = '100%'
+        vid.style.maxHeight = '100%'
         card.appendChild(vid)
       }
     }
@@ -760,25 +820,72 @@ document.addEventListener('DOMContentLoaded', async function () {
   })
 
   const fileInput = document.getElementById('fileInput')
-  fileInput?.addEventListener('change', e => {
+  fileInput?.addEventListener('change', async e => {
     const file = e.target.files[0]
     if (!file) return
-    const type = file.type.startsWith('image') ? 'image' : 'video'
-    const src = URL.createObjectURL(file)
-    const el = {
-      id: generateId(),
-      type,
-      title: file.name,
-      x: 40,
-      y: 40,
-      width: '300px',
-      height: '200px',
-      src,
+
+    try {
+      const response = await uploadFile(file)
+      const fileData = response
+
+      const type = file.type.startsWith('image') ? 'image' : 'video'
+      const el = {
+        id: generateId(),
+        type,
+        title: file.name,
+        x: 40,
+        y: 40,
+        width: '300px',
+        height: '200px',
+        filePath: fileData.filePath, // Store filePath instead of src
+      }
+      elements.push(el)
+      saveElements()
+      renderAll()
+      fileInput.value = ''
+    } catch (error) {
+      console.error('File upload error:', error)
+      alert('Failed to upload file')
     }
-    elements.push(el)
-    saveElements()
-    renderAll()
-    fileInput.value = ''
+  })
+
+  const uploadByUrlBtn = document.getElementById('uploadByUrlBtn')
+  uploadByUrlBtn?.addEventListener('click', async () => {
+    const url = prompt('Enter image or video URL:')
+    if (!url) return
+
+    const isImage = /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(url)
+    const isVideo = /\.(mp4|webm|ogg|mov|mkv)$/i.test(url)
+
+    if (!isImage && !isVideo) {
+      alert('Please enter a valid image or video URL')
+      return
+    }
+
+    try {
+      const response = await uploadFileByUrl(url)
+      const fileData = response
+
+      const type = isImage ? 'image' : 'video'
+      const fileName = url.split('/').pop() || 'untitled'
+
+      const el = {
+        id: generateId(),
+        type,
+        title: fileName,
+        x: 40,
+        y: 40,
+        width: '300px',
+        height: '200px',
+        filePath: fileData.filePath, // Store filePath from backend response
+      }
+      elements.push(el)
+      saveElements()
+      renderAll()
+    } catch (error) {
+      console.error('URL upload error:', error)
+      alert('Failed to upload file from URL')
+    }
   })
 
   document.getElementById('exportBtn')?.addEventListener('click', () => {
@@ -820,7 +927,7 @@ document.addEventListener('DOMContentLoaded', async function () {
   })
 
   // Context Menu Actions
-  document.getElementById('deleteCurrentCategoryAction')?.addEventListener('click', () => {
+  document.getElementById('deleteElementAction')?.addEventListener('click', () => {
     if (selectedElement) {
       elements = elements.filter(el => el.id !== selectedElement.id)
       saveElements()
@@ -829,7 +936,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
   })
 
-  document.getElementById('editAction')?.addEventListener('click', () => {
+  document.getElementById('editElementAction')?.addEventListener('click', () => {
     if (selectedElement) {
       const newTitle = prompt('Edit element title', selectedElement.title || '')
       if (newTitle !== null) selectedElement.title = newTitle

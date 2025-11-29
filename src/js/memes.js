@@ -74,7 +74,7 @@ function displayFiles(files) {
   const filesDiv = document.getElementById('files')
   filesDiv.innerHTML = ''
 
-  mediaFiles = files.map(file => file.replace('https:', 'http:'))
+  mediaFiles = files.map(file => file.replace('https:', 'http:').replace(':8080', ''))
 
   mediaFiles.forEach((file, index) => {
     const fileDiv = document.createElement('div')
