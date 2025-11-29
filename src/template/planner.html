@@ -98,9 +98,68 @@
     </style>
   </head>
   <body>
-    <h2 class="text-center">2026 Planner</h2>
-    <p class="text-center">Todos shown below load dynamically from your backend on each refresh.</p>
+    <div id="main" class="main">
+      <div
+        style="
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 10px;
+        "
+      >
+        <div>
+          <h2 class="text-center">Planner</h2>
+          <p class="text-center">
+            Todos shown below load dynamically from your backend on each refresh.
+          </p>
+        </div>
+        <div style="display: flex; gap: 8px; align-items: center">
+          <select
+            id="plannerSelect"
+            style="
+              padding: 8px;
+              border-radius: 6px;
+              border: 1px solid rgba(255, 255, 255, 0.1);
+              background: var(--dark-grey);
+              color: var(--text-color);
+            "
+          ></select>
+          <button
+            id="createPlannerBtn"
+            style="
+              padding: 8px 12px;
+              border-radius: 6px;
+              border: 1px solid rgba(255, 255, 255, 0.1);
+              background: var(--dark-grey);
+              color: var(--text-color);
+              cursor: pointer;
+            "
+          >
+            + New Planner
+          </button>
+        </div>
+      </div>
 
+      <div class="toolbar">
+        <input id="newTitle" type="text" placeholder="New element title" />
+        <select id="typeSelect">
+          <option value="note">Note</option>
+          <option value="list">Todos List</option>
+          <option value="image">Image</option>
+          <option value="video">Video</option>
+        </select>
+        <select id="categorySelect" style="display: none">
+          <option value="">Select category</option>
+        </select>
+        <button id="addBtn">Add</button>
+        <label class="file-btn" title="Upload image or video">
+          <input id="fileInput" type="file" accept="image/*,video/*" />Upload
+        </label>
+        <button id="exportBtn">Export JSON</button>
+        <button id="importBtn">Import JSON</button>
+        <button id="clearBtn">Clear</button>
+      </div>
+    </div>
     <!-- General Context Menu -->
     <div id="contextMenu" class="context-menu">
       <div class="context-menu-item" id="openSettingsAction">Open Settings</div>
@@ -142,27 +201,6 @@
         Add Linked Count Todo
       </div>
     </div>
-
-    <div class="toolbar">
-      <input id="newTitle" type="text" placeholder="New element title" />
-      <select id="typeSelect">
-        <option value="note">Note</option>
-        <option value="list">Todos List</option>
-        <option value="image">Image</option>
-        <option value="video">Video</option>
-      </select>
-      <select id="categorySelect" style="display: none">
-        <option value="">Select category</option>
-      </select>
-      <button id="addBtn">Add</button>
-      <label class="file-btn" title="Upload image or video">
-        <input id="fileInput" type="file" accept="image/*,video/*" />Upload
-      </label>
-      <button id="exportBtn">Export JSON</button>
-      <button id="importBtn">Import JSON</button>
-      <button id="clearBtn">Clear</button>
-    </div>
-
     <div id="stage"></div>
 
     <!-- Existing context menus should already exist in the parent page -->

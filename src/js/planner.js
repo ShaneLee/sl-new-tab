@@ -11,6 +11,38 @@ const DEFAULT_TAG_COLOURS = new CircularQueue(['red', 'yellow', 'green', 'cyan']
 const TAG_COLOURS = new Map()
 const withEmojis = true
 
+let currentPlannerName = '2026'
+const PLANNERS_STORAGE_KEY = 'planner-names'
+const PLANNER_ELEMENTS_STORAGE_PREFIX = 'planner-elements-'
+
+function getPlannerStorageKey(plannerName) {
+  return PLANNER_ELEMENTS_STORAGE_PREFIX + plannerName
+}
+
+function getAllPlannerNames() {
+  const raw = localStorage.getItem(PLANNERS_STORAGE_KEY)
+  if (!raw) return ['2026']
+  try {
+    return JSON.parse(raw)
+  } catch {
+    return ['2026']
+  }
+}
+
+function savePlannerNames(names) {
+  localStorage.setItem(PLANNERS_STORAGE_KEY, JSON.stringify(names))
+}
+
+function createNewPlanner(plannerName) {
+  const names = getAllPlannerNames()
+  if (!names.includes(plannerName)) {
+    names.push(plannerName)
+    savePlannerNames(names)
+  }
+  currentPlannerName = plannerName
+  return plannerName
+}
+
 function getTodosForCategory(category) {
   const endpoint = todosForCategoryEndpointFn(category)
   return api(endpoint, {
@@ -413,11 +445,8 @@ function renderTodoElement(todo) {
 }
 
 document.addEventListener('DOMContentLoaded', async function () {
-  console.log('Planner2026 integrated')
-
   const stage = document.getElementById('stage')
   if (!stage) {
-    console.warn('Planner stage not found — ensure planner HTML loaded')
     return
   }
 
@@ -427,11 +456,10 @@ document.addEventListener('DOMContentLoaded', async function () {
   stage.style.position = 'relative'
   stage.style.cursor = 'grab'
 
-  const STORAGE_KEY = 'planner2026-elements-v1'
   let elements = loadElements()
 
   function loadElements() {
-    const raw = localStorage.getItem(STORAGE_KEY)
+    const raw = localStorage.getItem(getPlannerStorageKey(currentPlannerName))
     if (!raw) return []
     try {
       return JSON.parse(raw)
@@ -441,8 +469,53 @@ document.addEventListener('DOMContentLoaded', async function () {
   }
 
   function saveElements() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(elements))
+    localStorage.setItem(getPlannerStorageKey(currentPlannerName), JSON.stringify(elements))
   }
+
+  // Update page title
+  function updatePageTitle() {
+    document.querySelector('h2').textContent = `${currentPlannerName} Planner`
+  }
+
+  // Planner selector
+  const plannerSelect = document.getElementById('plannerSelect')
+  const createPlannerBtn = document.getElementById('createPlannerBtn')
+
+  function updatePlannerSelect() {
+    const plannerNames = getAllPlannerNames()
+    plannerSelect.innerHTML = ''
+    plannerNames.forEach(name => {
+      const option = document.createElement('option')
+      option.value = name
+      option.textContent = name
+      option.selected = name === currentPlannerName
+      plannerSelect.appendChild(option)
+    })
+  }
+
+  updatePlannerSelect()
+
+  plannerSelect.addEventListener('change', e => {
+    currentPlannerName = e.target.value
+    elements = loadElements()
+    updatePageTitle()
+    renderAll()
+  })
+
+  createPlannerBtn.addEventListener('click', () => {
+    const plannerName = prompt('Enter new planner name:')
+    if (plannerName && plannerName.trim()) {
+      createNewPlanner(plannerName.trim())
+      updatePlannerSelect()
+      plannerSelect.value = plannerName.trim()
+      elements = []
+      saveElements()
+      updatePageTitle()
+      renderAll()
+    }
+  })
+
+  updatePageTitle()
 
   // Stage panning
   stage.addEventListener('pointerdown', e => {
@@ -712,7 +785,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(elements))
     const dlAnchor = document.createElement('a')
     dlAnchor.setAttribute('href', dataStr)
-    dlAnchor.setAttribute('download', 'planner-export.json')
+    dlAnchor.setAttribute('download', `planner-${currentPlannerName}-export.json`)
     dlAnchor.click()
   })
 
@@ -739,7 +812,7 @@ document.addEventListener('DOMContentLoaded', async function () {
   })
 
   document.getElementById('clearBtn')?.addEventListener('click', () => {
-    if (confirm('Clear all elements?')) {
+    if (confirm('Clear all elements in this planner?')) {
       elements = []
       saveElements()
       renderAll()
@@ -769,7 +842,7 @@ document.addEventListener('DOMContentLoaded', async function () {
   // Todo Context Menu Actions
   const deleteThisInstanceAction = document.getElementById('deleteThisInstanceAction')
   const deleteAllInstancesAction = document.getElementById('deleteAllInstancesAction')
-  const editAction = document.getElementById('editTodoAction')
+  const editTodoAction = document.getElementById('editTodoAction')
   const editDueDateAction = document.getElementById('editDueDateAction')
   const removeDueDateAction = document.getElementById('removeDueDateAction')
   const openLinkAction = document.getElementById('openLinkAction')
@@ -797,8 +870,8 @@ document.addEventListener('DOMContentLoaded', async function () {
     })
   }
 
-  if (editAction) {
-    editAction.addEventListener('click', function () {
+  if (editTodoAction) {
+    editTodoAction.addEventListener('click', function () {
       const todo = selectedTodo
       const todoForm = createTodoEditForm(todo, update)
       showPopupForm(todoForm)
