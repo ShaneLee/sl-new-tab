@@ -2178,6 +2178,13 @@ const pages = [
     feature: 'events',
   }),
   new Page({
+    id: 'planner-link',
+    url: `${browserExtension}://${extensionId}/template/planner.html`,
+    name: 'Planner',
+    emoji: withEmojis ? '⌨️' : '',
+    feature: 'planner',
+  }),
+  new Page({
     id: 'songs-link',
     url: `${browserExtension}://${extensionId}/template/songs.html`,
     name: 'Songs',

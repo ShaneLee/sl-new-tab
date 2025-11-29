@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>2026 Planner</title>
+    <script src="../js/environment.js" charset="UTF-8"></script>
+    <script src="../js/planner.js" charset="UTF-8"></script>
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+    <style>
+      /* Planner-specific minimal styling */
+      #stage {
+        position: relative;
+        width: 100%;
+        height: calc(100vh - 60px);
+        border: 1px solid var(--light-grey);
+        border-radius: 8px;
+        background: var(--very-dark);
+        overflow: hidden;
+        margin-top: 10px;
+      }
+
+      .card {
+        position: absolute;
+        background: var(--dark-grey);
+        color: var(--text-color);
+        border: 1px solid var(--light-grey);
+        border-radius: 8px;
+        padding: 10px;
+        box-shadow: 0 4px 6px var(--off-black);
+        min-width: 280px;
+        user-select: none;
+      }
+
+      .title {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .title h3 {
+        margin: 0;
+        font-size: 1.3rem;
+        font-family: var(--font-family);
+        color: var(--text-color);
+      }
+
+      .controls {
+        display: flex;
+        gap: 6px;
+      }
+
+      .handle {
+        cursor: grab;
+        padding: 4px;
+        background: var(--medium-grey);
+        border-radius: 4px;
+        font-size: 14px;
+        color: var(--highlighted-todo-color);
+      }
+
+      ul.backend-todo-list li {
+        padding: 6px 4px;
+        border-bottom: 1px solid var(--light-grey);
+        cursor: pointer;
+      }
+
+      .toolbar {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        margin-bottom: 8px;
+      }
+
+      .toolbar input[type='text'],
+      .toolbar select,
+      .toolbar button {
+        padding: 6px 8px;
+        border-radius: 6px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: var(--dark-grey);
+        color: var(--text-color);
+      }
+
+      label.file-btn {
+        cursor: pointer;
+        border: 1px dashed rgba(255, 255, 255, 0.1);
+        padding: 6px 8px;
+        border-radius: 6px;
+        color: var(--text-color);
+        background: var(--dark-grey);
+      }
+
+      input[type='file'] {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <h2 class="text-center">2026 Planner</h2>
+    <p class="text-center">Todos shown below load dynamically from your backend on each refresh.</p>
+
+    <!-- General Context Menu -->
+    <div id="contextMenu" class="context-menu">
+      <div class="context-menu-item" id="openSettingsAction">Open Settings</div>
+      <div class="context-menu-item" id="deleteElementAction">Delete Current Element</div>
+      <div class="context-menu-item" id="editAction">Edit Current Element</div>
+      <!-- <div class="context-menu-item" id="showCompleteTodosAction">Show Complete Todos</div> -->
+    </div>
+    <!-- Todo-specific Context Menu -->
+    <div id="todoContextMenu" class="context-menu">
+      <div class="context-menu-item" id="editAction">Edit</div>
+      <div class="context-menu-item" id="copyToSubCategoryAction">
+        New Todo Linked to Subcategory
+      </div>
+      <div class="context-menu-item" id="deleteThisInstanceAction">Delete This Instance</div>
+      <div class="context-menu-item" id="deleteAllInstancesAction">Delete This + Future</div>
+      <div class="context-menu-item" id="moveNextAction">Move to Next Week</div>
+      <div class="context-menu-item" id="changeCategoryAction">Change Category</div>
+      <div class="context-menu-item" id="thisWeekCategoryAction">Move to This Week</div>
+      <div class="context-menu-item" id="editDueDateAction">Edit Due Date</div>
+      <div class="context-menu-item" id="removeDueDateAction">Remove Due Date</div>
+      <div class="context-menu-item" id="moveToIdeaAction">Move to Idea</div>
+      <div class="context-menu-item" id="openLinkAction">Open Link</div>
+      <div class="context-menu-item" id="markImportantAction">Mark Important</div>
+      <div class="context-menu-item" id="addTagAction">Add Tags</div>
+      <div class="context-menu-item" id="addNotesAction">Add Notes</div>
+      <div class="context-menu-item" id="openInSearchEngineAction">Open in Search Engine</div>
+      <div class="context-menu-item hidden" id="moveToFavourite0"></div>
+      <div class="context-menu-item hidden" id="moveToFavourite1"></div>
+      <div class="context-menu-item hidden" id="moveToFavourite2"></div>
+      <div class="context-menu-item hidden" id="moveAllToFavourite0"></div>
+      <div class="context-menu-item hidden" id="moveAllToFavourite1"></div>
+      <div class="context-menu-item hidden" id="moveAllToFavourite2"></div>
+      <div
+        class="context-menu-item"
+        title="The created todo will be associated with this one,
+            such that when it is completed, the count of this current todo is incremented"
+        id="addLinkedCountAction"
+      >
+        Add Linked Count Todo
+      </div>
+    </div>
+
+    <div class="toolbar">
+      <input id="newTitle" type="text" placeholder="New element title" />
+      <select id="typeSelect">
+        <option value="note">Note</option>
+        <option value="list">Todos List</option>
+        <option value="image">Image</option>
+        <option value="video">Video</option>
+      </select>
+      <select id="categorySelect" style="display: none">
+        <option value="">Select category</option>
+      </select>
+      <button id="addBtn">Add</button>
+      <label class="file-btn" title="Upload image or video">
+        <input id="fileInput" type="file" accept="image/*,video/*" />Upload
+      </label>
+      <button id="exportBtn">Export JSON</button>
+      <button id="importBtn">Import JSON</button>
+      <button id="clearBtn">Clear</button>
+    </div>
+
+    <div id="stage"></div>
+
+    <!-- Existing context menus should already exist in the parent page -->
+    <!-- e.g., <div id="todoContextMenu"></div> -->
+  </body>
+</html>

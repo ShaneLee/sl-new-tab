@@ -36,6 +36,7 @@ const featuresList = [
   new Feature('weight-tracking', true),
   new Feature('music', true),
   new Feature('spotify', true),
+  new Feature('planner', true),
 ]
 
 // TODO feature map should be the feature flags source of truth
