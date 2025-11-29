@@ -29,18 +29,6 @@ let startX, startY
 let selectionBox
 const SELECTED_TODOS = new Set()
 
-class CircularQueue {
-  constructor(elements) {
-    this.elements = elements
-  }
-
-  get() {
-    const element = this.elements.pop()
-    this.elements.unshift(element)
-    return element
-  }
-}
-
 const TAG_COLOURS = new Map()
 
 const DEFAULT_TAG_COLOURS = new CircularQueue(['red', 'yellow', 'green', 'cyan'])

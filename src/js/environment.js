@@ -453,3 +453,15 @@ function setTheme(theme) {
   const root = document.documentElement
   theme.forEach((value, key) => root.style.setProperty(key, value))
 }
+
+class CircularQueue {
+  constructor(elements) {
+    this.elements = elements
+  }
+
+  get() {
+    const element = this.elements.pop()
+    this.elements.unshift(element)
+    return element
+  }
+}
