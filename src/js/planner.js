@@ -16,6 +16,11 @@ let currentPlannerName = '2026'
 const PLANNERS_STORAGE_KEY = 'planner-names'
 const PLANNER_ELEMENTS_STORAGE_PREFIX = 'planner-elements-'
 
+const THIS_WEEK_CATEGRORY = 'This Week'
+const THIS_MONTH_CATEGRORY = 'This Month'
+
+const SPECIAL_CATEGORIES = [THIS_MONTH_CATEGRORY, THIS_WEEK_CATEGRORY]
+
 function uploadFile(file) {
   const formData = new FormData()
   formData.append('file', file)
@@ -98,7 +103,18 @@ function createNewPlanner(plannerName) {
   return plannerName
 }
 
+function handleSpecialCategories(category) {
+  if (category === THIS_WEEK_CATEGRORY) {
+    return `Week ${currentWeekNumber()}`
+  }
+  if (category === THIS_MONTH_CATEGRORY) {
+    return currentMonthName()
+  }
+  return category
+}
+
 function getTodosForCategory(category) {
+  category = handleSpecialCategories(category)
   const endpoint = todosForCategoryEndpointFn(category)
   return api(endpoint, {
     method: 'GET',
@@ -110,7 +126,9 @@ function getCategories() {
   return api(categoriesEndpoint, {
     method: 'GET',
     headers: headers,
-  }).then(response => response?.json())
+  })
+    .then(response => response?.json())
+    .then(categories => SPECIAL_CATEGORIES.concat(categories))
 }
 
 function getTagColour(tag) {

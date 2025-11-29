@@ -84,6 +84,24 @@ function currentWeekNumber() {
   return Math.min(52, 1 + Math.ceil((firstThursday - target) / 604800000))
 }
 
+function currentMonthName() {
+  const monthNames = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ]
+  return monthNames[new Date().getMonth()]
+}
+
 function closePopupForm(id) {
   let form = document.getElementById(id)
   if (form) {
