@@ -2,6 +2,7 @@
 let page = 0
 let contextMenu
 let selectedFile
+let category
 
 let currentMediaIndex = 0
 let mediaFiles = []
@@ -47,11 +48,14 @@ function addEventListeners() {
 }
 
 function fetchFiles(bucket, tags) {
+  if (bucket) {
+    category = bucket
+  }
   const size = 50
 
   // TODO items of interest is the bucket, but need tags
   // before we can get memes specifically
-  api(filesEndpointFn(bucket, page, size), {
+  api(filesEndpointFn(category, page, size), {
     method: 'GET',
     headers: headers,
   })
@@ -82,6 +86,10 @@ function displayFiles(files) {
 
     if (file.includes('.mp4')) {
       const videoElement = document.createElement('video')
+      videoElement.onerror = () => {
+        fileDiv.remove()
+        mediaFiles[index] = null
+      }
       videoElement.controls = true
       videoElement.src = file
       fileDiv.appendChild(videoElement)
@@ -93,6 +101,9 @@ function displayFiles(files) {
       })
     } else {
       const imgElement = document.createElement('img')
+      imgElement.onerror = () => {
+        fileDiv.style.display = 'none'
+      }
       imgElement.src = file
       fileDiv.appendChild(imgElement)
 
