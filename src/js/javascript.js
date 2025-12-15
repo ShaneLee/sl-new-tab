@@ -582,14 +582,19 @@ function complete(todo, dontRefresh) {
   }).then(_ => (!!dontRefresh ? null : refreshTodos()))
 }
 
-function deleteTodo(todo, thisInstance, alternateSuccessMessage) {
-  api(deleteTodosEndpointFn(thisInstance), {
+function deleteTodo(todo, thisInstance, alternateSuccessMessage, noRefresh) {
+  return api(deleteTodosEndpointFn(thisInstance), {
     successMessage: alternateSuccessMessage ?? '🐸 The task has been deleted',
     failureMessage: '🙉 Oh no! The task failed to delete. Please try again later',
     method: 'DELETE',
     headers: headers,
     body: JSON.stringify(todo),
-  }).then(_ => refreshTodos())
+  }).then(_ => {
+    if (!noRefresh) {
+      return refreshTodos()
+    }
+    return Promise.resolve()
+  })
 }
 
 let audio
@@ -1742,6 +1747,7 @@ function addTodoListener() {
   const openSettingsAction = document.getElementById('openSettingsAction')
   const addTodoTagFilterAction = document.getElementById('addTagTodoFilterAction')
   const moveAllNextAction = document.getElementById('moveAllNextAction')
+  const deleteAllAction = document.getElementById('deleteAllAction')
   const addLinkedCountAction = document.getElementById('addLinkedCountAction')
   const editDueDateAction = document.getElementById('editDueDateAction')
   const removeDueDateAction = document.getElementById('removeDueDateAction')
@@ -2080,6 +2086,21 @@ function addTodoListener() {
     update(todo)
     selectedTodo = null
     hideContextMenu()
+  })
+
+  deleteAllAction.addEventListener('click', function () {
+    // TODO update the backend to have a list edit endpoint
+    // will need to validate that all are for the same user
+    const setToUse = SELECTED_TODOS.size > 0 ? SELECTED_TODOS : TODOS_SET
+    const promises = [...setToUse].map(todo => {
+      return deleteTodo(todo, true, null, true)
+    })
+
+    Promise.all(promises).then(() => {
+      SELECTED_TODOS.clear()
+      refreshTodos()
+      hideContextMenu()
+    })
   })
 
   moveAllNextAction.addEventListener('click', function () {
