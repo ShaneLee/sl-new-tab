@@ -1,6 +1,7 @@
 IMPORTANT_TODO_DISPLAY_COUNT = 3
 TAGS_FILTER_LIMIT = 3
 quotesEnabled = false
+showHidden = false
 timerEnabled = features.get('time-tracking')?.enabled
 eventsEnabled = features.get('events')?.enabled
 showTags = true
@@ -837,6 +838,15 @@ function shouldDisplayCopyToSubcategory(todo) {
   }
 }
 
+function shouldHide(today, todo) {
+  if (showHidden || !todo.hideUntil) {
+    return false
+  }
+
+  const todayStr = today.toISOString().split('T')[0]
+  return todo.hideUntil > todayStr
+}
+
 function todos(includeComplete = false) {
   if (typeof includeComplete !== 'boolean') {
     includeComplete = false
@@ -864,7 +874,7 @@ function todos(includeComplete = false) {
       const list = document.getElementById('todos')
       if (!!todos) {
         todos
-          .filter(todo => !(todo.recurring && !isTodoDueToday(todo)))
+          .filter(todo => !(todo.recurring && !isTodoDueToday(todo)) && !shouldHide(today, todo))
           .forEach(todo => addTodo(list, todo))
       }
     })
@@ -1424,6 +1434,10 @@ function createTodoEditForm(todo, updateTodoAction) {
       <!-- Due date -->
       <label for="todo-dueDate">Due Date</label>
       <input type="date" id="todo-dueDate" name="dueDate" value="${todo.dueDate || ''}">
+
+      <!-- Hide Until -->
+      <label for="todo-HideUntil">Hide Until</label>
+      <input type="date" id="todo-hideUntil" name="hideUntil" value="${todo.hideUntil || ''}">
       
       ${todo.recurring ? `<label for="todo-recurring">Recurring</label>` : ''}
 
@@ -1466,6 +1480,7 @@ function createTodoEditForm(todo, updateTodoAction) {
       todo: document.getElementById('todo-description').value,
       category: document.getElementById('todo-category').value,
       dueDate: document.getElementById('todo-dueDate').value || null,
+      hideUntil: document.getElementById('todo-hideUntil').value || null,
       important: document.getElementById('todo-important').checked,
       timeEstimateHours: document.getElementById('todo-time-estimate-hours').value || null,
       tags: document
@@ -1715,6 +1730,7 @@ function addTodoListener() {
   contextMenu = document.getElementById('contextMenu')
   const deleteThisInstanceAction = document.getElementById('deleteThisInstanceAction')
   const showCompleteTodosAction = document.getElementById('showCompleteTodosAction')
+  const showHiddenTodosAction = document.getElementById('showHiddenTodosAction')
   const deleteAllInstancesAction = document.getElementById('deleteAllInstancesAction')
   const editAction = document.getElementById('editAction')
   const moveNextAction = document.getElementById('moveNextAction')
@@ -1735,6 +1751,7 @@ function addTodoListener() {
   const markImportantAction = document.getElementById('markImportantAction')
   const addTagAction = document.getElementById('addTagAction')
   const addNotesAction = document.getElementById('addNotesAction')
+  const addHideUntilAction = document.getElementById('addHideUntilAction')
   const addTagsToAllAction = document.getElementById('addTagsToAllAction')
   const openInSearchEngineAction = document.getElementById('openInSearchEngineAction')
 
@@ -1750,6 +1767,54 @@ function addTodoListener() {
     selectedTodo = null
     hideContextMenu()
   }
+
+  addHideUntilAction.addEventListener('click', function () {
+    // TODO doesn't display right
+    const todo = selectedTodo
+
+    const datePicker = document.createElement('input')
+    datePicker.type = 'date'
+
+    const today = new Date()
+    const yesterday = new Date(today)
+    yesterday.setDate(today.getDate() - 1)
+    const formatted = yesterday.toISOString().split('T')[0]
+    datePicker.value = formatted
+
+    // Set the position of the date picker relative to the context menu
+    const rect = editDueDateAction.getBoundingClientRect()
+    datePicker.style.position = 'absolute'
+    // datePicker.className = 'default-form';
+    datePicker.style.top = window.scrollY + rect.bottom + 'px'
+    datePicker.style.left = window.scrollX + rect.left + 'px'
+
+    datePicker.addEventListener('change', function () {
+      const selectedDate = new Date(datePicker.value)
+
+      selectedTodo.hideUntil = selectedDate
+      update(selectedTodo)
+
+      document.body.removeChild(datePicker)
+
+      selectedTodo = null
+      hideContextMenu()
+    })
+
+    // Add a global click event listener to remove the date picker if clicked outside
+    function clickOutsideDatePickerHandler(event) {
+      if (!datePicker.contains(event.target) && event.target !== editDueDateAction) {
+        document.removeEventListener('click', clickOutsideDatePickerHandler)
+        document.body.removeChild(datePicker)
+        selectedTodo = null
+        hideContextMenu()
+      }
+    }
+
+    document.addEventListener('click', clickOutsideDatePickerHandler)
+
+    // Append the date picker to the body
+    document.body.appendChild(datePicker)
+  })
 
   copyToSubcategoryAction.addEventListener('click', function () {
     const todo = selectedTodo
@@ -1777,6 +1842,12 @@ function addTodoListener() {
 
   openSettingsAction.addEventListener('click', function () {
     window.location.href = `${browserExtension}://${extensionId}/template/settings.html`
+  })
+
+  showHiddenTodosAction.addEventListener('click', function (event) {
+    event.preventDefault()
+    showHidden = true
+    refreshTodos()
   })
 
   showCompleteTodosAction.addEventListener('click', function (event) {
