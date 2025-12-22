@@ -159,6 +159,7 @@ const deleteTodosEndpointFn = thisInstance => `${host}/todos?thisInstance=${this
 const completeEndpoint = `${host}/todos/complete`
 const uncompleteEndpoint = `${host}/todos/uncomplete`
 const categoriesEndpoint = `${host}/todos/categories`
+const todosHabitsEndpoint = `${host}/todos/habits`
 const transactionsEndpointFn = (start, end) =>
   `${host}/transaction?start=${start}&endInclusive=${end}`
 const transactionEndpoint = `${host}/transaction`

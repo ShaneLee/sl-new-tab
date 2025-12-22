@@ -42,6 +42,26 @@ function getCompletedReviewForWeek(dateParam) {
     .then(val => {
       if (!!val) {
         renderMoodForType('WEEK')
+        renderHabits()
+        renderDiaryForType('WEEK')
+        const todoListsElement = getTodoListsElement()
+        renderTodos(val.responses.todoReviewSummary, todoListsElement)
+        renderTimeTrackingSummaryFromData(val.responses.timeTrackingSummary, todoListsElement)
+        renderReponses(val.responses, todoListsElement)
+      }
+    })
+}
+
+function getCompletedReviewForWeek(dateParam) {
+  return fetch(reviewEndpointFn(dateParam), {
+    method: 'GET',
+    headers: headers,
+  })
+    .then(response => response?.json())
+    .then(val => {
+      if (!!val) {
+        renderMoodForType('WEEK')
+        renderHabits()
         renderDiaryForType('WEEK')
         const todoListsElement = getTodoListsElement()
         renderTodos(val.responses.todoReviewSummary, todoListsElement)
@@ -88,6 +108,51 @@ function getReviewForm(typeParam) {
     .then(val => renderTodosForType(typeParam))
     .then(val => renderTimeTrackingSummary(typeParam))
     .then(val => renderWellForType(typeParam))
+    .then(val => renderHabits())
+}
+
+function renderHabits() {
+  return fetch(todosHabitsEndpoint, {
+    method: 'GET',
+    headers: headers,
+  })
+    .then(response => response?.json())
+    .then(renderHabitTable)
+}
+
+function renderHabitTable(habits) {
+  if (!habits || habits.length === 0) return
+
+  const container = document.getElementById('habit-container')
+  container.innerHTML = ''
+
+  const grid = document.createElement('div')
+  grid.className = 'habit-grid'
+
+  habits.forEach(habit => {
+    const card = document.createElement('div')
+    card.className = 'habit-card'
+
+    const title = document.createElement('div')
+    title.className = 'habit-title'
+    title.textContent = habit.todo
+
+    const circleWrapper = document.createElement('div')
+    circleWrapper.className = 'habit-circle-wrapper'
+
+    const circle = document.createElement('div')
+    circle.className = 'habit-circle'
+    circle.textContent = habit.count
+
+    circle.style.backgroundColor = 'var(--main-color)'
+
+    circleWrapper.appendChild(circle)
+    card.appendChild(title)
+    card.appendChild(circleWrapper)
+    grid.appendChild(card)
+  })
+
+  container.appendChild(grid)
 }
 
 function renderMoodForType(type) {
@@ -210,6 +275,8 @@ function getWellForType(type) {
     .then(val => {
       if (!!val) {
         return val
+      } else {
+        return []
       }
     })
 }
