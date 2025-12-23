@@ -1734,6 +1734,7 @@ function addTodoListener() {
 
   contextMenu = document.getElementById('contextMenu')
   const deleteThisInstanceAction = document.getElementById('deleteThisInstanceAction')
+  const completeThisAction = document.getElementById('completeThisAction')
   const showCompleteTodosAction = document.getElementById('showCompleteTodosAction')
   const showHiddenTodosAction = document.getElementById('showHiddenTodosAction')
   const deleteAllInstancesAction = document.getElementById('deleteAllInstancesAction')
@@ -1743,6 +1744,7 @@ function addTodoListener() {
   const changeCategoryAction = document.getElementById('changeCategoryAction')
   const thisWeekcategoryAction = document.getElementById('thisWeekCategoryAction')
   const changeAllCategoryAction = document.getElementById('changeAllCategoryAction')
+  const completeAllAction = document.getElementById('completeAllAction')
   const deleteCurrentCategoryAction = document.getElementById('deleteCurrentCategoryAction')
   const openSettingsAction = document.getElementById('openSettingsAction')
   const addTodoTagFilterAction = document.getElementById('addTagTodoFilterAction')
@@ -1773,6 +1775,26 @@ function addTodoListener() {
     selectedTodo = null
     hideContextMenu()
   }
+
+  completeAllAction.addEventListener('click', function () {
+    // TODO update the backend to have a list edit endpoint
+    // will need to validate that all are for the same user
+    const setToUse = SELECTED_TODOS.size > 0 ? SELECTED_TODOS : TODOS_SET
+    const promises = [...setToUse].map(todo => {
+      return complete(todo, false)
+    })
+
+    Promise.all(promises).then(() => {
+      SELECTED_TODOS.clear()
+      refreshTodos()
+      hideContextMenu()
+    })
+  })
+
+  completeThisAction.addEventListener('click', function () {
+    const todo = selectedTodo
+    complete(todo, false)
+  })
 
   addHideUntilAction.addEventListener('click', function () {
     // TODO doesn't display right
