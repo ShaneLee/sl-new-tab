@@ -1076,6 +1076,10 @@ function addTodo(uL, todo) {
               newCount >= todo.targetCount ||
               (todo.incrementTarget != null && newCount >= todo.incrementTarget)
             ) {
+              if (!todo.completeOnTarget) {
+                console.debug('Not completing todo as complete on target false')
+                return
+              }
               // Continue with the normal click function
               LAST.push(todo)
               complete(todo, true)
