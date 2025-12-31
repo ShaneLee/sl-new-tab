@@ -949,7 +949,7 @@ function addTodo(uL, todo) {
   let spanItemCount = 0
 
   if (showTags && !!todo.tags) {
-    todo.tags.forEach(tag => {
+    todo.tags.filter(shouldDisplayTag).forEach(tag => {
       const tagElement = document.createElement('span')
       tagElement.title = tag
       const colour = getTagColour(tag)

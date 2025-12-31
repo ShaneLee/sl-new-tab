@@ -495,3 +495,31 @@ class CircularQueue {
 function basename(path) {
   return path.split('/').reverse()[0]
 }
+
+// This prevents category-type tags from being displayed
+// which prevents bloat in the tags lists.
+// Tags like '2025-week-1' won't display, but 'work' will.
+function shouldDisplayTag(tag) {
+  return !shouldNotDisplayTag(tag)
+}
+
+function shouldNotDisplayTag(tag) {
+  if (typeof tag !== 'string' || tag.length === 0) {
+    return false
+  }
+
+  // YYYY-week-N
+  const weekRegex = /^\d{4}-week-\d{1,2}$/
+
+  // YYYY-month
+  const monthRegex =
+    /^\d{4}-(january|february|march|april|may|june|july|august|september|october|november|december)$/
+
+  // Yearly categories:
+  // - lowercase
+  // - spaces replaced with hyphens
+  // - must contain "yearly"
+  const yearlyRegex = /^[a-z0-9-]*yearly[a-z0-9-]*$/
+
+  return weekRegex.test(tag) || monthRegex.test(tag) || yearlyRegex.test(tag)
+}
