@@ -1,6 +1,12 @@
 host = 'http://localhost:8080'
 host = 'http://192.168.0.12:8080'
 
+const isLocal = localStorage.getItem('local')
+
+if (isLocal) {
+  host = 'http://localhost:8080'
+}
+
 const isChrome = /Chrome/.test(navigator.userAgent)
 const browserExtension = isChrome ? 'chrome-extension' : 'moz-extension'
 const extensionId = isChrome ? chrome.runtime.id : '81be2699-c7c2-4b3b-95c0-b12162e94558'
