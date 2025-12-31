@@ -508,6 +508,10 @@ function shouldNotDisplayTag(tag) {
     return false
   }
 
+  if (tag === 'habit') {
+    return true
+  }
+
   // YYYY-week-N
   const weekRegex = /^\d{4}-week-\d{1,2}$/
 
