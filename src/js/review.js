@@ -16,21 +16,68 @@ function getQueryParam(paramName) {
 
 function loadPage() {
   const dateParam = getQueryParam('date')
+  const startDateParam = getQueryParam('startDate')
+  const endDateParam = getQueryParam('endDate')
   const typeParam = getQueryParam('type') || 'WEEK'
   const nameParam = getQueryParam('name') || null
 
-  if (!!nameParam && nameParam.includes('Quarter')) {
+  // Handle quarterly naming
+  if (nameParam && nameParam.includes('Quarter')) {
     isQuarterly = true
     const temp = formIdTitle.split('Week')[0]
     formIdTitle = temp + ' ' + nameParam
     formReviewId = formReviewId.split('week')[0] + nameParam.toLowerCase()
   }
-  if (dateParam) {
-    new Date(dateParam)
+
+  // Prefer explicit date range if both startDate and endDate are provided
+  if (startDateParam && endDateParam) {
+    getReviewFormForDateRange(startDateParam, endDateParam)
+  } else if (dateParam) {
     getCompletedReviewForWeek(dateParam)
   } else {
     getReviewForm(typeParam)
   }
+}
+
+function getReviewFormForDateRange(startDate, endDate) {
+  getFormConfig()
+    .then(formConfig => {
+      renderForm(formConfig)
+      return formConfig
+    })
+    .then(() => {
+      renderMoodForDateRange(startDate, endDate)
+      renderDiaryForDateRange(startDate, endDate)
+      renderTodosForDateRange(startDate, endDate)
+      renderWellForDateRange(startDate, endDate)
+      renderHabits() // habits don’t need a date param in your current code
+    })
+}
+
+function renderMoodForDateRange(start, end) {
+  fetch(moodEndpointDateRangeFn(start, end), { method: 'GET', headers })
+    .then(res => res.json())
+    .then(renderMoodTable)
+}
+
+function renderDiaryForDateRange(start, end) {
+  fetch(diaryEndpointDateRangeFn(start, end), { method: 'GET', headers })
+    .then(res => res.json())
+    .then(renderDiaryTable)
+}
+
+function renderTodosForDateRange(start, end) {
+  // NOT supported yet
+  // const todoListsElement = getTodoListsElement()
+  // fetch(todoReviewEndpoint(undefined, undefined, start, end), { method: 'GET', headers })
+  //   .then(res => res.json())
+  //   .then(val => renderTodos(val, todoListsElement))
+}
+
+function renderWellForDateRange(start, end) {
+  fetch(wellEndpointDateRangeFn(start, end), { method: 'GET', headers })
+    .then(res => (res.status === 200 ? res.json() : []))
+    .then(renderWellList)
 }
 
 function getCompletedReviewForWeek(dateParam) {

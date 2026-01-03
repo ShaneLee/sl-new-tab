@@ -2455,19 +2455,60 @@ const pages = [
     feature: 'mood',
   }),
   new Page({
-    id: 'quarter-review-link',
-    url: `${browserExtension}://${extensionId}/template/review.html?type=YEAR&name="Quarter1"`,
-    name: 'Quarterly Review',
+    id: 'dynamic-review-link',
+    url: `${browserExtension}://${extensionId}/template/review.html`,
+    name: 'Dynamic Review',
     emoji: withEmojis ? '🍀' : '',
     shortcut: ',q',
     feature: 'review',
     clickHandler: function (event) {
       event.preventDefault()
 
-      const quarterNumber = prompt('Enter the quarter number:')
-      if (quarterNumber) {
-        window.location.href = `${browserExtension}://${extensionId}/template/review.html?type=YEAR&name=Quarter${quarterNumber}`
+      const reviewType = prompt('Enter review type: "Quarter" or "Year"').toLowerCase()
+      if (!reviewType || !['quarter', 'year'].includes(reviewType)) {
+        alert('Invalid review type. Please enter "Quarter" or "Year".')
+        return
       }
+
+      let startDate, endDate, nameParam
+      const now = new Date()
+      let year = now.getFullYear()
+
+      if (reviewType === 'quarter') {
+        const inputQuarter = parseInt(prompt('Enter the quarter number (1-4):'))
+        if (!inputQuarter || inputQuarter < 1 || inputQuarter > 4) {
+          alert('Invalid quarter number. Must be between 1 and 4.')
+          return
+        }
+
+        const inputYear = parseInt(prompt('Enter the year for this quarter:')) || year
+        year = inputYear
+
+        const quarterStartMonths = [0, 3, 6, 9] // Jan, Apr, Jul, Oct
+        const month = quarterStartMonths[inputQuarter - 1]
+
+        startDate = new Date(year, month, 1)
+        endDate = new Date(year, month + 3, 0) // last day of quarter
+
+        nameParam = `Quarter${inputQuarter}`
+      } else if (reviewType === 'year') {
+        const inputYear = parseInt(prompt('Enter the year:')) || year
+        year = inputYear
+
+        startDate = new Date(year, 0, 1)
+        endDate = new Date(year, 11, 31)
+
+        nameParam = `Yearly-${year}`
+      }
+
+      // Format YYYY-MM-DD
+      const formatDate = d => d.toISOString().split('T')[0]
+
+      const reviewUrl = `${browserExtension}://${extensionId}/template/review.html?startDate=${formatDate(
+        startDate,
+      )}&endDate=${formatDate(endDate)}&name=${nameParam}`
+
+      window.location.href = reviewUrl
     },
   }),
 ]

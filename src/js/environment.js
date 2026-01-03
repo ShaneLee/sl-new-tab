@@ -179,6 +179,7 @@ const loginV2Endpoint = `${host}/v2/login`
 const registerEndpoint = `${host}/v1/register`
 const spendCategoriesEndpoint = `${host}/spend-category`
 const wellEndpoint = type => `${host}/well?rangeType=${type}`
+const wellEndpointDateRangeFn = (start, end) => `${host}/well?&startDate=${start}&endDate=${end}`
 
 // Music
 const songsEndpoint = `${host}/music/songs`
@@ -207,8 +208,10 @@ const readingListEndpointDeleteFn = id => `${host}/reading-list?id=${id}`
 const bucketEndpoint = `${host}/bucket`
 
 const moodEndpoint = `${host}/mood?rangeType=`
+const moodEndpointDateRangeFn = (start, end) => `${host}/mood?&startDate=${start}&endDate=${end}`
 
 const diaryEndpoint = `${host}/diary?rangeType=`
+const diaryEndpointDateRangeFn = (start, end) => `${host}/diary?&startDate=${start}&endDate=${end}`
 
 const reviewEndpoint = `${host}/review`
 const reviewEndpointFn = date => `${host}/review?reviewDate=${date}`
