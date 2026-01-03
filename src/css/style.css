@@ -1314,3 +1314,32 @@ h3 {
   border-color: var(--main-color);
   box-shadow: 0 0 0 2px var(--very-dark);
 }
+
+/* Year of Mood */
+.year-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100px;
+  height: 28px;
+}
+
+/* Override default-form button rules */
+.year-nav button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: auto;
+  height: 32px;
+  padding: 0 8px;
+  margin: 0;
+  font-size: 1em;
+  line-height: 1;
+}
+
+.year-nav span {
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+}

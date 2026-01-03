@@ -4,9 +4,57 @@ function getQueryParam(paramName) {
 }
 
 function loadPage() {
-  const typeParam = getQueryParam('type') || 'YEAR'
+  const year = getYearFromQuery()
+  initYearNavigator(year)
 
-  renderMoodForType(typeParam)
+  const { startDate, endDate } = buildYearRange(year)
+
+  renderMoodForDateRange(startDate, endDate)
+  renderWellForDateRange(startDate, endDate)
+}
+
+function initYearNavigator(year) {
+  const currentYearEl = document.getElementById('current-year')
+  const prevBtn = document.getElementById('prev-year')
+  const nextBtn = document.getElementById('next-year')
+
+  const thisYear = new Date().getFullYear()
+
+  currentYearEl.textContent = year
+
+  // Disable going into the future
+  nextBtn.disabled = year >= thisYear
+
+  prevBtn.onclick = () => navigateToYear(year - 1)
+  nextBtn.onclick = () => {
+    if (year < thisYear) {
+      navigateToYear(year + 1)
+    }
+  }
+}
+
+function renderMoodForDateRange(start, end) {
+  fetch(moodEndpointDateRangeFn(start, end), { headers })
+    .then(res => res.json())
+    .then(renderMoodTable)
+}
+
+function renderWellForDateRange(start, end) {
+  fetch(wellEndpointDateRangeFn(start, end), { headers })
+    .then(res => (res.status === 200 ? res.json() : []))
+    .then(renderWellList)
+}
+
+function navigateToYear(year) {
+  const { startDate, endDate } = buildYearRange(year)
+
+  const params = new URLSearchParams({
+    startDate,
+    endDate,
+    name: `Year ${year}`,
+  })
+
+  window.location.search = params.toString()
 }
 
 function getCompletedReviewForWeek(dateParam) {}
@@ -26,7 +74,7 @@ function renderReponses(responses, containerElement) {
   }
 }
 
-function createGrid(ratings) {
+function createGrid(ratings, year) {
   const gridContainer = document.getElementById('mood-grid-container')
   gridContainer.innerHTML = ''
 
@@ -71,7 +119,6 @@ function createGrid(ratings) {
     'December',
   ]
   const daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-  const year = new Date().getFullYear()
   if ((year % 4 === 0 && year % 100 !== 0) || year % 400 === 0) {
     daysInMonth[1] = 29 // Leap year adjustment
   }
@@ -129,17 +176,22 @@ function renderMoodForType(type) {
 
 function renderMoodTable(ratings) {
   if (!ratings) return
-  createGrid(ratings)
+
+  const year = getYearFromQuery()
+
+  // Clear previous renders
+  document.getElementById('ratings-table-container').innerHTML = ''
+  document.getElementById('mood-grid-container').innerHTML = ''
+
+  createGrid(ratings, year)
+
   const table = document.createElement('table')
   table.className = 'time-tracking-summary'
 
   const headerRow = table.insertRow(0)
-
-  const headers = ['Created At', 'Rating', 'Notes']
-
-  headers.forEach((headerText, index) => {
+  ;['Created At', 'Rating', 'Notes'].forEach(text => {
     const th = document.createElement('th')
-    th.textContent = headerText
+    th.textContent = text
     headerRow.appendChild(th)
   })
 
@@ -156,26 +208,17 @@ function renderMoodTable(ratings) {
       'Friday',
       'Saturday',
     ]
-    const dayOfWeekText = daysOfWeek[createdAtDate.getDay()]
-    const createdAtText = `${dayOfWeekText} ${createdAtDate.getFullYear()}-${(
-      createdAtDate.getMonth() + 1
-    )
-      .toString()
-      .padStart(2, '0')}-${createdAtDate.getDate().toString().padStart(2, '0')}`
 
-    const createdAtCell = row.insertCell(0)
-    createdAtCell.textContent = createdAtText
+    const createdAtText = `${daysOfWeek[createdAtDate.getDay()]} ${createdAtDate.getFullYear()}-${String(createdAtDate.getMonth() + 1).padStart(2, '0')}-${String(
+      createdAtDate.getDate(),
+    ).padStart(2, '0')}`
 
-    const ratingCell = row.insertCell(1)
-    ratingCell.textContent = ratingData.rating
-
-    const notesCell = row.insertCell(2)
-    notesCell.textContent = ratingData.notes
-    notesCell.style.width = '50%'
+    row.insertCell(0).textContent = createdAtText
+    row.insertCell(1).textContent = ratingData.rating
+    row.insertCell(2).textContent = ratingData.notes || ''
   })
 
-  const container = document.getElementById('ratings-table-container')
-  container.appendChild(table)
+  document.getElementById('ratings-table-container').appendChild(table)
 }
 
 function getWellForType(type) {
@@ -240,6 +283,21 @@ function createRatingElement(name) {
   }
 
   return ratingDiv
+}
+
+function getYearFromQuery() {
+  const startDate = getQueryParam('startDate')
+  if (startDate) {
+    return parseInt(startDate.split('-')[0], 10)
+  }
+  return new Date().getFullYear()
+}
+
+function buildYearRange(year) {
+  return {
+    startDate: `${year}-01-01`,
+    endDate: `${year}-12-31`,
+  }
 }
 
 window.addEventListener('load', loadPage)

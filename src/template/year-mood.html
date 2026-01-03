@@ -9,12 +9,16 @@
     <script src="../js/time-tracking-summary.js" charset="UTF-8"></script>
     <script src="../js/year-mood.js" charset="UTF-8"></script>
     <script src="../js/chart.js" charset="UTF-8"></script>
-    <title>Review</title>
+    <title>Year of Mood 😀</title>
   </head>
   <body>
     <div id="review-container">
-      <h1 id="review-page-title">Review</h1>
-      <a id="previous-review-link">Last Week's Review</a>
+      <h1 id="review-page-title">Year of Mood 😀</h1>
+      <div id="year-navigator" class="year-nav default-form">
+        <button id="prev-year">&lt;</button>
+        <span><h2 id="current-year"></h2></span>
+        <button id="next-year">&gt;</button>
+      </div>
       <div id="feedback" class="feedback hidden"></div>
       <div class="chart-container">
         <canvas id="ratingsChart" width="400" height="200"></canvas>
