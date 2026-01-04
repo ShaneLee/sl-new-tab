@@ -53,9 +53,7 @@ function fetchFiles(bucket, tags) {
   }
   const size = 50
 
-  // TODO items of interest is the bucket, but need tags
-  // before we can get memes specifically
-  api(filesEndpointFn(category, page, size), {
+  api(filesTagsEndpointFn(category, 'memes', page, size), {
     method: 'GET',
     headers: headers,
   })
