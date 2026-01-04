@@ -14,6 +14,7 @@ document.getElementById('file-upload-form').addEventListener('submit', function 
       const metadata = {
         category: category ? category : 'itemsofinterest',
         fileName: `${subcategory}/${file.name}`,
+        tags: subcategory,
         notes: notes,
       }
 

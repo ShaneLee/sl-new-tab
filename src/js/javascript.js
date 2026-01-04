@@ -2305,6 +2305,13 @@ const pages = [
     feature: 'memes',
   }),
   new Page({
+    id: 'file-viewer-link',
+    url: `${browserExtension}://${extensionId}/template/file-viewer.html`,
+    name: 'File Viewer',
+    emoji: withEmojis ? '🗃️' : '',
+    feature: 'files',
+  }),
+  new Page({
     id: 'logs-link',
     url: `${host.replace(':8080', '')}/logs`,
     name: 'Logs',
@@ -2325,7 +2332,7 @@ const pages = [
     url: `${browserExtension}://${extensionId}/template/file-upload.html`,
     name: 'File Upload',
     emoji: withEmojis ? '☁️' : '',
-    feature: 'memes',
+    feature: 'files',
   }),
   new Page({
     id: 'spend-tracker-link',

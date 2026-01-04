@@ -30,6 +30,7 @@ const featuresList = [
   new Feature('kanban', true),
   new Feature('logs', true),
   new Feature('memes', true),
+  new Feature('files', true),
   new Feature('mood', true),
   new Feature('diary', true),
   new Feature('notes', true),
@@ -248,6 +249,8 @@ const foodItemCsvEndpoint = `${host}/nutrition/food/item/csv`
 // Files Endpoints
 const filesEndpointFn = (category, page, size) =>
   `${host}/files?category=${category}&page=${page}&size=${size}`
+const filesTagsEndpointFn = (category, tags, page, size) =>
+  `${host}/files?category=${category}&tags=${tags}&page=${page}&size=${size}`
 const fileUploadEndpoint = `${host}/files/upload`
 const fileUploadUrlEndpoint = `${host}/files/upload/url`
 

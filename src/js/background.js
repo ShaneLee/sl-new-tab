@@ -197,6 +197,7 @@ browserAPI.runtime.onMessage.addListener((message, sender, sendResponse) => {
           const metadata = {
             category: bucket,
             fileName: `${category}/${basename(file.name)}`,
+            tags: category,
             notes,
           }
           saveFile(file, metadata)
