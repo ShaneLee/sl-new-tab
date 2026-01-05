@@ -7,6 +7,13 @@ let currentTags = []
 let currentMediaIndex = 0
 let mediaFiles = []
 
+function getTags() {
+  return api(fileTagsEndpoint, {
+    method: 'GET',
+    headers: headers,
+  })
+}
+
 function deleteFile() {
   const fileId = selectedFile.id
   console.error('Not implemented boyo')
@@ -15,6 +22,30 @@ function deleteFile() {
   //     headers: headers,
   //     body: JSON.stringify({'id': podcastId})
   //     })
+}
+
+function populateTagOptions() {
+  const datalist = document.getElementById('tagOptions')
+
+  getTags()
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+      return response.json()
+    })
+    .then(tags => {
+      datalist.innerHTML = ''
+
+      tags.forEach(tag => {
+        const option = document.createElement('option')
+        option.value = tag
+        datalist.appendChild(option)
+      })
+    })
+    .catch(error => {
+      console.error('Error fetching tags:', error)
+    })
 }
 
 function addContextMenuListener() {
@@ -274,4 +305,5 @@ window.onload = () => {
   addContextMenuListener()
   addModalCloseListener()
   addCategoryFormListener()
+  populateTagOptions()
 }
