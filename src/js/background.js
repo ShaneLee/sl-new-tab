@@ -274,6 +274,7 @@ browserAPI.contextMenus.onClicked.addListener((info, tab) => {
     const name = basename(imageUrl)
     const metadata = {
       category: 'itemsofinterest',
+      tags: 'memes',
       fileName: `${basename(name)}`,
       notes: `Source: ${info.pageUrl}`,
     }
