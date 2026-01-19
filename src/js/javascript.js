@@ -2606,11 +2606,55 @@ function fetchCurrentlyPlaying() {
       }
     })
 }
+function addTodoNavigationShortcuts() {
+  document.addEventListener('keydown', event => {
+    if (event.shiftKey) {
+      const selectElement = document.getElementById('category-input')
+      let category = selectElement.value
+      if (category.startsWith('Week ')) {
+        const weekNumber = parseInt(category.replace('Week ', ''))
+        let newWeek
+
+        // Shift + H - go to previous week
+        if (event.key === 'H') {
+          newWeek = weekNumber - 1
+          if (newWeek < 1) {
+            newWeek = 52
+          }
+        }
+
+        // Shift + L - go to next week
+        if (event.key === 'L') {
+          newWeek = weekNumber + 1
+          if (newWeek > 52) {
+            newWeek = 1
+          }
+        }
+
+        if (newWeek != undefined) {
+          const newCategory = `Week ${newWeek}`
+          // Check if the week exists in the select, if not add it
+          let option = Array.from(selectElement.options).find(opt => opt.value === newCategory)
+          if (!option) {
+            option = document.createElement('option')
+            option.className = 'categories-item'
+            option.value = newCategory
+            option.innerHTML = newCategory
+            selectElement.appendChild(option)
+          }
+          selectElement.value = newCategory
+          refreshTodos()
+        }
+      }
+    }
+  })
+}
 
 window.onload = function () {
   getPreferences().then(processPreferences).then(loadTagFilters).then(addTodoListener)
   // Shift + click drag
   addTodoDragToSelectListener()
+  addTodoNavigationShortcuts()
   if (importantTodosEnabled) {
     targetNote()
   }
