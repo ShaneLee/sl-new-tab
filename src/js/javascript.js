@@ -2133,16 +2133,56 @@ function addTodoListener() {
     // TODO update the backend to have a list edit endpoint
     // will need to validate that all are for the same user
     const setToUse = SELECTED_TODOS.size > 0 ? SELECTED_TODOS : TODOS_SET
+
     const promises = [...setToUse].map(todo => {
-      const category = todo?.category.replace(/\d+/, nextCategoryFn)
-      if (!!category) {
+      let changed = false
+
+      // ---- category handling (existing logic) ----
+      const category = todo?.category?.replace(/\d+/, nextCategoryFn)
+      if (category) {
         todo.category = category
+        changed = true
+
         if (category === 'Week 1') {
           todo.year = !todo.year ? null : todo.year + 1
         }
-        return update(todo, true)
       }
-      return Promise.resolve()
+
+      // ---- tags handling (new logic) ----
+      if (Array.isArray(todo.tags)) {
+        const newTags = []
+        let rolledToWeek1 = false
+
+        for (const tag of todo.tags) {
+          const match = tag.match(/^week-(\d+)$/)
+
+          if (!match) {
+            newTags.push(tag)
+            continue
+          }
+
+          const currentWeek = Number(match[1])
+          const nextWeek = nextCategoryFn(currentWeek)
+
+          newTags.push(`week-${nextWeek}`)
+          changed = true
+
+          if (nextWeek === 1) {
+            rolledToWeek1 = true
+          }
+        }
+
+        if (changed) {
+          todo.tags = newTags
+        }
+
+        // Apply the same “Week 1” year logic if tags rolled over
+        if (rolledToWeek1) {
+          todo.year = !todo.year ? null : todo.year + 1
+        }
+      }
+
+      return changed ? update(todo, true) : Promise.resolve()
     })
 
     Promise.all(promises).then(() => {
