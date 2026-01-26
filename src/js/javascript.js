@@ -2137,7 +2137,6 @@ function addTodoListener() {
     const promises = [...setToUse].map(todo => {
       let changed = false
 
-      // ---- category handling (existing logic) ----
       const category = todo?.category?.replace(/\d+/, nextCategoryFn)
       if (category) {
         todo.category = category
@@ -2148,36 +2147,38 @@ function addTodoListener() {
         }
       }
 
-      // ---- tags handling (new logic) ----
       if (Array.isArray(todo.tags)) {
         const newTags = []
-        let rolledToWeek1 = false
+        let rolledToWeek1FromTags = false
 
         for (const tag of todo.tags) {
-          const match = tag.match(/^week-(\d+)$/)
+          const match = tag.match(/^(\d{4})-week-(\d+)$/)
 
+          // Non-week tags pass straight through
           if (!match) {
             newTags.push(tag)
             continue
           }
 
-          const currentWeek = Number(match[1])
+          let tagYear = Number(match[1])
+          const currentWeek = Number(match[2])
           const nextWeek = nextCategoryFn(currentWeek)
 
-          newTags.push(`week-${nextWeek}`)
-          changed = true
-
           if (nextWeek === 1) {
-            rolledToWeek1 = true
+            tagYear += 1
+            rolledToWeek1FromTags = true
           }
+
+          // Replace old tag with new one
+          newTags.push(`${tagYear}-week-${nextWeek}`)
+          changed = true
         }
 
         if (changed) {
           todo.tags = newTags
         }
 
-        // Apply the same “Week 1” year logic if tags rolled over
-        if (rolledToWeek1) {
+        if (rolledToWeek1FromTags) {
           todo.year = !todo.year ? null : todo.year + 1
         }
       }
