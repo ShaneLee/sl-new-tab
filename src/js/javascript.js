@@ -19,6 +19,7 @@ const showCurrentPlayingTrackEnabled = true
 const concatWithPlus = s => s.replace(' ', '+')
 const searchEngineFn = q => `https://www.google.com/search?q=${concatWithPlus(q)}`
 
+const ALL_CATEGORIES_SET = new Set()
 const CATEGORIES_SET = new Set()
 const LAST = new Array()
 
@@ -137,6 +138,12 @@ document.addEventListener('keydown', event => {
     if (!!last) {
       uncomplete(last)
     }
+  }
+
+  // cmd+space to open category swap modal
+  if ((event.ctrlKey || event.metaKey) && event.code === 'Space') {
+    event.preventDefault()
+    openCategorySwapModal()
   }
 })
 
@@ -669,6 +676,7 @@ function categories() {
         categories.appendChild(all)
       }
       if (!!val) {
+        val.forEach(category => ALL_CATEGORIES_SET.add(category))
         filterAndSlice(
           val.filter(category => category !== week),
           4,
@@ -2745,4 +2753,109 @@ window.onload = function () {
   })
   todoForm()
   updateTimeLeft()
+  initCategorySwapModal()
+}
+
+// Category Swap Modal Functions
+function initCategorySwapModal() {
+  const modal = document.getElementById('category-swap-modal')
+  const input = document.getElementById('category-swap-input')
+  const suggestionsUl = document.getElementById('category-swap-suggestions')
+
+  // Close modal on Escape
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') {
+      closeCategorySwapModal()
+    }
+  })
+
+  // Close modal when clicking outside
+  modal.addEventListener('click', event => {
+    if (event.target === modal) {
+      closeCategorySwapModal()
+    }
+  })
+
+  // Filter categories on input
+  input.addEventListener('input', event => {
+    const query = event.target.value.toLowerCase()
+    const categories = Array.from(ALL_CATEGORIES_SET).sort()
+    const filtered = categories.filter(cat => cat.toLowerCase().includes(query))
+
+    renderSuggestions(filtered, suggestionsUl, query)
+  })
+
+  // Handle selection via keyboard
+  let selectedIndex = -1
+  input.addEventListener('keydown', event => {
+    const items = suggestionsUl.querySelectorAll('li')
+
+    if (event.key === 'ArrowDown' || (event.ctrlKey && event.key === 'n')) {
+      event.preventDefault()
+      selectedIndex = Math.min(selectedIndex + 1, items.length - 1)
+      updateSelection(items, selectedIndex)
+    } else if (event.key === 'ArrowUp' || (event.ctrlKey && event.key === 'p')) {
+      event.preventDefault()
+      selectedIndex = Math.max(selectedIndex - 1, -1)
+      updateSelection(items, selectedIndex)
+    } else if (event.key === 'Enter') {
+      event.preventDefault()
+      if (selectedIndex >= 0 && selectedIndex < items.length) {
+        selectCategory(items[selectedIndex].textContent)
+      }
+    }
+  })
+
+  // Reset selection on input change
+  input.addEventListener('change', () => {
+    selectedIndex = -1
+  })
+}
+
+function openCategorySwapModal() {
+  const modal = document.getElementById('category-swap-modal')
+  const input = document.getElementById('category-swap-input')
+  const suggestionsUl = document.getElementById('category-swap-suggestions')
+
+  modal.classList.remove('hidden')
+  input.value = ''
+  input.focus()
+
+  // Show all categories initially
+  const categories = Array.from(CATEGORIES_SET).sort()
+  renderSuggestions(categories, suggestionsUl, '')
+}
+
+function closeCategorySwapModal() {
+  const modal = document.getElementById('category-swap-modal')
+  modal.classList.add('hidden')
+}
+
+function renderSuggestions(categories, container, query) {
+  container.innerHTML = ''
+
+  categories.forEach(category => {
+    const li = document.createElement('li')
+    li.textContent = category
+    li.addEventListener('click', () => selectCategory(category))
+    container.appendChild(li)
+  })
+}
+
+function updateSelection(items, index) {
+  items.forEach((item, i) => {
+    if (i === index) {
+      item.classList.add('selected')
+      item.scrollIntoView({ block: 'nearest' })
+    } else {
+      item.classList.remove('selected')
+    }
+  })
+}
+
+function selectCategory(category) {
+  const categories = document.getElementById('category-input')
+  categories.value = category
+  refreshTodos()
+  closeCategorySwapModal()
 }
