@@ -140,8 +140,8 @@ document.addEventListener('keydown', event => {
     }
   }
 
-  // cmd+space to open category swap modal
-  if ((event.ctrlKey || event.metaKey) && event.code === 'Space') {
+  // cmd+space or p to open category swap modal
+  if ((event.ctrlKey || event.metaKey) && (event.code === 'Space' || event.key === 'p')) {
     event.preventDefault()
     openCategorySwapModal()
   }
