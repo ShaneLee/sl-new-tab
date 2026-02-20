@@ -581,6 +581,14 @@ function updateRanks(todos) {
   })
 }
 
+function emailTodoList(category) {
+  api(emailListEndpoint, {
+    method: 'POST',
+    headers: headers,
+    body: JSON.stringify({ category: category }),
+  })
+}
+
 function complete(todo, dontRefresh) {
   api(completeEndpoint, {
     method: 'PATCH',
@@ -1747,6 +1755,7 @@ function addTodoListener() {
   contextMenu = document.getElementById('contextMenu')
   const deleteThisInstanceAction = document.getElementById('deleteThisInstanceAction')
   const completeThisAction = document.getElementById('completeThisAction')
+  const emailListAction = document.getElementById('emailListAction')
   const showCompleteTodosAction = document.getElementById('showCompleteTodosAction')
   const showHiddenTodosAction = document.getElementById('showHiddenTodosAction')
   const deleteAllInstancesAction = document.getElementById('deleteAllInstancesAction')
@@ -1801,6 +1810,12 @@ function addTodoListener() {
       refreshTodos()
       hideContextMenu()
     })
+  })
+
+  emailListAction.addEventListener('click', function () {
+    const categories = document.getElementById('category-input')
+    const category = categories.value
+    emailTodoList(category)
   })
 
   completeThisAction.addEventListener('click', function () {
