@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+    <script src="../js/environment.js" charset="UTF-8"></script>
+    <script src="../js/recurring-transactions.js" charset="UTF-8"></script>
+    <title>Recurring Transactions</title>
+    <style>
+      section {
+        overflow-x: auto;
+        width: 100%;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        margin: 20px auto;
+      }
+      th,
+      td {
+        border: 1px solid var(--light-grey);
+        text-align: left;
+        padding: 12px;
+      }
+      th {
+        background-color: var(--dark-grey);
+        font-weight: bold;
+      }
+      tr:hover {
+        background-color: var(--medium-grey);
+        cursor: context-menu;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      <div id="feedback" class="feedback hidden"></div>
+      <h1>Recurring Transactions 🔄</h1>
+
+      <!-- Context Menu -->
+      <div id="recurringContextMenu" class="context-menu">
+        <div class="context-menu-item" id="splitRecurringAction">Split Transaction</div>
+      </div>
+
+      <!-- Recurring Transactions Table -->
+      <section>
+        <table>
+          <thead>
+            <tr>
+              <th>Day</th>
+              <th>Description</th>
+              <th>Category</th>
+              <th>Account Alias</th>
+              <th>Amount</th>
+              <th>Notes</th>
+              <th>From Date</th>
+              <th>To Date</th>
+            </tr>
+          </thead>
+          <tbody id="recurring-transactions-table"></tbody>
+        </table>
+      </section>
+
+      <!-- Split Recurring Transaction Modal -->
+      <div id="splitModal">
+        <h2>Split Recurring Transaction</h2>
+        <form id="splitForm">
+          <label for="splitDate">Split Date:</label>
+          <input type="date" id="splitDate" name="splitDate" required />
+
+          <label for="newAmount">New Amount:</label>
+          <input
+            type="number"
+            id="newAmount"
+            name="newAmount"
+            placeholder="Amount"
+            step="0.01"
+            required
+          />
+
+          <div class="button-group">
+            <button type="submit" id="submitSplitBtn">Split</button>
+            <button type="button" id="cancelSplitBtn">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

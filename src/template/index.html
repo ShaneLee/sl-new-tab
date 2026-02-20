@@ -7,6 +7,7 @@
     <script src="../js/environment.js" charset="UTF-8"></script>
     <script src="../js/javascript.js" charset="UTF-8"></script>
     <script src="../js/popup-form.js" charset="UTF-8"></script>
+    <script src="../js/reminder.js" charset="UTF-8"></script>
     <script src="../js/jquery-3.5.0.min.js" charset="utf-8"></script>
     <link rel="stylesheet" type="text/css" href="../css/style.css" />
   </head>
@@ -66,6 +67,7 @@
         <li><a id="songs-link"></a></li>
         <li><a id="planner-link"></a></li>
         <li><a id="file-viewer-link"></a></li>
+        <li><a id="recurring-transactions-link"></a></li>
       </ul>
     </div>
     <div class="main" id="main">
@@ -97,6 +99,7 @@
           <div class="context-menu-item" id="showCompleteTodosAction">Show Complete Todos</div>
           <div class="context-menu-item" id="showHiddenTodosAction">Show Hidden Todos</div>
           <div class="context-menu-item" id="emailListAction">Email Current List</div>
+          <div class="context-menu-item" id="createReminderAction">Create Reminder</div>
         </div>
         <!-- Todo-specific Context Menu -->
         <div id="todoContextMenu" class="context-menu">
@@ -190,6 +193,28 @@
         />
         <ul id="category-swap-suggestions" class="category-swap-suggestions"></ul>
       </div>
+    </div>
+
+    <!-- Reminder Modal -->
+    <div id="reminderModal">
+      <h2>Add Reminder</h2>
+      <form id="reminderForm">
+        <label for="reminderDescription">Description:</label>
+        <textarea
+          id="reminderDescription"
+          name="description"
+          placeholder="What do you want to be reminded about?"
+          required
+        ></textarea>
+
+        <label for="reminderAlertTime">Alert Time:</label>
+        <input type="datetime-local" id="reminderAlertTime" name="alertTime" required />
+
+        <div class="button-group">
+          <button type="submit" id="submitBtn">Create Reminder</button>
+          <button type="button" id="cancelBtn">Cancel</button>
+        </div>
+      </form>
     </div>
   </body>
 </html>

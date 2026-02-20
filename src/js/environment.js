@@ -171,6 +171,8 @@ const todosHabitsEndpoint = `${host}/todos/habits`
 const transactionsEndpointFn = (start, end) =>
   `${host}/transaction?start=${start}&endInclusive=${end}`
 const transactionEndpoint = `${host}/transaction`
+const recurringTransactionEndpoint = `${host}/recurring/transactions`
+const splitRecurringTransactionEndpoint = `${recurringTransactionEndpoint}/split`
 const eventsEndpointFn = (start, end) => `${host}/event?start=${start}&endInclusive=${end}`
 const deleteEventEndpointFn = id => `${host}/event?id=${id}`
 const eventEndpoint = `${host}/event`
@@ -235,6 +237,8 @@ const podcastAllSubsribedEpisodesEndpointFn = (page, size, sort) =>
   `${host}/podcast/all?page=${page}&size=${size}&sort=${sort}`
 const podcastAllSubsribedEndpointFn = (page, size) =>
   `${host}/podcast/subscribed?page=${page}&size=${size}&sort=createdAtUtc,desc`
+
+const reminderEndpoint = `${host}/reminder`
 
 const versionCatalogueEndpoint = `${host}/version-catalogue`
 

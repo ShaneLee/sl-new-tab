@@ -1756,6 +1756,7 @@ function addTodoListener() {
   const deleteThisInstanceAction = document.getElementById('deleteThisInstanceAction')
   const completeThisAction = document.getElementById('completeThisAction')
   const emailListAction = document.getElementById('emailListAction')
+  const createReminderAction = document.getElementById('createReminderAction')
   const showCompleteTodosAction = document.getElementById('showCompleteTodosAction')
   const showHiddenTodosAction = document.getElementById('showHiddenTodosAction')
   const deleteAllInstancesAction = document.getElementById('deleteAllInstancesAction')
@@ -1816,6 +1817,11 @@ function addTodoListener() {
     const categories = document.getElementById('category-input')
     const category = categories.value
     emailTodoList(category)
+  })
+
+  createReminderAction.addEventListener('click', function () {
+    showReminderModal()
+    hideContextMenu()
   })
 
   completeThisAction.addEventListener('click', function () {
@@ -2346,6 +2352,13 @@ const pages = [
     emoji: withEmojis ? '🐸' : '',
     shortcut: ',e',
     feature: 'events',
+  }),
+  new Page({
+    id: 'recurring-transactions-link',
+    url: `${browserExtension}://${extensionId}/template/recurring-transactions.html`,
+    name: 'Recurring Transactions',
+    emoji: withEmojis ? '🔁' : '',
+    feature: 'spend-tracking',
   }),
   new Page({
     id: 'planner-link',

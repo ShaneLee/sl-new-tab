@@ -1414,3 +1414,172 @@ h3 {
 .category-swap-suggestions li:last-child {
   border-bottom: none;
 }
+
+/** Reminder Modal **/
+#reminderModal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10000;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  padding: 30px;
+  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+  font-family: var(--font-family);
+  text-align: center;
+  width: 50%;
+  border-radius: 15px;
+  display: none;
+}
+
+#reminderModal h2 {
+  margin-top: 0;
+}
+
+#reminderForm {
+  display: flex;
+  flex-direction: column;
+}
+
+#reminderForm label {
+  text-align: left;
+  margin-top: 15px;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+#reminderForm input[type='datetime-local'],
+#reminderForm textarea {
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid var(--text-color);
+  background-color: var(--dark-grey);
+  color: var(--link-color);
+  border-radius: 5px;
+  font-family: var(--font-family);
+  font-weight: bold;
+}
+
+#reminderForm textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+#reminderForm input[type='datetime-local']:focus,
+#reminderForm textarea:focus {
+  outline: none;
+  border: 2px solid var(--main-color);
+}
+
+#reminderForm .button-group {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+#reminderForm button {
+  background-color: var(--main-color);
+  color: var(--background-color);
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-weight: bold;
+  transition: background-color 0.2s;
+}
+
+#reminderForm button:hover {
+  background-color: var(--lighter-main-color);
+}
+
+#reminderForm #cancelBtn {
+  background-color: var(--light-grey);
+  color: var(--background-color);
+}
+
+#reminderForm #cancelBtn:hover {
+  background-color: var(--text-color);
+}
+
+/** Split Recurring Transaction Modal **/
+#splitModal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10000;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  padding: 30px;
+  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+  font-family: var(--font-family);
+  text-align: center;
+  width: 50%;
+  border-radius: 15px;
+  display: none;
+}
+
+#splitModal h2 {
+  margin-top: 0;
+}
+
+#splitForm {
+  display: flex;
+  flex-direction: column;
+}
+
+#splitForm label {
+  text-align: left;
+  margin-top: 15px;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+#splitForm input {
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid var(--text-color);
+  background-color: var(--dark-grey);
+  color: var(--link-color);
+  border-radius: 5px;
+  font-family: var(--font-family);
+  font-weight: bold;
+}
+
+#splitForm input:focus {
+  outline: none;
+  border: 2px solid var(--main-color);
+}
+
+#splitForm .button-group {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+#splitForm button {
+  background-color: var(--main-color);
+  color: var(--background-color);
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-weight: bold;
+  transition: background-color 0.2s;
+}
+
+#splitForm button:hover {
+  background-color: var(--lighter-main-color);
+}
+
+#splitForm #cancelSplitBtn {
+  background-color: var(--light-grey);
+  color: var(--background-color);
+}
+
+#splitForm #cancelSplitBtn:hover {
+  background-color: var(--text-color);
+}
