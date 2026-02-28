@@ -1780,7 +1780,7 @@ function addTodoListener() {
   const moveNextAction = document.getElementById('moveNextAction')
   const copyToSubcategoryAction = document.getElementById('copyToSubCategoryAction')
   const changeCategoryAction = document.getElementById('changeCategoryAction')
-  const thisWeekcategoryAction = document.getElementById('thisWeekCategoryAction')
+  const thisWeekCategoryAction = document.getElementById('thisWeekCategoryAction')
   const changeAllCategoryAction = document.getElementById('changeAllCategoryAction')
   const completeAllAction = document.getElementById('completeAllAction')
   const deleteCurrentCategoryAction = document.getElementById('deleteCurrentCategoryAction')
@@ -2147,6 +2147,14 @@ function addTodoListener() {
     if (!!tags) {
       update(todo)
     }
+    selectedTodo = null
+    hideContextMenu()
+  })
+
+  moveToBacklogAction.addEventListener('click', function () {
+    const todo = selectedTodo
+    todo.category = `Backlog`
+    update(todo)
     selectedTodo = null
     hideContextMenu()
   })
