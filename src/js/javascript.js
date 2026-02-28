@@ -73,6 +73,7 @@ let runningTask
 let timerInterval
 let contextMenu
 let TODOS_SET = new Set()
+let lastVisibilityChangeTime = Date.now()
 
 class Page {
   constructor({ id, url, name, emoji, shortcut, feature, clickHandler }) {
@@ -171,6 +172,21 @@ function pickRandom(quotes) {
 function printQuote(quoteAuthor, quote) {
   document.getElementById('quote').innerHTML = quote
   document.getElementById('author').innerHTML = quoteAuthor
+}
+
+function setupVisibilityTracking() {
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+      const currentTime = Date.now()
+      const timeSinceLastVisibilityChange = currentTime - lastVisibilityChangeTime
+      const oneMinuteInMs = 60 * 1000
+
+      if (timeSinceLastVisibilityChange > oneMinuteInMs) {
+        refreshTodos()
+      }
+    }
+    lastVisibilityChangeTime = Date.now()
+  })
 }
 
 function startOfMonthCurrentDatePair() {
@@ -2741,6 +2757,7 @@ window.onload = function () {
   // Shift + click drag
   addTodoDragToSelectListener()
   addTodoNavigationShortcuts()
+  setupVisibilityTracking()
   if (importantTodosEnabled) {
     targetNote()
   }
