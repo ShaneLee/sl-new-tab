@@ -2120,13 +2120,12 @@ function addTodoListener() {
 
   changeCategoryAction.addEventListener('click', function () {
     const todo = selectedTodo
-    const category = prompt('Enter the new category:')
-    if (!!category) {
+    openCategoryModalWithCallback(category => {
       todo.category = category
       update(todo)
-    }
-    selectedTodo = null
-    hideContextMenu()
+      selectedTodo = null
+      hideContextMenu()
+    })
   })
 
   addNotesAction.addEventListener('click', function () {
@@ -2151,7 +2150,7 @@ function addTodoListener() {
     hideContextMenu()
   })
 
-  moveToBacklogAction.addEventListener('click', function () {
+  moveToBacklogAction?.addEventListener('click', function () {
     const todo = selectedTodo
     todo.category = `Backlog`
     update(todo)
@@ -2265,22 +2264,18 @@ function addTodoListener() {
   })
 
   changeAllCategoryAction.addEventListener('click', function () {
-    // TODO update the backend to have a list edit endpoint
-    // will need to validate that all are for the same user
-    const category = prompt('Enter the new category:')
-    const setToUse = SELECTED_TODOS.size > 0 ? SELECTED_TODOS : TODOS_SET
-    const promises = [...setToUse].map(todo => {
-      if (!!category) {
+    openCategoryModalWithCallback(category => {
+      const setToUse = SELECTED_TODOS.size > 0 ? SELECTED_TODOS : TODOS_SET
+      const promises = [...setToUse].map(todo => {
         todo.category = category
         return update(todo, true)
-      }
-      return Promise.resolve()
-    })
+      })
 
-    Promise.all(promises).then(() => {
-      SELECTED_TODOS.clear()
-      refreshTodos()
-      hideContextMenu()
+      Promise.all(promises).then(() => {
+        SELECTED_TODOS.clear()
+        refreshTodos()
+        hideContextMenu()
+      })
     })
   })
 
@@ -2810,6 +2805,8 @@ window.onload = function () {
 }
 
 // Category Swap Modal Functions
+let categoryModalCallback = null
+
 function initCategorySwapModal() {
   const modal = document.getElementById('category-swap-modal')
   const input = document.getElementById('category-swap-input')
@@ -2855,6 +2852,9 @@ function initCategorySwapModal() {
       event.preventDefault()
       if (selectedIndex >= 0 && selectedIndex < items.length) {
         selectCategory(items[selectedIndex].textContent)
+      } else if (event.target.value.trim()) {
+        // Allow creating new category by typing and pressing Enter
+        selectCategory(event.target.value.trim())
       }
     }
   })
@@ -2866,10 +2866,20 @@ function initCategorySwapModal() {
 }
 
 function openCategorySwapModal() {
+  categoryModalCallback = null
+  openCategoryModalWithCallback(category => {
+    const categories = document.getElementById('category-input')
+    categories.value = category
+    refreshTodos()
+  })
+}
+
+function openCategoryModalWithCallback(callback) {
   const modal = document.getElementById('category-swap-modal')
   const input = document.getElementById('category-swap-input')
   const suggestionsUl = document.getElementById('category-swap-suggestions')
 
+  categoryModalCallback = callback
   modal.classList.remove('hidden')
   input.value = ''
   input.focus()
@@ -2882,6 +2892,7 @@ function openCategorySwapModal() {
 function closeCategorySwapModal() {
   const modal = document.getElementById('category-swap-modal')
   modal.classList.add('hidden')
+  categoryModalCallback = null
 }
 
 function renderSuggestions(categories, container, query) {
@@ -2907,8 +2918,8 @@ function updateSelection(items, index) {
 }
 
 function selectCategory(category) {
-  const categories = document.getElementById('category-input')
-  categories.value = category
-  refreshTodos()
+  if (categoryModalCallback) {
+    categoryModalCallback(category)
+  }
   closeCategorySwapModal()
 }
