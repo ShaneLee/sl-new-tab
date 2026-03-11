@@ -1,0 +1,1 @@
+- [ ] Create a new package script that allows this to be ran outside of an extension
