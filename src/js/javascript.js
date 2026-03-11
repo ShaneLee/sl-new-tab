@@ -1785,6 +1785,7 @@ function addTodoListener() {
   const completeAllAction = document.getElementById('completeAllAction')
   const deleteCurrentCategoryAction = document.getElementById('deleteCurrentCategoryAction')
   const openSettingsAction = document.getElementById('openSettingsAction')
+  const showShortcutsAction = document.getElementById('showShortcutsAction')
   const addTodoTagFilterAction = document.getElementById('addTagTodoFilterAction')
   const moveAllNextAction = document.getElementById('moveAllNextAction')
   const deleteAllAction = document.getElementById('deleteAllAction')
@@ -1919,6 +1920,11 @@ function addTodoListener() {
 
   openSettingsAction.addEventListener('click', function () {
     window.location.href = `${browserExtension}://${extensionId}/template/settings.html`
+  })
+
+  showShortcutsAction.addEventListener('click', function () {
+    openShortcutsModal()
+    hideContextMenu()
   })
 
   showHiddenTodosAction.addEventListener('click', function (event) {

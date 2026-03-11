@@ -8,6 +8,7 @@
     <script src="../js/javascript.js" charset="UTF-8"></script>
     <script src="../js/popup-form.js" charset="UTF-8"></script>
     <script src="../js/reminder.js" charset="UTF-8"></script>
+    <script src="../js/shortcuts.js" charset="UTF-8"></script>
     <script src="../js/jquery-3.5.0.min.js" charset="utf-8"></script>
     <link rel="stylesheet" type="text/css" href="../css/style.css" />
   </head>
@@ -93,6 +94,7 @@
           <div class="context-menu-item" id="addTagTodoFilterAction">Add Todo Tag Filter</div>
           <div class="context-menu-item" id="addTagsToAllAction">Add Tags to All</div>
           <div class="context-menu-item" id="openSettingsAction">Open Settings</div>
+          <div class="context-menu-item" id="showShortcutsAction">Show Shortcuts</div>
           <div class="context-menu-item" id="deleteCurrentCategoryAction">
             Delete Current Category
           </div>
@@ -215,6 +217,114 @@
           <button type="button" id="cancelBtn">Cancel</button>
         </div>
       </form>
+    </div>
+
+    <!-- Shortcuts Modal -->
+    <div id="shortcuts-modal" class="shortcuts-modal hidden">
+      <div class="shortcuts-modal-content">
+        <div class="shortcuts-modal-header">
+          <h2>Keyboard Shortcuts & Tips</h2>
+          <button class="shortcuts-modal-close" id="shortcuts-modal-close">&times;</button>
+        </div>
+        <div class="shortcuts-modal-body">
+          <!-- Navigation Shortcuts -->
+          <div class="shortcuts-section">
+            <h3>Navigation Shortcuts</h3>
+            <div class="shortcuts-grid">
+              <div class="shortcut-item">
+                <kbd>Cmd</kbd> + <kbd>Space</kbd> / <kbd>P</kbd>
+                <span>Open category swap</span>
+              </div>
+              <div class="shortcut-item">
+                <kbd>Cmd</kbd> + <kbd>Z</kbd>
+                <span>Undo (uncomplete last todo)</span>
+              </div>
+              <div class="shortcut-item">
+                <kbd>Shift</kbd> + <kbd>H</kbd>
+                <span>Previous week (in Week view)</span>
+              </div>
+              <div class="shortcut-item">
+                <kbd>Shift</kbd> + <kbd>L</kbd>
+                <span>Next week (in Week view)</span>
+              </div>
+              <div class="shortcut-item">
+                <kbd>?</kbd>
+                <span>Show shortcuts (this modal)</span>
+              </div>
+              <div class="shortcut-item">
+                <kbd>~</kbd>
+                <span>Hide main content</span>
+              </div>
+              <div class="shortcut-item">
+                <code>gt</code>
+                <span>Quick shortcut to move to the current week (e.g., "Week 11")</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Page Navigation -->
+          <div class="shortcuts-section">
+            <h3>Page Navigation (Press keys in sequence, e.g., <code>,e</code>)</h3>
+            <div id="page-shortcuts-section" class="shortcuts-grid">
+              <!-- Populated dynamically from javascript.js pages array -->
+            </div>
+          </div>
+
+          <!-- Todo Shortcuts -->
+          <div class="shortcuts-section">
+            <h3>Todo Input Shortcuts</h3>
+            <div class="shortcuts-list">
+              <div class="shortcut-item-full">
+                <code>@category@</code>
+                <span>Set category for a todo (e.g., <code>@Work@ Finish report</code>)</span>
+              </div>
+              <div class="shortcut-item-full">
+                <code>tags:tag1,tag2,tag3</code>
+                <span
+                  >Add tags to a todo (comma-separated, no spaces). Example:
+                  <code>Meeting tags:important,work</code></span
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Date & Time Shortcuts -->
+          <div class="shortcuts-section">
+            <h3>Date & Time Patterns (highlighted in yellow)</h3>
+            <div class="shortcuts-list">
+              <div class="shortcut-item-full">
+                <code>today</code> | <code>tomorrow</code>
+                <span>Set due date to today or tomorrow</span>
+              </div>
+              <div class="shortcut-item-full">
+                <code>Monday - Sunday</code>
+                <span>Set due date to specific weekday</span>
+              </div>
+              <div class="shortcut-item-full">
+                <code>YYYY-MM-DD</code>
+                <span>Set specific date (e.g., 2026-03-15)</span>
+              </div>
+              <div class="shortcut-item-full">
+                <code>@2pm</code> | <code>@2am</code>
+                <span>Set time for reminder (e.g., <code>Meeting @2pm</code>)</span>
+              </div>
+              <div class="shortcut-item-full">
+                <code>every Monday</code> | <code>every 2 weeks</code>
+                <span>Create recurring todos (supports days, weeks, months, quarters, years)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Context Menu Tips -->
+          <div class="shortcuts-section">
+            <h3>Context Menu (Right-Click)</h3>
+            <p class="shortcuts-tip">
+              Right-click on the category name to access category options. Right-click on individual
+              todos for more actions like edit, delete, move, add tags, and more.
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   </body>
 </html>
