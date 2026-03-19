@@ -2864,6 +2864,11 @@ function initCategorySwapModal() {
       event.preventDefault()
       if (selectedIndex >= 0 && selectedIndex < items.length) {
         selectCategory(items[selectedIndex].textContent)
+      } else if (items.length === 1) {
+        // If there's only one suggestion, highlight it first then select it
+        selectedIndex = 0
+        updateSelection(items, selectedIndex)
+        selectCategory(items[0].textContent)
       } else if (event.target.value.trim()) {
         // Allow creating new category by typing and pressing Enter
         selectCategory(event.target.value.trim())
