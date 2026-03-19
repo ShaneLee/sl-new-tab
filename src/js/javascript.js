@@ -146,6 +146,12 @@ document.addEventListener('keydown', event => {
     event.preventDefault()
     openCategorySwapModal()
   }
+
+  // Tab to focus todo input
+  if (event.key === 'Tab') {
+    event.preventDefault()
+    document.getElementById('todo-input').focus()
+  }
 })
 
 function loadJSon() {
