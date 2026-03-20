@@ -2406,6 +2406,13 @@ const pages = [
     feature: 'music',
   }),
   new Page({
+    id: 'albums-to-listen-link',
+    url: `${browserExtension}://${extensionId}/template/albums-to-listen.html`,
+    name: 'Albums to Listen',
+    emoji: withEmojis ? '💿' : '',
+    feature: 'spotify',
+  }),
+  new Page({
     id: 'memes-link',
     url: `${browserExtension}://${extensionId}/template/memes.html`,
     name: 'Memes',

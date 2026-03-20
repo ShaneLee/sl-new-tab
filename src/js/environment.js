@@ -263,6 +263,7 @@ const fileTagsEndpoint = `${host}/files/tags`
 // Spotify Endpoints
 const spotifyCallbackEndpointFn = code => `${host}/spotify/callback?code=${code}`
 const spotifyCurrentlyPlayingEndpoint = `${host}/spotify/currently-playing`
+const albumsToListenEndpoint = `${host}/spotify/albums-to-listen`
 
 function categoryParam(category) {
   return !!category ? `&category=${category}` : ''
