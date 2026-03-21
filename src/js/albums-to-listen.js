@@ -1,8 +1,11 @@
-function fetchAlbums() {
-  api(albumsToListenEndpoint, { method: 'GET', headers: headers })
+function fetchAlbums(playlistName) {
+  const url = playlistName
+    ? `${albumsToListenEndpoint}?playlistName=${encodeURIComponent(playlistName)}`
+    : albumsToListenEndpoint
+  api(url, { method: 'GET', headers: headers })
     .then(res => res.json())
     .then(albums => displayAlbums(albums))
-    .catch(err => console.error('Error fetching albums to listen:', err))
+    .catch(err => console.error('Error fetching albums:', err))
 }
 
 function displayAlbums(albums) {
@@ -40,5 +43,22 @@ function displayAlbums(albums) {
 }
 
 window.onload = () => {
-  fetchAlbums()
+  const overlay = document.getElementById('playlistModalOverlay')
+  const form = document.getElementById('playlistForm')
+  const input = document.getElementById('playlistNameInput')
+  const title = document.getElementById('albums-title')
+
+  overlay.classList.remove('hidden')
+
+  form.addEventListener('submit', e => {
+    e.preventDefault()
+    const playlistName = input.value.trim()
+    overlay.classList.add('hidden')
+    if (playlistName) {
+      title.textContent = `${playlistName} 💿`
+    }
+    fetchAlbums(playlistName)
+  })
+
+  input.focus()
 }

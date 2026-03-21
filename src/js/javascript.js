@@ -2408,7 +2408,7 @@ const pages = [
   new Page({
     id: 'albums-to-listen-link',
     url: `${browserExtension}://${extensionId}/template/albums-to-listen.html`,
-    name: 'Albums to Listen',
+    name: 'Albums',
     emoji: withEmojis ? '💿' : '',
     feature: 'spotify',
   }),

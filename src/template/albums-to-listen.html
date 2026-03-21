@@ -2,14 +2,31 @@
 <html>
   <head>
     <meta charset="UTF-8" />
-    <title id="title">Albums to Listen 💿</title>
+    <title id="title">Albums 💿</title>
     <script src="../js/environment.js"></script>
     <script src="../js/albums-to-listen.js"></script>
     <link rel="stylesheet" href="../css/style.css" />
   </head>
   <body>
+    <div class="albums-playlist-modal-overlay" id="playlistModalOverlay">
+      <div class="albums-playlist-modal">
+        <h2>Albums 💿</h2>
+        <form id="playlistForm" class="default-form">
+          <label for="playlistNameInput">Playlist name (leave blank for default)</label>
+          <input
+            type="text"
+            id="playlistNameInput"
+            placeholder="Albums to Listen"
+            autocomplete="off"
+          />
+          <div class="button-group">
+            <button type="submit">Load Albums</button>
+          </div>
+        </form>
+      </div>
+    </div>
     <div class="main albums-page" id="main">
-      <h1>Albums to Listen 💿</h1>
+      <h1 id="albums-title">Albums 💿</h1>
       <div id="feedback" class="feedback hidden"></div>
       <div class="albums-grid" id="albums-grid"></div>
     </div>
