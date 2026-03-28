@@ -1088,9 +1088,14 @@ function addTodo(uL, todo) {
     if (todo.targetCount != null) {
       const existingCountInput = document.getElementById('countInput')
       if (existingCountInput) {
-        // If an input already exists, focus on it and return
-        existingCountInput.focus()
-        return
+        if (contentDiv.contains(existingCountInput)) {
+          // Same todo clicked — just focus the existing input
+          existingCountInput.focus()
+          return
+        } else {
+          // Different todo clicked — remove the existing input first
+          existingCountInput.parentNode.removeChild(existingCountInput)
+        }
       }
       const countInput = document.createElement('input')
       countInput.type = 'number'
@@ -1100,6 +1105,12 @@ function addTodo(uL, todo) {
       countInput.id = 'countInput'
       countInput.className = 'countInput'
       countInput.value = todo.count // Prepopulate with the current count
+      countInput.addEventListener('keydown', event => {
+        if (event.key === 'Escape') {
+          contentDiv.removeChild(countInput)
+          return
+        }
+      })
       countInput.addEventListener('keypress', event => {
         if (event.key === 'Enter') {
           const newCount = parseInt(countInput.value, 10)
