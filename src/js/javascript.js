@@ -1837,7 +1837,7 @@ function addTodoListener() {
     // will need to validate that all are for the same user
     const setToUse = SELECTED_TODOS.size > 0 ? SELECTED_TODOS : TODOS_SET
     const promises = [...setToUse].map(todo => {
-      return complete(todo, false)
+      return complete(todo, true)
     })
 
     Promise.all(promises).then(() => {
