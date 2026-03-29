@@ -31,7 +31,7 @@ function showPopupForm() {
       <input type="text" id="category-popup-input" name="category" placeholder="Category">
       <textarea id="notes-popup-input" name="notes" placeholder="Notes"></textarea>
       <input type="submit" value="Submit">
-      <button type="button" onclick="(() => document.getElementById('idea-bucket-popup')?.remove())()">Close</button>
+      <button type="button" id="idea-bucket-popup-close">Close</button>
     </form>
   `
 
@@ -69,6 +69,9 @@ function showPopupForm() {
   })
 
   document.body.appendChild(form)
+  form
+    .querySelector('#idea-bucket-popup-close')
+    .addEventListener('click', () => closeForm('idea-bucket-popup'))
   form.querySelector('form').addEventListener('submit', function (e) {
     e.preventDefault()
 
@@ -89,12 +92,8 @@ function showPopupForm() {
       method: 'POST',
       headers: vars.headers,
       body: JSON.stringify(formData),
-    }).then(closeForm)
+    }).then(() => closeForm('idea-bucket-popup'))
   })
-}
-
-function closeForm() {
-  closeForm('idea-bucket-popup')
 }
 
 function closeForm(formId) {
