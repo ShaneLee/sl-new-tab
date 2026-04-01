@@ -1478,6 +1478,13 @@ h3 {
   line-height: 1;
 }
 
+/* Year of Diary */
+#diary-grid-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
 /** Category Swap Modal **/
 .category-swap-modal {
   position: fixed;

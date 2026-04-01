@@ -23,6 +23,7 @@ class Feature {
 
 const featuresList = [
   new Feature('books', true),
+  new Feature('diary', true),
   new Feature('events', true),
   new Feature('food', true),
   new Feature('idea-bucket', true),

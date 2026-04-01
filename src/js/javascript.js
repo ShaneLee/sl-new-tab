@@ -2588,6 +2588,14 @@ const pages = [
     feature: 'mood',
   }),
   new Page({
+    id: 'year-diary-link',
+    url: `${browserExtension}://${extensionId}/template/year-diary.html`,
+    name: 'Year of Diary',
+    emoji: withEmojis ? '📓' : '',
+    shortcut: ',yd',
+    feature: 'diary',
+  }),
+  new Page({
     id: 'dynamic-review-link',
     url: `${browserExtension}://${extensionId}/template/review.html`,
     name: 'Dynamic Review',
