@@ -4,18 +4,6 @@ let originalColumn = null
 let originalIndex = -1
 let draggedTodo = null
 
-class CircularQueue {
-  constructor(elements) {
-    this.elements = elements
-  }
-
-  get() {
-    const element = this.elements.pop()
-    this.elements.unshift(element)
-    return element
-  }
-}
-
 const TAG_COLOURS = new Map()
 
 // TODO in the future remove any colours that are set by the user for given tags
