@@ -887,7 +887,7 @@ function shouldHide(today, todo) {
   }
 
   const todayStr = today.toISOString().split('T')[0]
-  return todo.hideUntil > todayStr
+  return todo.hideUntil >= todayStr
 }
 
 function todos(includeComplete = false) {
