@@ -1814,6 +1814,8 @@ function addTodoListener() {
   const openLinkAction = document.getElementById('openLinkAction')
   const markImportantAction = document.getElementById('markImportantAction')
   const addTagAction = document.getElementById('addTagAction')
+  const tagThisWeekAction = document.getElementById('tagThisWeekAction')
+  const tagNextWeekAction = document.getElementById('tagNextWeekAction')
   const addNotesAction = document.getElementById('addNotesAction')
   const addHideUntilAction = document.getElementById('addHideUntilAction')
   const addTagsToAllAction = document.getElementById('addTagsToAllAction')
@@ -2169,6 +2171,20 @@ function addTodoListener() {
     if (!!tags) {
       update(todo)
     }
+    selectedTodo = null
+    hideContextMenu()
+  })
+
+  tagThisWeekAction.addEventListener('click', function () {
+    const todo = addTags(selectedTodo, currentWeekTag())
+    update(todo)
+    selectedTodo = null
+    hideContextMenu()
+  })
+
+  tagNextWeekAction.addEventListener('click', function () {
+    const todo = addTags(selectedTodo, nextWeekTag())
+    update(todo)
     selectedTodo = null
     hideContextMenu()
   })

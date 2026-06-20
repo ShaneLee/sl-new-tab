@@ -92,6 +92,26 @@ function currentWeekNumber() {
   return Math.min(52, 1 + Math.ceil((firstThursday - target) / 604800000))
 }
 
+function currentWeekTag() {
+  // year-week-weeknumber
+  // eg. 2026-week-50
+  // currentWeekNumber() returns the current week number
+  return `${currentYear()}-week-${currentWeekNumber()}`
+}
+
+function nextWeekTag() {
+  // year-week-weeknumber
+  // eg. 2026-week-50
+  // currentWeekNumber() returns the current week number
+  let week = currentWeekNumber() + 1
+  let year = currentYear()
+  if (week === 52) {
+    week = 1
+    year = year + 1
+  }
+  return `${year}-week-${week}`
+}
+
 function currentMonthName() {
   const monthNames = [
     'January',
