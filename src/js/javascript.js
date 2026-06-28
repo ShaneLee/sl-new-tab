@@ -882,12 +882,11 @@ function shouldDisplayCopyToSubcategory(todo) {
 }
 
 function shouldHide(today, todo) {
-  if (showHidden || !todo.hideUntil) {
+  if (showHidden) {
     return false
   }
 
-  const todayStr = today.toISOString().split('T')[0]
-  return todo.hideUntil >= todayStr
+  return todo.hide
 }
 
 function todos(includeComplete = false) {
