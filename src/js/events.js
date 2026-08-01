@@ -123,11 +123,16 @@ function renderEvents(events, view, containerId) {
 
     let inner
 
+    const costLine =
+      event.cost || event.ticketUrl
+        ? `Cost: ${event.cost || 'Free'}${event.ticketUrl ? ` — <a href="${event.ticketUrl}" target="_blank" rel="noopener">Tickets</a>` : ''}<br>`
+        : ''
+
     if (event.toDate) {
       // Multi-day event: no time fields
       inner = `
       <strong>${event.name}</strong> (${dateDisplay})<br>
-      Notes: ${event.notes || 'None'}
+      ${costLine}Notes: ${event.notes || 'None'}
     `
     } else {
       // Single-day event: include times
@@ -137,7 +142,7 @@ function renderEvents(events, view, containerId) {
       inner = `
       <strong>${event.name}</strong> (${dateDisplay})<br>
       Time: ${startTime} - ${endTime}<br>
-      Notes: ${event.notes || 'None'}
+      ${costLine}Notes: ${event.notes || 'None'}
     `
     }
 
