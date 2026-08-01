@@ -18,6 +18,28 @@ function createEvent(eventObj) {
   )
 }
 
+function getLocations() {
+  return api(locationsEndpoint, {
+    method: 'GET',
+    headers: headers,
+  })
+    .then(response => (response.status === 200 ? response?.json() : null))
+    .then(populateLocations)
+}
+
+function populateLocations(locations) {
+  if (!locations) {
+    return
+  }
+  const select = document.getElementById('locationId')
+  locations.forEach(location => {
+    const option = document.createElement('option')
+    option.value = location.id
+    option.textContent = location.name
+    select.appendChild(option)
+  })
+}
+
 function setDefaultDate() {
   const dateInput = document.getElementById('date')
   const today = new Date()
@@ -51,7 +73,9 @@ function addEventFormListener() {
     const formData = new FormData(this)
     const jsonObject = {}
     formData.forEach(function (value, key) {
-      jsonObject[key] = value
+      if (value !== '') {
+        jsonObject[key] = value
+      }
     })
 
     createEvent(jsonObject)
@@ -210,5 +234,6 @@ window.addEventListener('load', () => {
   addEventFormListener()
   const eventDates = getEventStartAndEndDates()
   getEvents(eventDates['start'], eventDates['end'])
+  getLocations()
   addContextMenuListener()
 })

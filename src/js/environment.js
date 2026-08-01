@@ -197,6 +197,7 @@ const splitRecurringTransactionEndpoint = `${recurringTransactionEndpoint}/split
 const eventsEndpointFn = (start, end) => `${host}/event?start=${start}&endInclusive=${end}`
 const deleteEventEndpointFn = id => `${host}/event?id=${id}`
 const eventEndpoint = `${host}/event`
+const locationsEndpoint = `${host}/location`
 const transactionToDeductEndpoint = `${host}/transaction/to-deduct`
 const transactionToDeductEndpointFn = end => `${host}/transaction/to-deduct?endInclusive=${end}`
 const loginEndpoint = `${host}/v1/login`
