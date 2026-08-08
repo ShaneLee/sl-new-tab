@@ -4,6 +4,12 @@ window.onload = function () {
     withFeedbackMessage('warning', message)
   }
 
+  chrome.storage.local.get('name', function (result) {
+    if (result.name) {
+      document.getElementById('name').classList.add('hidden')
+    }
+  })
+
   const form = document.getElementById('loginForm')
   const loginButton = document.getElementById('loginButton')
   const registerButton = document.getElementById('registerButton')
