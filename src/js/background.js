@@ -369,8 +369,21 @@ browserAPI.runtime.onInstalled.addListener(details => {
 browserAPI.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
   if (changeInfo.status === 'complete') {
     checkAndChangeTitle(tab)
+    checkAndRedirectLinkedIn(tabId, tab)
   }
 })
+
+function checkAndRedirectLinkedIn(tabId, tab) {
+  const url = new URL(tab.url)
+
+  if (!url.hostname.includes('linkedin.com')) {
+    return
+  }
+
+  if (url.pathname === '/' || url.pathname === '/feed' || url.pathname === '/feed/') {
+    browserAPI.tabs.update(tabId, { url: 'https://www.linkedin.com/messaging' })
+  }
+}
 
 function checkAndChangeTitle(tab) {
   const targetHost = 'linkedin'
