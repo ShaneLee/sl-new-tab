@@ -1407,6 +1407,14 @@ function showContextMenu(event, todo) {
     existing.style.display = 'none'
   }
 
+  // Copy ID to Clipboard — developer feature flag
+  const copyIdEl = document.getElementById('copyIdToClipboardAction')
+  if (isTodoContextMenu && features.get('developer')?.enabled) {
+    copyIdEl.style.display = 'block'
+  } else {
+    copyIdEl.style.display = 'none'
+  }
+
   // Ensure the context menu is visible before retrieving dimensions
   contextMenu.style.display = 'block'
 
@@ -1480,6 +1488,16 @@ function createTodoEditForm(todo, updateTodoAction) {
     <form id="edit-todo-form">
       <h4>Edit Todo</h4>
       
+      <!-- Developer: ID (read-only) -->
+      ${
+        features.get('developer')?.enabled
+          ? `
+      <label for="todo-id">ID</label>
+      <input type="text" id="todo-id" name="id" value="${todo.id}" readonly>
+      `
+          : ''
+      }
+
       <!-- Todo description -->
       <label for="todo-description">Todo</label>
       <input type="text" id="todo-description" name="todo" value="${todo.todo}" required>
@@ -1819,7 +1837,7 @@ function addTodoListener() {
   const addHideUntilAction = document.getElementById('addHideUntilAction')
   const addTagsToAllAction = document.getElementById('addTagsToAllAction')
   const openInSearchEngineAction = document.getElementById('openInSearchEngineAction')
-
+  const copyIdToClipboardAction = document.getElementById('copyIdToClipboardAction')
   document.addEventListener('contextmenu', function (event) {
     hideContextMenu()
     showContextMenu(event)
@@ -2019,6 +2037,22 @@ function addTodoListener() {
   openInSearchEngineAction.addEventListener('click', function () {
     const todo = selectedTodo
     window.open(searchEngineFn(todo.todo), '_blank')
+    selectedTodo = null
+    hideContextMenu()
+  })
+
+  copyIdToClipboardAction.addEventListener('click', function () {
+    const todo = selectedTodo
+    if (todo?.id) {
+      navigator.clipboard
+        .writeText(String(todo.id))
+        .then(() => {
+          withFeedbackMessage('success', `📋 Copied ID: ${todo.id}`)
+        })
+        .catch(() => {
+          withFeedbackMessage('error', '🙈 Failed to copy ID to clipboard')
+        })
+    }
     selectedTodo = null
     hideContextMenu()
   })

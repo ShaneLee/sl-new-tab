@@ -45,6 +45,7 @@ const featuresList = [
   new Feature('music', true),
   new Feature('spotify', true),
   new Feature('planner', true),
+  new Feature('developer', true),
 ]
 
 // TODO feature map should be the feature flags source of truth
