@@ -3,6 +3,7 @@ host = 'http://192.168.0.12:8080'
 const webTrackerEndpoint = `${host}/tracking/web`
 const readingListEndpoint = `${host}/reading-list`
 const stopEndpoint = `${host}/tracking/web/stop`
+const webVisitsEndpoint = `${host}/tracking/web/visits`
 const podcastSubscribeEndpoint = `${host}/podcast/subscribe`
 const fileUploadEndpoint = `${host}/files/upload`
 const fileUploadUrlEndpoint = `${host}/files/upload/url`
@@ -186,6 +187,70 @@ function subscribeToPodcast(rss) {
   })
 }
 
+const trackedWebsites = ['linkedin.com', 'chess.com', 'youtube.com', 'reddit.com']
+const linkedinDailyVisitLimit = 15
+
+function getTrackedWebsite(url) {
+  const hostname = new URL(url).hostname
+  return trackedWebsites.find(site => hostname === site || hostname.endsWith(`.${site}`))
+}
+
+function recordPageVisit(url) {
+  return fetch(`${webVisitsEndpoint}?url=${encodeURIComponent(url)}`, {
+    method: 'PUT',
+    headers: headers,
+  }).catch(error => console.error('Error recording page visit:', error))
+}
+
+function getLinkedInVisitCount(url) {
+  return fetch(`${webVisitsEndpoint}?url=${encodeURIComponent(url)}`, {
+    method: 'GET',
+    headers: headers,
+  })
+    .then(response => {
+      if (response.status === 204) {
+        return 0
+      }
+      if (!response.ok) {
+        throw new Error(`Unable to get page visits: ${response.status}`)
+      }
+      return response.json()
+    })
+    .then(visits => {
+      if (!Array.isArray(visits)) {
+        return visits?.count || 0
+      }
+
+      const today = new Date().toISOString().slice(0, 10)
+      const todayVisit = visits.find(visit => {
+        const visitDate = visit.date || visit.visitDate || visit.visitedAt || visit.createdAt
+        return visitDate && String(visitDate).slice(0, 10) === today
+      })
+
+      return todayVisit?.count || (todayVisit ? 1 : visits.length)
+    })
+}
+
+function preventLinkedInLoading(tabId) {
+  browserAPI.tabs.update(tabId, { url: 'https://www.google.com' })
+}
+
+function checkLinkedInDailyLimit(tabId, url) {
+  return getLinkedInVisitCount(url)
+    .then(count => {
+      console.log('LinkedIn visit count for today:', count)
+      if (count > linkedinDailyVisitLimit) {
+        preventLinkedInLoading(tabId)
+        return true
+      }
+      return false
+    })
+    .catch(error => {
+      console.error('Error checking LinkedIn page visits:', error)
+      return false
+    })
+}
+
 browserAPI.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === 'saveFile') {
     browserAPI.storage.local.get(['fileUrl', 'bucket', 'category', 'notes'], function (data) {
@@ -367,7 +432,18 @@ browserAPI.runtime.onInstalled.addListener(details => {
 })
 
 browserAPI.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
+  const trackedWebsite = tab.url && getTrackedWebsite(tab.url)
+
+  if (changeInfo.status === 'loading' && trackedWebsite === 'linkedin.com') {
+    checkLinkedInDailyLimit(tabId, trackedWebsite)
+  }
+
   if (changeInfo.status === 'complete') {
+    if (tab.url) {
+      if (trackedWebsite) {
+        recordPageVisit(trackedWebsite)
+      }
+    }
     checkAndChangeTitle(tab)
     checkAndRedirectLinkedIn(tabId, tab)
   }
