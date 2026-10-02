@@ -11,8 +11,12 @@ const podcastListenLater = `${host}/podcast/listenLater`
 const bookShelfEndpoint = `${host}/book/shelf`
 const webTrackingEnabled = false
 
-const trackedWebsites = ['linkedin.com', 'chess.com', 'youtube.com', 'reddit.com']
-const linkedinDailyVisitLimit = 15
+const trackedWebsites = {
+  'linkedin.com': 15,
+  'chess.com': 20,
+  'youtube.com': undefined,
+  'reddit.com': undefined,
+}
 const disableWebVisitTracking = false
 
 const browserAPI = typeof browser !== 'undefined' ? browser : chrome
@@ -193,7 +197,9 @@ function subscribeToPodcast(rss) {
 
 function getTrackedWebsite(url) {
   const hostname = new URL(url).hostname
-  return trackedWebsites.find(site => hostname === site || hostname.endsWith(`.${site}`))
+  return Object.keys(trackedWebsites).find(
+    site => hostname === site || hostname.endsWith(`.${site}`),
+  )
 }
 
 function recordPageVisit(url) {
@@ -203,7 +209,7 @@ function recordPageVisit(url) {
   }).catch(error => console.error('Error recording page visit:', error))
 }
 
-function getLinkedInVisitCount(url) {
+function getPageVisitCount(url) {
   return fetch(`${webVisitsEndpoint}?url=${encodeURIComponent(url)}`, {
     method: 'GET',
     headers: headers,
@@ -232,16 +238,16 @@ function getLinkedInVisitCount(url) {
     })
 }
 
-function preventLinkedInLoading(tabId) {
+function preventWebsiteLoading(tabId) {
   browserAPI.tabs.update(tabId, { url: 'https://www.google.com' })
 }
 
-function checkLinkedInDailyLimit(tabId, url) {
-  return getLinkedInVisitCount(url)
+function checkDailyVisitLimit(tabId, url, limit) {
+  return getPageVisitCount(url)
     .then(count => {
-      console.log('LinkedIn visit count for today:', count)
-      if (count > linkedinDailyVisitLimit) {
-        preventLinkedInLoading(tabId)
+      console.log('Page visit count for today:', count)
+      if (count > limit) {
+        preventWebsiteLoading(tabId)
         return true
       }
       return false
@@ -438,9 +444,11 @@ browserAPI.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
   if (
     !disableWebVisitTracking &&
     changeInfo.status === 'loading' &&
-    trackedWebsite === 'linkedin.com'
+    trackedWebsite &&
+    trackedWebsites[trackedWebsite] !== undefined &&
+    trackedWebsites[trackedWebsite] !== -1
   ) {
-    checkLinkedInDailyLimit(tabId, trackedWebsite)
+    checkDailyVisitLimit(tabId, trackedWebsite, trackedWebsites[trackedWebsite])
   }
 
   if (changeInfo.status === 'complete') {
