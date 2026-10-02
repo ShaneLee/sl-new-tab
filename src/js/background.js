@@ -11,6 +11,10 @@ const podcastListenLater = `${host}/podcast/listenLater`
 const bookShelfEndpoint = `${host}/book/shelf`
 const webTrackingEnabled = false
 
+const trackedWebsites = ['linkedin.com', 'chess.com', 'youtube.com', 'reddit.com']
+const linkedinDailyVisitLimit = 15
+const disableWebVisitTracking = false
+
 const browserAPI = typeof browser !== 'undefined' ? browser : chrome
 
 const headers = {
@@ -186,10 +190,6 @@ function subscribeToPodcast(rss) {
     body: JSON.stringify(rss),
   })
 }
-
-const trackedWebsites = ['linkedin.com', 'chess.com', 'youtube.com', 'reddit.com']
-const linkedinDailyVisitLimit = 15
-const disableWebVisitTracking = true
 
 function getTrackedWebsite(url) {
   const hostname = new URL(url).hostname
