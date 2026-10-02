@@ -189,6 +189,7 @@ function subscribeToPodcast(rss) {
 
 const trackedWebsites = ['linkedin.com', 'chess.com', 'youtube.com', 'reddit.com']
 const linkedinDailyVisitLimit = 15
+const disableWebVisitTracking = true
 
 function getTrackedWebsite(url) {
   const hostname = new URL(url).hostname
@@ -434,12 +435,16 @@ browserAPI.runtime.onInstalled.addListener(details => {
 browserAPI.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
   const trackedWebsite = tab.url && getTrackedWebsite(tab.url)
 
-  if (changeInfo.status === 'loading' && trackedWebsite === 'linkedin.com') {
+  if (
+    !disableWebVisitTracking &&
+    changeInfo.status === 'loading' &&
+    trackedWebsite === 'linkedin.com'
+  ) {
     checkLinkedInDailyLimit(tabId, trackedWebsite)
   }
 
   if (changeInfo.status === 'complete') {
-    if (tab.url) {
+    if (!disableWebVisitTracking && tab.url) {
       if (trackedWebsite) {
         recordPageVisit(trackedWebsite)
       }
