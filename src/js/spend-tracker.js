@@ -1,28 +1,43 @@
 let contextMenu
 let selectedSpend
 
-function createTransaction(spend) {
-  return api(transactionEndpoint, {
-    method: 'POST',
-    headers: headers,
-    body: JSON.stringify(spend),
+function refreshAfterSuccessfulMutation(request) {
+  return request.then(response => {
+    if (!response.ok) {
+      return response
+    }
+    return getTransactions().then(() => response)
   })
+}
+
+function createTransaction(spend) {
+  return refreshAfterSuccessfulMutation(
+    api(transactionEndpoint, {
+      method: 'POST',
+      headers: headers,
+      body: JSON.stringify(spend),
+    }),
+  )
 }
 
 function updateTransaction(spend) {
-  return api(transactionEndpoint, {
-    method: 'PUT',
-    headers: headers,
-    body: JSON.stringify(spend),
-  })
+  return refreshAfterSuccessfulMutation(
+    api(transactionEndpoint, {
+      method: 'PUT',
+      headers: headers,
+      body: JSON.stringify(spend),
+    }),
+  )
 }
 
 function deleteTransaction(spend) {
-  return api(transactionEndpoint, {
-    method: 'DELETE',
-    headers: headers,
-    body: JSON.stringify(spend),
-  })
+  return refreshAfterSuccessfulMutation(
+    api(transactionEndpoint, {
+      method: 'DELETE',
+      headers: headers,
+      body: JSON.stringify(spend),
+    }),
+  )
 }
 
 function addTransactionFormListener() {
@@ -233,7 +248,7 @@ function addTransactionToTable(tbody, transaction) {
 function markAsDeductedOrNot(transactions, deducted) {
   const promises = transactions.map(transaction => {
     transaction.deducted = deducted
-    api(transactionEndpoint, {
+    return api(transactionEndpoint, {
       method: 'PUT',
       headers: headers,
       body: JSON.stringify(transaction),
@@ -242,7 +257,7 @@ function markAsDeductedOrNot(transactions, deducted) {
     )
   })
 
-  return Promise.all(promises)
+  return Promise.all(promises).then(() => getTransactions())
 }
 
 function getSpendCategories() {
