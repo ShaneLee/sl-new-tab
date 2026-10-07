@@ -29,6 +29,13 @@ window.onload = function () {
 }
 
 const MAX_CATEGORIES = 3
+const DEFAULT_IMAGE_SEARCH_ENGINE = 'tineye'
+const extensionAPI = typeof browser !== 'undefined' ? browser : chrome
+
+// The background script can't see the cached preferences, so mirror the engine to extension storage
+function storeImageSearchEngine(imageSearchEngine) {
+  extensionAPI.storage.local.set({ imageSearchEngine })
+}
 
 function spotifyLogin() {
   window.location.href = `${host}/spotify/login`
@@ -104,12 +111,17 @@ function saveSettings() {
     document.querySelectorAll('#categoriesContainer input:checked'),
   ).map(input => input.value)
 
+  const imageSearchEngine = document.getElementById('imageSearchEngine').value
+
   const prefs = {
     name: name,
     timezone: timezone,
     coloursByTags: coloursByTags,
     favouriteCategories: selectedCategories,
+    imageSearchEngine: imageSearchEngine,
   }
+
+  storeImageSearchEngine(imageSearchEngine)
 
   api(userPreferences, {
     method: 'POST',
@@ -134,6 +146,10 @@ function loadSettings() {
           tag => !(prefs.prefs.coloursByTags && prefs.prefs.coloursByTags.hasOwnProperty(tag)),
         )
         document.getElementById('name').value = prefs.prefs.name || ''
+
+        const imageSearchEngine = prefs.prefs.imageSearchEngine || DEFAULT_IMAGE_SEARCH_ENGINE
+        document.getElementById('imageSearchEngine').value = imageSearchEngine
+        storeImageSearchEngine(imageSearchEngine)
 
         if (prefs.prefs.coloursByTags) {
           Object.entries(prefs.prefs.coloursByTags).forEach(([tag, colour]) => {

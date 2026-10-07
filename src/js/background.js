@@ -21,6 +21,16 @@ const disableWebVisitTracking = false
 
 const browserAPI = typeof browser !== 'undefined' ? browser : chrome
 
+const defaultImageSearchEngine = 'tineye'
+const imageSearchEngines = {
+  yandex: imageUrl =>
+    `https://yandex.com/images/search?rpt=imageview&url=${encodeURIComponent(imageUrl)}`,
+  google: imageUrl => `https://lens.google.com/uploadbyurl?url=${encodeURIComponent(imageUrl)}`,
+  bing: imageUrl =>
+    `https://www.bing.com/images/search?view=detailv2&iss=sbi&q=imgurl:${encodeURIComponent(imageUrl)}`,
+  tineye: imageUrl => `https://tineye.com/search?url=${encodeURIComponent(imageUrl)}`,
+}
+
 const headers = {
   'Content-Type': 'application/json',
   Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -67,6 +77,14 @@ function saveFile(imageUrl, metadata) {
     method: 'POST',
     headers: noContentTypeHeaders,
     body: formData,
+  })
+}
+
+function searchImage(imageUrl, tab) {
+  browserAPI.storage.local.get(['imageSearchEngine'], function (data) {
+    const searchUrlFn =
+      imageSearchEngines[data.imageSearchEngine] || imageSearchEngines[defaultImageSearchEngine]
+    browserAPI.tabs.create({ url: searchUrlFn(imageUrl), index: tab.index + 1 })
   })
 }
 
@@ -351,6 +369,8 @@ browserAPI.contextMenus.onClicked.addListener((info, tab) => {
       notes: `Source: ${info.pageUrl}`,
     }
     saveFile(imageUrl, metadata)
+  } else if (info.menuItemId === 'searchImage') {
+    searchImage(info.srcUrl, tab)
   } else if (info.menuItemId === 'saveBucketList') {
     const imageUrl = info.srcUrl
     const name = basename(imageUrl)
@@ -423,6 +443,12 @@ browserAPI.runtime.onInstalled.addListener(() => {
     id: 'saveMeme',
     title: 'Save Meme',
     contexts: ['image', 'audio', 'video'],
+  })
+
+  browserAPI.contextMenus.create({
+    id: 'searchImage',
+    title: 'Search Image',
+    contexts: ['image'],
   })
 
   browserAPI.contextMenus.create({
