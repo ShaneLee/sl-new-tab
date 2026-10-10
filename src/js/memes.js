@@ -3,6 +3,13 @@ let page = 0
 let contextMenu
 let selectedFile
 let category
+let searchQuery = ''
+let searchDebounce
+let latestFetch = 0
+let knownTags = []
+
+// Every file on this page carries this tag, so it's not shown or editable as one
+const MEME_TAG = 'memes'
 
 let currentMediaIndex = 0
 let mediaFiles = []
@@ -23,6 +30,10 @@ function deleteFile() {
 function addContextMenuListener() {
   contextMenu = document.getElementById('fileContextMenu')
   const deleteAction = document.getElementById('deleteAction')
+
+  document.getElementById('editTagsAction').addEventListener('click', function () {
+    openTagEditor(selectedFile)
+  })
 
   deleteAction.addEventListener('click', function () {
     delete selectedEpisode.id
@@ -74,6 +85,15 @@ function addEventListeners() {
   document.getElementById('modalVideo').addEventListener('play', () => {
     document.querySelectorAll('#files video').forEach(video => video.pause())
   })
+
+  document.getElementById('memeSearch').addEventListener('input', event => {
+    clearTimeout(searchDebounce)
+    searchDebounce = setTimeout(() => {
+      searchQuery = event.target.value.trim()
+      page = 0
+      fetchFiles()
+    }, 250)
+  })
 }
 
 function fetchFiles(bucket, onLoaded) {
@@ -82,10 +102,14 @@ function fetchFiles(bucket, onLoaded) {
   }
   const size = 50
 
+  // Typing in the search box can start a fetch while another is in flight, so only
+  // the most recent one is allowed to render.
+  const fetchId = ++latestFetch
+
   isFetching = true
   updateFetchingState()
 
-  return api(filesTagsEndpointFn(category, 'memes', page, size), {
+  return api(filesSearchEndpointFn(category, MEME_TAG, searchQuery, page, size), {
     method: 'GET',
     headers: headers,
   })
@@ -96,6 +120,9 @@ function fetchFiles(bucket, onLoaded) {
       return response.json()
     })
     .then(data => {
+      if (fetchId !== latestFetch) {
+        return
+      }
       displayFiles(data.content)
       updatePaginationButtons(data)
       if (onLoaded) {
@@ -106,9 +133,22 @@ function fetchFiles(bucket, onLoaded) {
       console.error('Error fetching files:', error)
     })
     .finally(() => {
+      if (fetchId !== latestFetch) {
+        return
+      }
       isFetching = false
       updateFetchingState()
     })
+}
+
+function displayTags(file) {
+  return file.tags.filter(tag => tag !== MEME_TAG).sort()
+}
+
+function renderTags(tagsElement, file) {
+  tagsElement.textContent = displayTags(file)
+    .map(tag => `#${tag}`)
+    .join(' ')
 }
 
 function pauseGridVideos(filesDiv) {
@@ -124,7 +164,7 @@ function displayFiles(files) {
   pauseGridVideos(filesDiv)
   filesDiv.innerHTML = ''
 
-  mediaFiles = files.map(file => file.replace('https:', 'http:').replace(':8080', ''))
+  mediaFiles = files.map(file => file.url.replace('https:', 'http:').replace(':8080', ''))
 
   if (mediaFiles.length === 0) {
     const empty = document.createElement('div')
@@ -135,6 +175,7 @@ function displayFiles(files) {
   }
 
   mediaFiles.forEach((file, index) => {
+    const record = files[index]
     const fileDiv = document.createElement('div')
     fileDiv.classList.add('file')
 
@@ -185,13 +226,19 @@ function displayFiles(files) {
       }
       showContextMenu(
         event,
-        file,
+        record,
         val => {
           selectedFile = val
         },
         'fileContextMenu',
       )
     })
+
+    const tagsElement = document.createElement('p')
+    tagsElement.className = 'file-tags'
+    renderTags(tagsElement, record)
+    record.tagsElement = tagsElement
+    fileDiv.appendChild(tagsElement)
 
     filesDiv.appendChild(fileDiv)
   })
@@ -318,6 +365,115 @@ function addModalCloseListener() {
   })
 }
 
+function fetchKnownTags() {
+  return api(fileTagsEndpoint, {
+    method: 'GET',
+    headers: headers,
+  })
+    .then(response => (response.ok ? response.json() : []))
+    .then(tags => {
+      knownTags = tags.filter(tag => tag !== MEME_TAG)
+    })
+    .catch(error => {
+      console.error('Error fetching tags:', error)
+    })
+}
+
+function parseTagInput(value) {
+  return [
+    ...new Set(
+      value
+        .split(',')
+        .map(tag => tag.trim().toLowerCase())
+        .filter(Boolean),
+    ),
+  ]
+}
+
+// Existing tags are offered as one-click chips so the same thing doesn't end up
+// tagged three different ways.
+function renderTagSuggestions() {
+  const input = document.getElementById('tagInput')
+  const suggestions = document.getElementById('tagSuggestions')
+  const current = parseTagInput(input.value)
+  suggestions.innerHTML = ''
+
+  knownTags
+    .filter(tag => !current.includes(tag))
+    .forEach(tag => {
+      const chip = document.createElement('button')
+      chip.type = 'button'
+      chip.className = 'tag-chip'
+      chip.textContent = tag
+      chip.addEventListener('click', () => {
+        input.value = [...parseTagInput(input.value), tag].join(', ')
+        renderTagSuggestions()
+        input.focus()
+      })
+      suggestions.appendChild(chip)
+    })
+}
+
+function openTagEditor(file) {
+  if (!file) {
+    return
+  }
+  const input = document.getElementById('tagInput')
+  input.value = displayTags(file).join(', ')
+  renderTagSuggestions()
+  document.getElementById('tagModal').classList.remove('hidden')
+  input.focus()
+}
+
+function closeTagEditor() {
+  document.getElementById('tagModal').classList.add('hidden')
+}
+
+function saveTags(file, tags) {
+  return api(fileTagsUpdateEndpointFn(file.id), {
+    method: 'PUT',
+    headers: headers,
+    body: JSON.stringify([MEME_TAG, ...tags]),
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+      return response.json()
+    })
+    .then(updated => {
+      file.tags = updated.tags
+      renderTags(file.tagsElement, file)
+      closeTagEditor()
+      return fetchKnownTags()
+    })
+    .catch(error => {
+      console.error('Error saving tags:', error)
+    })
+}
+
+function addTagEditorListeners() {
+  document.getElementById('tagForm').addEventListener('submit', event => {
+    event.preventDefault()
+    saveTags(selectedFile, parseTagInput(document.getElementById('tagInput').value))
+  })
+
+  document.getElementById('tagInput').addEventListener('input', renderTagSuggestions)
+  document.getElementById('tagCancel').addEventListener('click', closeTagEditor)
+
+  document.getElementById('tagModal').addEventListener('click', event => {
+    if (event.target === document.getElementById('tagModal')) {
+      closeTagEditor()
+    }
+  })
+
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') {
+      closeTagEditor()
+    }
+  })
+}
+
 function showContextMenu(event, val, setterFn, contextMenuId) {
   // Check if the right-click occurred outside of an 'a' tag
   if (event.target.tagName.toLowerCase() === 'a') {
@@ -382,4 +538,6 @@ window.onload = () => {
   addEventListeners()
   addContextMenuListener()
   addModalCloseListener()
+  addTagEditorListeners()
+  fetchKnownTags()
 }

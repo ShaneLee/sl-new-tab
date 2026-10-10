@@ -16,6 +16,7 @@
       <div id="feedback" class="feedback hidden"></div>
       <section>
         <div id="fileContextMenu" class="context-menu">
+          <div class="context-menu-item" id="editTagsAction">Edit Tags</div>
           <div class="context-menu-item" id="deleteAction">Delete File</div>
         </div>
       </section>
@@ -33,6 +34,25 @@
         </div>
       </section>
       <section>
+        <div id="tagModal" class="tag-modal hidden">
+          <form id="tagForm" class="default-form">
+            <label for="tagInput">Tags (comma separated):</label>
+            <input type="text" id="tagInput" name="tagInput" autocomplete="off" />
+            <div id="tagSuggestions" class="tag-suggestions"></div>
+            <button type="submit">Save</button>
+            <button type="button" id="tagCancel">Cancel</button>
+          </form>
+        </div>
+      </section>
+      <section>
+        <input
+          type="search"
+          id="memeSearch"
+          class="meme-search"
+          placeholder="Search memes by tag…"
+          autocomplete="off"
+          autofocus
+        />
         <div class="episodes" id="files"></div>
         <div id="pagination" class="default-form">
           <button id="prevPage" disabled>Previous</button>

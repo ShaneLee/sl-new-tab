@@ -80,6 +80,16 @@ function saveFile(imageUrl, metadata) {
   })
 }
 
+function saveMeme(imageUrl, pageUrl, tags = []) {
+  const metadata = {
+    category: 'itemsofinterest',
+    tags: ['memes', ...tags],
+    fileName: basename(imageUrl),
+    notes: `Source: ${pageUrl}`,
+  }
+  return saveFile(imageUrl, metadata)
+}
+
 function searchImage(imageUrl, tab) {
   browserAPI.storage.local.get(['imageSearchEngine'], function (data) {
     const searchUrlFn =
@@ -277,6 +287,11 @@ function checkDailyVisitLimit(tabId, url, limit) {
 }
 
 browserAPI.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === 'saveMeme') {
+    saveMeme(message.memeUrl, message.memePageUrl, message.tags).catch(error => {
+      console.error('Error saving meme:', error)
+    })
+  }
   if (message.action === 'saveFile') {
     browserAPI.storage.local.get(['fileUrl', 'bucket', 'category', 'notes'], function (data) {
       const { fileUrl, bucket, category, notes } = data
@@ -360,15 +375,16 @@ browserAPI.contextMenus.onClicked.addListener((info, tab) => {
       })
     })
   } else if (info.menuItemId === 'saveMeme') {
-    const imageUrl = info.srcUrl
-    const name = basename(imageUrl)
-    const metadata = {
-      category: 'itemsofinterest',
-      tags: 'memes',
-      fileName: `${basename(name)}`,
-      notes: `Source: ${info.pageUrl}`,
-    }
-    saveFile(imageUrl, metadata)
+    saveMeme(info.srcUrl, info.pageUrl)
+  } else if (info.menuItemId === 'saveMemeWithTags') {
+    browserAPI.storage.local.set({ memeUrl: info.srcUrl, memePageUrl: info.pageUrl }, function () {
+      browserAPI.windows.create({
+        url: browserAPI.runtime.getURL('template/meme-tags-popup.html'),
+        type: 'popup',
+        width: 500,
+        height: 600,
+      })
+    })
   } else if (info.menuItemId === 'searchImage') {
     searchImage(info.srcUrl, tab)
   } else if (info.menuItemId === 'saveBucketList') {
@@ -442,6 +458,12 @@ browserAPI.runtime.onInstalled.addListener(() => {
   browserAPI.contextMenus.create({
     id: 'saveMeme',
     title: 'Save Meme',
+    contexts: ['image', 'audio', 'video'],
+  })
+
+  browserAPI.contextMenus.create({
+    id: 'saveMemeWithTags',
+    title: 'Save Meme with Tags…',
     contexts: ['image', 'audio', 'video'],
   })
 

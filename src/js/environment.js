@@ -282,6 +282,9 @@ const filesTagsEndpointFn = (category, tags, page, size) =>
 const fileUploadEndpoint = `${host}/files/upload`
 const fileUploadUrlEndpoint = `${host}/files/upload/url`
 const fileTagsEndpoint = `${host}/files/tags`
+const filesSearchEndpointFn = (category, tags, query, page, size) =>
+  `${host}/files/search?category=${category}&tags=${tags}&q=${encodeURIComponent(query)}&page=${page}&size=${size}`
+const fileTagsUpdateEndpointFn = id => `${host}/files/${id}/tags`
 
 // Spotify Endpoints
 const spotifyCallbackEndpointFn = code => `${host}/spotify/callback?code=${code}`

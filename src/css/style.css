@@ -1108,6 +1108,81 @@ td {
   opacity: 1;
 }
 
+.file .file-tags {
+  margin: 0;
+  min-height: 1em;
+  word-break: break-word;
+}
+
+.meme-tags-preview {
+  display: block;
+  max-width: 100%;
+  max-height: 300px;
+  margin: 0 auto;
+  border-radius: 8px;
+}
+
+.meme-search {
+  display: block;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  background-color: var(--dark-grey);
+  color: var(--text-color);
+  font-family: var(--font-family);
+  font-weight: bold;
+  box-sizing: border-box;
+}
+
+.meme-search:focus {
+  outline: 2px solid var(--main-color);
+}
+
+.tag-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.tag-modal .default-form {
+  width: 100%;
+  margin: 0;
+}
+
+.tag-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  max-height: 160px;
+  margin-top: 12px;
+  overflow-y: auto;
+}
+
+.default-form .tag-chip {
+  display: inline-block;
+  width: auto;
+  margin-top: 0;
+  padding: 4px 10px;
+  border-radius: 12px;
+  background-color: var(--medium-grey);
+  color: var(--text-color);
+  font-weight: normal;
+}
+
+.default-form .tag-chip:hover {
+  background-color: var(--light-medium-grey);
+}
+
 .empty-state {
   grid-column: 1 / -1;
   text-align: center;
